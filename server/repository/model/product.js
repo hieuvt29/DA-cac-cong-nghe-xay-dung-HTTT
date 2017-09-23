@@ -22,10 +22,6 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.DOUBLE, 
             allowNull: false
         },
-        weight: {
-            type: DataTypes.DOUBLE, 
-            allowNull: true
-        },
         quantity: {
             type: DataTypes.INTEGER,
             allowNull: false,
