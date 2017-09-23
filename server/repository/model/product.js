@@ -28,7 +28,7 @@ module.exports = function(sequelize, DataTypes) {
             defaultValue: 1
         },
         image: {
-            type: DataTypes.TEXT,
+            type: DataTypes.STRING(255),
             allowNull: false, 
             defaultValue: '/img/default.png'
         },

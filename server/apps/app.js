@@ -3,7 +3,7 @@ var express = require('express');
 var queryHandler = require('express-api-queryhandler');
 var bodyParser = require('body-parser');
 var cors = require('cors');
-var config = require('../config');
+var config = require('../../config');
 var compress = require('compression');
 /* ===== Express setup ===== */
 
@@ -17,6 +17,9 @@ app.use(bodyParser.json());
 app.use(compress());
 app.use(cors());
 
+
+var DataContext = require('../repository/data-context')(config.db);
+DataContext.sequelize.sync();
 
 app.use(function(err, req, res, next) {
     console.error(new Date() + " - " + JSON.stringify(err, null, '\t'));

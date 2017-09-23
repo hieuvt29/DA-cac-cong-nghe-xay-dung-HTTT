@@ -1,5 +1,5 @@
 module.exports = function(sequelize, DataTypes) {
-    return sequelize.define('Supplier', {
+    return sequelize.define('Account', {
         accountId: {
             type: DataTypes.UUID,
             allowNull: false, 
