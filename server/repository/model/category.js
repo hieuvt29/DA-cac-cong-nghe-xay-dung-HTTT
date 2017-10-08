@@ -14,14 +14,14 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.TEXT, 
             allowNull: true
         },
-        createAt: {
+        createdAt: {
             type: DataTypes.DATE,
             defaultValue: new Date()
         },        
         isDelete: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
-            defaultValue: 0
+            defaultValue: false
         }
     })
 }

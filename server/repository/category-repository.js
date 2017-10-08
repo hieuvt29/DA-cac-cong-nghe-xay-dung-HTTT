@@ -3,24 +3,45 @@ var CategoryRepository = function(dbContext) {
     this.Category = dbContext.Category;
 }
 
-CategoryRepository.prototype.findBy = function(conditions, callback) {
+CategoryRepository.prototype.findOneBy = function(condition, select, callback) {
     this.Category
-    .findOne({
-        where : conditions
-    })
-    .then(function(result){
-        callback(null, result.dataValues);
-    })
-    .catch(function(err){
-        callback(err, null);
-    })
+        .findOne({
+            attributes: select.length ? select : null,
+            where: condition ? condition: null,
+        })
+        .then(function(result) {
+            callback(null, result.dataValues);
+        })
+        .catch(function(err) {
+            callback(err, null);
+        });
+}
+
+CategoryRepository.prototype.findAllBy = function (condition, orderBy, select, page, limit, callback) {
+    this.Category
+        .findAll({
+            attributes: select.length ? select : null,
+            where: condition ? condition : null,
+            order: orderBy ? orderBy : null,
+            limit: limit,
+            offset: page * limit
+        })
+        .then(function (result) {
+            let res = result.map(function(val){
+                return val.dataValues
+            })
+            callback(null, res);
+        })
+        .catch(function (err) {
+            callback(err, null);
+        });
 }
 
 CategoryRepository.prototype.save = function(categoryObj, callback) {
     this.Category
     .create(categoryObj)
     .then(function(result){
-        callback(null, result);
+        callback(null, result.dataValues);
     })
     .catch(function(err){
         callback(err, null);

@@ -3,24 +3,45 @@ var AccountRepository = function(dbContext) {
     this.Account = dbContext.Account;
 }
 
-AccountRepository.prototype.findBy = function(conditions, callback) {
+AccountRepository.prototype.findOneBy = function(condition, select, callback) {
     this.Account
-    .findOne({
-        where : conditions
-    })
-    .then(function(result){
-        callback(null, result.dataValues);
-    })
-    .catch(function(err){
-        callback(err, null);
-    })
+        .findOne({
+            attributes: select.length ? select : null,
+            where: condition ? condition: null,
+        })
+        .then(function(result) {
+            callback(null, result.dataValues);
+        })
+        .catch(function(err) {
+            callback(err, null);
+        });
+}
+
+AccountRepository.prototype.findAllBy = function (condition, orderBy, select, page, limit, callback) {
+    this.Account
+        .findAll({
+            attributes: select.length ? select : null,
+            where: condition ? condition : null,
+            order: orderBy ? orderBy : null,
+            limit: limit,
+            offset: page * limit
+        })
+        .then(function (result) {
+            let res = result.map(function(val){
+                return val.dataValues
+            })
+            callback(null, res);
+        })
+        .catch(function (err) {
+            callback(err, null);
+        });
 }
 
 AccountRepository.prototype.save = function(accountObj, callback) {
     this.Account
     .create(accountObj)
     .then(function(result){
-        callback(null, result);
+        callback(null, result.dataValues);
     })
     .catch(function(err){
         callback(err, null);

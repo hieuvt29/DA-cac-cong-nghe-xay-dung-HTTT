@@ -26,6 +26,11 @@ module.exports = function(sequelize, DataTypes) {
         contact : {
             type: DataTypes.STRING(40),
             allowNull: true
+        },
+        isDelete: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
         }
     })
 }

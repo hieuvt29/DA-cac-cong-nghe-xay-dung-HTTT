@@ -3,24 +3,45 @@ var SupplierRepository = function(dbContext) {
     this.Supplier = dbContext.Supplier;
 }
 
-SupplierRepository.prototype.findBy = function(conditions, callback) {
+SupplierRepository.prototype.findOneBy = function(condition, select, callback) {
     this.Supplier
-    .findOne({
-        where : conditions
-    })
-    .then(function(result){
-        callback(null, result.dataValues);
-    })
-    .catch(function(err){
-        callback(err, null);
-    })
+        .findOne({
+            attributes: select.length ? select : null,
+            where: condition ? condition: null,
+        })
+        .then(function(result) {
+            callback(null, result.dataValues);
+        })
+        .catch(function(err) {
+            callback(err, null);
+        });
+}
+
+SupplierRepository.prototype.findAllBy = function (condition, orderBy, select, page, limit, callback) {
+    this.Supplier
+        .findAll({
+            attributes: select.length ? select : null,
+            where: condition ? condition : null,
+            order: orderBy ? orderBy : null,
+            limit: limit,
+            offset: page * limit
+        })
+        .then(function (result) {
+            let res = result.map(function(val){
+                return val.dataValues
+            })
+            callback(null, res);
+        })
+        .catch(function (err) {
+            callback(err, null);
+        });
 }
 
 SupplierRepository.prototype.save = function(supplierObj, callback) {
     this.Supplier
     .create(supplierObj)
     .then(function(result){
-        callback(null, result);
+        callback(null, result.dataValues);
     })
     .catch(function(err){
         callback(err, null);

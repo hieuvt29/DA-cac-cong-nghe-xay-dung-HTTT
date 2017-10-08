@@ -12,14 +12,31 @@ app.use(queryHandler.fields());
 app.use(queryHandler.filter());
 app.use(queryHandler.pagination({limit: 100}));
 app.use(queryHandler.sort());
-app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(compress());
 app.use(cors());
 
 
-var DataContext = require('../repository/data-context')(config.db);
-DataContext.sequelize.sync();
+var dbContext = require('../repository/data-context')(config.db);
+// dbContext.sequelize.sync();
+
+// Repositories
+var ProductRepository = require('../repository/product-repository');
+var productRepository = new ProductRepository(dbContext);
+
+
+// Services
+var ProductService = require('../service/product-service');
+var productService = new ProductService(productRepository);
+
+// Controllers
+var ProductController = require('./controllers/product-controller');
+var productController = new ProductController(productService);
+
+
+// Routers
+require('./routes/product-route')(app, productController);
 
 app.use(function(err, req, res, next) {
     console.error(new Date() + " - " + JSON.stringify(err, null, '\t'));

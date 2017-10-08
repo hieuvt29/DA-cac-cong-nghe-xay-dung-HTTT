@@ -7,6 +7,41 @@
                 "name": "Launch API",
                 "program": "${workspaceRoot}/server/apps/app.js",
                 "cwd": "${workspaceRoot}"
+            },
+            {
+                "name": "TEST repository",
+                "type": "node",
+                "request": "launch",
+                "program": "/usr/local/lib/node_modules/mocha/bin/_mocha",
+                "stopOnEntry": false,
+                "args": [
+                    "server/test/repository-test/product-repository-test.js"
+                ],
+                "cwd": "${workspaceRoot}",
+                "runtimeExecutable": null
+            },
+            {
+                "name": "TEST services",
+                "type": "node",
+                "request": "launch",
+                "program": "/usr/local/lib/node_modules/mocha/bin/_mocha",
+                "stopOnEntry": false,
+                "args": [
+                    "server/test/service-test/product-service-test.js"
+                ],
+                "cwd": "${workspaceRoot}",
+                "runtimeExecutable": null
+            },{
+                "name": "TEST API",
+                "type": "node",
+                "request": "launch",
+                "program": "/usr/local/lib/node_modules/mocha/bin/_mocha",
+                "stopOnEntry": false,
+                "args": [
+                    "server/test/api-test/product-api-test.js"
+                ],
+                "cwd": "${workspaceRoot}",
+                "runtimeExecutable": null
             }
         ]
     }

@@ -3,24 +3,45 @@ var CustomerRepository = function(dbContext) {
     this.Customer = dbContext.Customer;
 }
 
-CustomerRepository.prototype.findBy = function(conditions, callback) {
+CustomerRepository.prototype.findOneBy = function(condition, select, callback) {
     this.Customer
-    .findOne({
-        where : conditions
-    })
-    .then(function(result){
-        callback(null, result.dataValues);
-    })
-    .catch(function(err){
-        callback(err, null);
-    })
+        .findOne({
+            attributes: select.length ? select : null,
+            where: condition ? condition: null,
+        })
+        .then(function(result) {
+            callback(null, result.dataValues);
+        })
+        .catch(function(err) {
+            callback(err, null);
+        });
+}
+
+CustomerRepository.prototype.findAllBy = function (condition, orderBy, select, page, limit, callback) {
+    this.Customer
+        .findAll({
+            attributes: select.length ? select : null,
+            where: condition ? condition : null,
+            order: orderBy ? orderBy : null,
+            limit: limit,
+            offset: page * limit
+        })
+        .then(function (result) {
+            let res = result.map(function(val){
+                return val.dataValues
+            })
+            callback(null, res);
+        })
+        .catch(function (err) {
+            callback(err, null);
+        });
 }
 
 CustomerRepository.prototype.save = function(customerObj, callback) {
     this.Customer
     .create(customerObj)
     .then(function(result){
-        callback(null, result);
+        callback(null, result.dataValues);
     })
     .catch(function(err){
         callback(err, null);

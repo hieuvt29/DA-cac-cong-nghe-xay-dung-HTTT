@@ -38,16 +38,17 @@ module.exports = function(sequelize, DataTypes) {
         },
         views: {
             type: DataTypes.INTEGER,
-            allowNull: true
+            allowNull: true,
+            defaultValue: 0
         },
-        createAt: {
+        createdAt: {
             type: DataTypes.DATE,
             defaultValue: new Date()
         },        
         isDelete: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
-            defaultValue: 0
+            defaultValue: false
         }
     })
 }
