@@ -7,7 +7,7 @@ module.exports = function(sequelize, DataTypes) {
             defaultValue: DataTypes.UUIDV4
         },
         userName: {
-            type: DataTypes.STRING(50),
+            type: DataTypes.STRING(255),
             allowNull: false
         },
         password: {
@@ -26,7 +26,7 @@ module.exports = function(sequelize, DataTypes) {
         isActive: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
-            defaultValue: 1
+            defaultValue: true
         },
         isDelete: {
             type: DataTypes.BOOLEAN,

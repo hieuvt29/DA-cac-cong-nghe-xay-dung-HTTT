@@ -3,55 +3,75 @@ var SupplierRepository = function(dbContext) {
     this.Supplier = dbContext.Supplier;
 }
 
-SupplierRepository.prototype.findOneBy = function(condition, select, callback) {
+SupplierRepository.prototype.findOneBy = function(condition, select, association, callback) {
     this.Supplier
         .findOne({
             attributes: select.length ? select : null,
             where: condition ? condition: null,
+            include: association
         })
         .then(function(result) {
-            callback(null, result.dataValues);
+            if (result){
+                callback(null, result.dataValues);
+            } else {
+                callback(null, null);
+            }
+            
         })
         .catch(function(err) {
             callback(err, null);
         });
 }
 
-SupplierRepository.prototype.findAllBy = function (condition, orderBy, select, page, limit, callback) {
+SupplierRepository.prototype.findAllBy = function (condition, association, orderBy, select, page, limit, callback) {
     this.Supplier
         .findAll({
             attributes: select.length ? select : null,
             where: condition ? condition : null,
             order: orderBy ? orderBy : null,
             limit: limit,
-            offset: page * limit
+            offset: page * limit,
+            include: association
         })
         .then(function (result) {
-            let res = result.map(function(val){
-                return val.dataValues
-            })
-            callback(null, res);
+            if (result){
+                let res = result.map(function(val){
+                    return val.dataValues
+                })
+                callback(null, res);
+            } else {
+                callback(null, null);
+            }
+
         })
         .catch(function (err) {
             callback(err, null);
         });
 }
 
-SupplierRepository.prototype.save = function(supplierObj, callback) {
+SupplierRepository.prototype.save = function(supplierObj, association, callback) {
     this.Supplier
-    .create(supplierObj)
+    .create(supplierObj, {
+        include: association
+    })
     .then(function(result){
-        callback(null, result.dataValues);
+        if (result){   
+            callback(null, result.dataValues);
+        } else {
+            callback(null, null);
+        }
+    
     })
     .catch(function(err){
         callback(err, null);
     })
 }
 
-SupplierRepository.prototype.update = function(supplierObj, callback) {
+SupplierRepository.prototype.update = function(supplierObj, association, callback) {
     this.Supplier
     .update(supplierObj, {
-        where: { 'id' : supplierObj.supplierId}
+        where: { supplierId : supplierObj.supplierId},
+        include: association
     })
     .then(function(result){
         if(result.every(function(val){

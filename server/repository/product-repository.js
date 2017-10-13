@@ -3,11 +3,12 @@ var ProductRepository = function(dbContext) {
     this.Product = dbContext.Product;
 }
 
-ProductRepository.prototype.findOneBy = function(condition, select, callback) {
+ProductRepository.prototype.findOneBy = function(condition, select, association, callback) {
     this.Product
         .findOne({
             attributes: select.length ? select : null,
             where: condition ? condition: null,
+            include: association
         })
         .then(function(result) {
             if (result){
@@ -23,14 +24,15 @@ ProductRepository.prototype.findOneBy = function(condition, select, callback) {
         });
 }
 
-ProductRepository.prototype.findAllBy = function (condition, orderBy, select, page, limit, callback) {
+ProductRepository.prototype.findAllBy = function (condition, association, orderBy, select, page, limit, callback) {
     this.Product
         .findAll({
             attributes: select.length ? select : null,
             where: condition ? condition : null,
             order: orderBy ? orderBy : null,
             limit: limit,
-            offset: page * limit
+            offset: page * limit,
+            include: association
         })
         .then(function (result) {
             if (result){
@@ -49,7 +51,7 @@ ProductRepository.prototype.findAllBy = function (condition, orderBy, select, pa
         });
 }
 
-ProductRepository.prototype.save = function(productObj, callback) {
+ProductRepository.prototype.save = function(productObj, association, callback) {
     productObj = Object.assign(
         {}, 
         productObj, 
@@ -57,7 +59,9 @@ ProductRepository.prototype.save = function(productObj, callback) {
     )
     
     this.Product
-    .create(productObj)
+    .create(productObj, {
+        include: association
+    })
     .then(function(result){
         if (result){
             result.description ? result.description = JSON.parse(result.description) : null;      
@@ -72,7 +76,7 @@ ProductRepository.prototype.save = function(productObj, callback) {
     })
 }
 
-ProductRepository.prototype.update = function(productObj, callback) {
+ProductRepository.prototype.update = function(productObj, association, callback) {
     productObj = Object.assign(
         {}, 
         productObj, 
@@ -81,7 +85,8 @@ ProductRepository.prototype.update = function(productObj, callback) {
     
     this.Product
     .update(productObj, {
-        where: { productId : productObj.productId}
+        where: { productId : productObj.productId},
+        include: association
     })
     .then(function(result){
         if(result.every(function(val){

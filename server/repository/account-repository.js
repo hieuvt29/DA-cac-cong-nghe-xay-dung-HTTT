@@ -3,55 +3,75 @@ var AccountRepository = function(dbContext) {
     this.Account = dbContext.Account;
 }
 
-AccountRepository.prototype.findOneBy = function(condition, select, callback) {
+AccountRepository.prototype.findOneBy = function(condition, select, association, callback) {
     this.Account
         .findOne({
             attributes: select.length ? select : null,
             where: condition ? condition: null,
+            include: association
         })
         .then(function(result) {
-            callback(null, result.dataValues);
+            if (result){
+                callback(null, result.dataValues);
+            } else {
+                callback(null, null);
+            }
+            
         })
         .catch(function(err) {
             callback(err, null);
         });
 }
 
-AccountRepository.prototype.findAllBy = function (condition, orderBy, select, page, limit, callback) {
+AccountRepository.prototype.findAllBy = function (condition, association, orderBy, select, page, limit, callback) {
     this.Account
         .findAll({
             attributes: select.length ? select : null,
             where: condition ? condition : null,
             order: orderBy ? orderBy : null,
             limit: limit,
-            offset: page * limit
+            offset: page * limit,
+            include: association
         })
         .then(function (result) {
-            let res = result.map(function(val){
-                return val.dataValues
-            })
-            callback(null, res);
+            if (result){
+                let res = result.map(function(val){
+                    return val.dataValues
+                })
+                callback(null, res);
+            } else {
+                callback(null, null);
+            }
+
         })
         .catch(function (err) {
             callback(err, null);
         });
 }
 
-AccountRepository.prototype.save = function(accountObj, callback) {
+AccountRepository.prototype.save = function(accountObj, association, callback) {
     this.Account
-    .create(accountObj)
+    .create(accountObj, {
+        include: association
+    })
     .then(function(result){
-        callback(null, result.dataValues);
+        if (result){   
+            callback(null, result.dataValues);
+        } else {
+            callback(null, null);
+        }
+    
     })
     .catch(function(err){
         callback(err, null);
     })
 }
 
-AccountRepository.prototype.update = function(accountObj, callback) {
+AccountRepository.prototype.update = function(accountObj, association, callback) {
     this.Account
     .update(accountObj, {
-        where: { 'id' : accountObj.accountId}
+        where: { accountId : accountObj.accountId},
+        include: association
     })
     .then(function(result){
         if(result.every(function(val){

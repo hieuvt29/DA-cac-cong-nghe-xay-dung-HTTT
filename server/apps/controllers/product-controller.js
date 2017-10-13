@@ -9,7 +9,7 @@ var ProductController = function(productService){
 ProductController.prototype.getOne = function(req, res, next){
     var productId = req.params.productId;
 
-    dependencies.productService.findOne({'productId': productId}, [], function(err, product){
+    dependencies.productService.getOne({'productId': productId}, [], function(err, product){
         if (err) {
             next(err);
         } else {
@@ -26,7 +26,7 @@ ProductController.prototype.getMany = function(req, res, next){
     var page = req.options.skip;
     var limit = req.options.limit;
 
-    dependencies.productService.findAll(condition, orderBy, select, page, limit, function(err, products){
+    dependencies.productService.getMany(condition, orderBy, select, page, limit, function(err, products){
         if (err) {
             next(err);
         } else {

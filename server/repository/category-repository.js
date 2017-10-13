@@ -3,55 +3,75 @@ var CategoryRepository = function(dbContext) {
     this.Category = dbContext.Category;
 }
 
-CategoryRepository.prototype.findOneBy = function(condition, select, callback) {
+CategoryRepository.prototype.findOneBy = function(condition, select, association, callback) {
     this.Category
         .findOne({
             attributes: select.length ? select : null,
             where: condition ? condition: null,
+            include: association
         })
         .then(function(result) {
-            callback(null, result.dataValues);
+            if (result){
+                callback(null, result.dataValues);
+            } else {
+                callback(null, null);
+            }
+            
         })
         .catch(function(err) {
             callback(err, null);
         });
 }
 
-CategoryRepository.prototype.findAllBy = function (condition, orderBy, select, page, limit, callback) {
+CategoryRepository.prototype.findAllBy = function (condition, association, orderBy, select, page, limit, callback) {
     this.Category
         .findAll({
             attributes: select.length ? select : null,
             where: condition ? condition : null,
             order: orderBy ? orderBy : null,
             limit: limit,
-            offset: page * limit
+            offset: page * limit,
+            include: association
         })
         .then(function (result) {
-            let res = result.map(function(val){
-                return val.dataValues
-            })
-            callback(null, res);
+            if (result){
+                let res = result.map(function(val){
+                    return val.dataValues
+                })
+                callback(null, res);
+            } else {
+                callback(null, null);
+            }
+
         })
         .catch(function (err) {
             callback(err, null);
         });
 }
 
-CategoryRepository.prototype.save = function(categoryObj, callback) {
+CategoryRepository.prototype.save = function(categoryObj, association, callback) {
     this.Category
-    .create(categoryObj)
+    .create(categoryObj, {
+        include: association
+    })
     .then(function(result){
-        callback(null, result.dataValues);
+        if (result){   
+            callback(null, result.dataValues);
+        } else {
+            callback(null, null);
+        }
+    
     })
     .catch(function(err){
         callback(err, null);
     })
 }
 
-CategoryRepository.prototype.update = function(categoryObj, callback) {
+CategoryRepository.prototype.update = function(categoryObj, association, callback) {
     this.Category
     .update(categoryObj, {
-        where: { 'id' : categoryObj.categoryId}
+        where: { categoryId : categoryObj.categoryId},
+        include: association
     })
     .then(function(result){
         if(result.every(function(val){

@@ -21,7 +21,7 @@ module.exports = function(sequelize, DataTypes) {
         },
         type : {
             type: DataTypes.STRING(50), 
-            allowNull: false
+            allowNull: true
         },
         contact : {
             type: DataTypes.STRING(40),

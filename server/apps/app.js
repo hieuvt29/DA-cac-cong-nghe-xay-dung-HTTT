@@ -1,5 +1,7 @@
 
 var express = require('express');
+var passport = require('passport');
+var session = require('express-session');
 var queryHandler = require('express-api-queryhandler');
 var bodyParser = require('body-parser');
 var cors = require('cors');
@@ -34,6 +36,18 @@ var productService = new ProductService(productRepository);
 var ProductController = require('./controllers/product-controller');
 var productController = new ProductController(productService);
 
+//config the passport 
+require('../config/passport')(passport);
+
+//config the session for passport
+app.use(session({
+	secret: 'secretProject3',
+	resave: false,
+	saveUninitialized: true
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Routers
 require('./routes/product-route')(app, productController);
@@ -52,6 +66,12 @@ app.use(function(err, req, res, next) {
             case 'Not Found':
                 return res.status(404).send({ error: 'Not Found' });
                 break;
+            case 'Duplicated':
+                return res.status(400).send({ error: 'Duplicated' });
+                break;
+            default: 
+                return res.status(500).send({ error: 'Something failed!' });
+            
         }
     } else {
         next(err);

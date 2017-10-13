@@ -44,7 +44,12 @@ module.exports = function(sequelize, DataTypes) {
         createdAt: {
             type: DataTypes.DATE,
             defaultValue: new Date()
-        },        
+        },
+        isActive: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
+        },
         isDelete: {
             type: DataTypes.BOOLEAN,
             allowNull: false,

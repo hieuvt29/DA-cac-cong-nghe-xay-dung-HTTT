@@ -1,0 +1,5 @@
+- Thêm trường isActive cho sản phẩm, để cho supplier đề xuất sản phẩm và Admin duyệt
+
+- Supplier không có email
+- Trường contact của supplier so với trường telephone của Customer?
+- Trường type của Supplier

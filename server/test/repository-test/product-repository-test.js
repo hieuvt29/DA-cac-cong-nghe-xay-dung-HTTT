@@ -6,7 +6,7 @@ var uuidv4 = require('uuid/v4');
 var config = require('../../../config');
 
 var dbContext = require('../../repository/data-context')(config.db);
-// dbContext.sequelize.sync();
+
 
 var ProductRepository = require('../../repository/product-repository');
 var productRepository = new ProductRepository(dbContext);
@@ -28,20 +28,22 @@ describe('create new valid product', function(){
                 Pin: "3200mAh"
             }
         }
-
-        productRepository.save(productProps, function(err, result){
-            assert.equal(err, null);
-            assert.equal(result.productName, productProps.productName);
-            assert.equal(result.categoryId, productProps.categoryId);
-            assert.equal(result.supplierId, productProps.supplierId);
-            assert.equal(result.description.name, productProps.description.name);
-            assert.equal(result.description.RAM, productProps.description.RAM);
-            assert.equal(result.description.Pin, productProps.description.Pin);         
-            
-
-            done();
-            
+        dbContext.sequelize.sync().then(function(){
+            productRepository.save(productProps, null, function(err, result){
+                assert.equal(err, null);
+                assert.equal(result.productName, productProps.productName);
+                assert.equal(result.categoryId, productProps.categoryId);
+                assert.equal(result.supplierId, productProps.supplierId);
+                assert.equal(result.description.name, productProps.description.name);
+                assert.equal(result.description.RAM, productProps.description.RAM);
+                assert.equal(result.description.Pin, productProps.description.Pin);         
+                
+    
+                done();
+                
+            })
         })
+        
     })
 })
 
@@ -76,11 +78,11 @@ describe('update new valid product', function(){
             }
         }
 
-        productRepository.save(productProps, function(err, savedProps){
-            productRepository.update(updateProductProps, function(err, isUpdated){
+        productRepository.save(productProps, null, function(err, savedProps){
+            productRepository.update(updateProductProps, null, function(err, isUpdated){
                 assert.equal(err, null);
                 assert.equal(isUpdated, true);
-                productRepository.findOneBy({productId: updateProductProps.productId}, [], function(err, updatedProps){
+                productRepository.findOneBy({productId: updateProductProps.productId}, [], null, function(err, updatedProps){
                     assert.equal(err, null);
                     assert.equal(updatedProps.productName, updateProductProps.productName);
                     assert.equal(updatedProps.description.name, updateProductProps.description.name);

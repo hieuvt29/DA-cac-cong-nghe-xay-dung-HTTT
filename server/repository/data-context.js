@@ -9,13 +9,15 @@ var DataContext = function(config) {
     var Supplier = sequelize.import('./model/supplier');
     var Account = sequelize.import('./model/account');
     
-    Account.hasOne(Customer, {foreignKey: 'accountId'});
-    Account.hasOne(Supplier, {foreignKey: 'accountId'});
+    Account.Customer = Account.hasOne(Customer, {foreignKey: 'accountId'});
+    Account.Supplier = Account.hasOne(Supplier, {foreignKey: 'accountId'});
+    
+    Product.Supplier = Product.belongsTo(Supplier, {foreignKey: 'supplierId'});
 
-    Supplier.hasMany(Product, {foreignKey: 'supplierId'});
-
-    Category.belongsToMany(Product, {through: 'CategoryProduct', foreignKey: 'categoryId'});
-    Product.belongsToMany(Category, {through: 'CategoryProduct', foreignKey: 'productId'})
+    Category.Products = Category.belongsToMany(Product, {through: 'CategoryProduct', foreignKey: 'categoryId'});
+    Product.Categories = Product.belongsToMany(Category, {through: 'CategoryProduct', foreignKey: 'productId'});
+    
+    Category.Parent = Category.hasMany(Category, {foreignKey: 'parentId'});
     
     return {
         Account: Account,
