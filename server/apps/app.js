@@ -27,17 +27,31 @@ var dbContext = require('../repository/data-context')(config.db);
 var ProductRepository = require('../repository/product-repository');
 var productRepository = new ProductRepository(dbContext);
 
+var AccountRepository = require('../repository/account-repository');
+var accountRepository = new AccountRepository(dbContext);
+
+var CustomerRepository = require('../repository/customer-repository');
+var customerRepository = new CustomerRepository(dbContext);
+
+var SupplierRepository = require('../repository/supplier-repository');
+var supplierRepository = new SupplierRepository(dbContext);
 
 // Services
 var ProductService = require('../service/product-service');
 var productService = new ProductService(productRepository);
 
+var AccountService = require('../service/product-service');
+var accountService = new ProductService(accountRepository);
+
 // Controllers
 var ProductController = require('./controllers/product-controller');
 var productController = new ProductController(productService);
 
+var AccountController = require('./controllers/account-controller');
+var accountController = new AccountController(accountService);
+
 //config the passport 
-require('../config/passport')(passport);
+require('../config/passport')(passport, accountRepository, supplierRepository, customerRepository);
 
 //config the session for passport
 app.use(session({
@@ -51,7 +65,7 @@ app.use(passport.session());
 
 // Routers
 require('./routes/product-route')(app, productController);
-
+require('./routes/account-route')(app, accountController, passport);
 app.use(function(err, req, res, next) {
     console.error(new Date() + " - " + JSON.stringify(err, null, '\t'));
     
@@ -69,7 +83,7 @@ app.use(function(err, req, res, next) {
             case 'Duplicated':
                 return res.status(400).send({ error: 'Duplicated' });
                 break;
-            default: 
+            default:
                 return res.status(500).send({ error: 'Something failed!' });
             
         }

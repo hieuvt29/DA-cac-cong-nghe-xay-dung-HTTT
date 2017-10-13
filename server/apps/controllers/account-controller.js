@@ -6,82 +6,79 @@ var AccountController = function (accountService) {
     dependencies.accountService = accountService;
 }
 
-AccountController.prototype.createAccount = function (req, res, next) {
+AccountController.prototype.create = function (req, res, next) {
 
     //validate
-    var accountObj = Object.assign({},
+    var accountProps = Object.assign({},
         req.body, {
             password: bcrypt.hashSync(req.body.password)
         }
     );
 
-    dependencies.accountService.createAccount(accountProps, function(err, result){
-        
-    })
-}
-
-AccountController.prototype.updateAccount = function (req, res) {
-    var accountObj = req.body;
-
-    dependencies.accountRepository.update(accountObj, function (err, account) {
-        if (err) {
-            let resObj = {
-                errorCode: 1,
-                message: "bad request",
-                data: null
-            }
-            return res.json(resObj);
+    dependencies.accountService.create(accountProps, function(err, result){
+        if (err){
+            next(err);
+        } else {
+            res.account = result;
+            next();
         }
-        let resObj = {
-            errorCode: 0,
-            message: "updated account!",
-            data: account
-        };
-        res.json(resObj);
     })
-
 }
-AccountController.prototype.changePassword = function (req, res) {
+
+
+AccountController.prototype.changePassword = function (req, res, next) {
     var oldPass = req.body.password;
     var newPass = req.body.newPassword;
 
     if (!oldPass) {
-        return res.json({
+        res.error = {
             errorCode: 1,
             message: 'Missing argument \'password\'',
             data: null,
-        });
+        };
+        next();
     }
     if (!newPassword) {
-        return res.json({
+        res.error = {
             errorCode: 1,
             message: 'Missing argument \'new password\'',
             data: null,
-        });
+        };
+        next();
     }
-    if (!bcrypt.compareSync(password, req.account.password)) {
-        return res.json({
+    if (!bcrypt.compareSync(oldPass, req.user.password)) {
+        res.error = {
             errorCode: 1,
             message: 'Password mismatch',
             data: null
-        });
+        };
+        next();
     }
-    req.account.password = bcrypt.hashSync(newPassword);
-    req.account.save(function (err) {
-        if (err) {
-            let resObj = {
-                errorCode: 1,
-                message: "bad request",
-                data: null
-            }
-            return res.json(resObj);
-        }
-        res.json({
-            errorCode: 0,
-            message: 'Password changed',
-            data: req.account
-        });
-    });
 
+    req.user.password = bcrypt.hashSync(newPass);
+    dependencies.accountService.changePassword(req.user, function(err, result){
+        if (err) {
+            next(err);
+        } else {
+            res.account = result;
+            next();
+        }
+    })
 }
+
+AccountController.prototype.changeUserName = function (req, res, next) {
+    var newUserName = req.body.userName;
+    
+    dependencies.accountService.changeUserName(req.user, function(err, result){
+        if (err) {
+            next(err);
+        } else {
+            res.account = result;
+            req.user.userName = newUserName;
+            next();
+        }
+    })
+}
+
+
 module.exports = AccountController;

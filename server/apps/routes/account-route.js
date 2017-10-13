@@ -1,6 +1,6 @@
 var accountMw = require('../middlewares/account-mw');
 
-module.exports = function (app, accountController) {
+module.exports = function (app, accountController, passport) {
     function isLoggedIn(req, res, next) {
         if (req.isAuthenticated()) {
             return next();
@@ -12,11 +12,13 @@ module.exports = function (app, accountController) {
             })
         }
     }
-    //user Controllers
+    //account Controllers
     app.route('/login')
         .post(function (req, res, next) {
             passport.authenticate('login', function (err, user, info) {
-                if (err) return console.error(err);
+                if (err) {
+                    return next(err);
+                }
                 if (!user) {
                     return res.json({
                         errorCode: 1,
@@ -29,7 +31,7 @@ module.exports = function (app, accountController) {
                     return res.json({
                         errorCode: 0,
                         message: 'Login successfully',
-                        data: user
+                        user: user
                     });
                 });
             })(req, res, next);
@@ -48,7 +50,7 @@ module.exports = function (app, accountController) {
         });
 
     app.route('/register')
-        .post(accountController.createUser);
+        .post(accountController.create, accountMw.create);
 
     app.route('/user/info')
         .get(isLoggedIn, function (req, res) {
@@ -56,17 +58,21 @@ module.exports = function (app, accountController) {
                 res.json({
                     errorCode: 0,
                     message: "user info",
-                    data: req.user
+                    user: req.user
                 });
             }
         });
 
     app.route('/user/change-password')
-        .post(isLoggedIn, accountController.changePassword);
+        .post(isLoggedIn, accountController.changePassword, 
+        accountMw.changePassword);
 
+    app.route('/user/change-username')
+        .post(isLoggedIn, accountController.changeUserName, 
+        accountMw.changeUserName);
 
-    app.route('/user')
-        .post(userController.createUser)
-        .put(userController.updateUser);
+    // app.route('/user')
+    //     .post(userController.createUser)
+    //     .put(userController.updateUser);
 
 }

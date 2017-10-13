@@ -23,6 +23,7 @@ module.exports = {
         if (res.product){
             res.status(200).send({
                 status: 200,
+                message: 'created',
                 product: res.product
             });
         } else {
@@ -33,6 +34,7 @@ module.exports = {
         if (res.product){
             res.status(200).send({
                 status: 200,
+                message: 'updated',
                 product: res.product
             });
         } else {
@@ -43,6 +45,7 @@ module.exports = {
         if (res.product){
             res.status(200).send({
                 status: 200,
+                message: 'deleted',
                 product: res.product
             });
         } else {

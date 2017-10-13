@@ -4,37 +4,41 @@ var rule = require('./validate/user-validator');
 var AccountService = function (accountRepository) {
     this.accountRepository = accountRepository;
 }
-AccountService.prototype.getOne = function(condition, select, callback) {
+AccountService.prototype.getOne = function (condition, select, callback) {
     condition.isDelete = false;
     condition.isActive = true;
-    
-    this.accountRepository.findOneBy(condition, select, function(err, result){
-        if (err){
+
+    this.accountRepository.findOneBy(condition, select, function (err, result) {
+        if (err) {
             return callback(err);
         } else if (result) {
             return callback(null, result);
         } else {
-            return callback({type: "Not Found"});
+            return callback({
+                type: "Not Found"
+            });
         }
     })
 }
 
-AccountService.prototype.getMany = function(condition, orderBy, select, page, limit, callback){
+AccountService.prototype.getMany = function (condition, orderBy, select, page, limit, callback) {
     condition.isDelete = false;
     condition.isActive = true;
-    
-    this.accountRepository.findAllBy(condition, null, orderBy, select, page, limit, function(err, result){
+
+    this.accountRepository.findAllBy(condition, null, orderBy, select, page, limit, function (err, result) {
         if (err) {
             return callback(err);
-        } else if (result){
+        } else if (result) {
             return callback(null, result);
         } else {
-            return callback({type: "Not Found"});
+            return callback({
+                type: "Not Found"
+            });
         }
     })
 }
 
-AccountService.prototype.createAccount = function (accountProps, userProps, callback) {
+AccountService.prototype.create = function (accountProps, callback) {
     var self = this;
     // nv.run(rule.checkAccount, accountProps, function(c, err){
     //     if (c) {
@@ -50,7 +54,7 @@ AccountService.prototype.createAccount = function (accountProps, userProps, call
             next(err);
         }
         if (!user) {
-            self.accountRepository.create(accountObj, null, function (err, newAccount) {
+            self.accountRepository.create(accountProps, null, function (err, newAccount) {
                 if (err) {
                     return callback(err);
                 } else {
@@ -65,43 +69,89 @@ AccountService.prototype.createAccount = function (accountProps, userProps, call
     })
 }
 
-AccountController.prototype.updateAccount = function (accountProps, callback) {
+AccountController.prototype.update = function (accountProps, callback) {
     //validate props
     var self = this;
 
-    self.accountRepository.findeOneBy({accountId: accountProps.accountId}, [], null, function(err, accountObj){
+    self.accountRepository.findeOneBy({
+        accountId: accountProps.accountId
+    }, [], null, function (err, accountObj) {
         if (err) {
             callback(err);
         } else if (accountObj) {
-            accountObj = Object.assign(
-                {},
-                accountObj, 
+            accountObj = Object.assign({},
+                accountObj,
                 accountProps
             );
             repository.update(accountObj, null, function (err, result) {
                 if (err) {
                     callback(err);
-                } else if(result) {
+                } else if (result) {
                     callback(null, accountObj)
                 }
             })
         } else {
-            callback({type: 'Not Found'});
+            callback({
+                type: 'Not Found'
+            });
         }
     })
 }
 
-/* AccountController.prototype.changePassword = function (accountObj, callback) {
+AccountController.prototype.changePassword = function (accountObj, callback) {
     // validate accountObj
     var self = this;
-    self.accountRepository.update(accountObj, null, function(err, result){
+    self.accountRepository.update(accountObj, null, function (err, result) {
         if (err) {
             callback(err);
         } else if (result) {
             callback(null, accountObj);
         } else {
-            callback({type: 'Bad Request'});
+            callback({
+                type: 'Bad Request'
+            });
         }
     })
 
-} */
+}
+
+AccountController.prototype.changeUserName = function (accountProps, callback) {
+    // validate accountProps 
+    var self = this;
+    self.accountRepository.findeOneBy({
+        userName: accountProps.userName
+    }, [], null, function (err, dup) {
+        if (err) {
+            callback(err);
+        } else if (dup) {
+            callback({
+                type: 'Duplicate'
+            });
+        } else {
+            self.accountRepository.findeOneBy({
+                accountId: accountProps.accountId
+            }, [], null, function (err, accountObj) {
+                if (err) {
+                    callback(err);
+                } else if (accountObj) {
+                    accountObj = Object.assign({},
+                        accountObj,
+                        accountProps
+                    );
+                    repository.update(accountObj, null, function (err, result) {
+                        if (err) {
+                            callback(err);
+                        } else if (result) {
+                            callback(null, accountObj)
+                        }
+                    })
+                } else {
+                    callback({
+                        type: 'Not Found'
+                    });
+                }
+            })
+        }
+    })
+
+}
