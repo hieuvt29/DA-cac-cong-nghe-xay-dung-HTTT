@@ -1,4 +1,4 @@
-var nv = require('better-validator');
+var nv = require('node-validator');
 var rule = require('./validate/user-validator');
 
 var AccountService = function (accountRepository) {
@@ -40,13 +40,12 @@ AccountService.prototype.getMany = function (condition, orderBy, select, page, l
 
 AccountService.prototype.create = function (accountProps, callback) {
     var self = this;
-    // nv.run(rule.checkAccount, accountProps, function(c, err){
-    //     if (c) {
-    //         callback(err);
-    //     }
-    // })
+    //validate props
+    var val = await validate(rule.checkAccount, accountProps);
+    if (val.numErr > 0){
+        return callback({type: "Bad Request", error: val.error});
+    }
 
-    //check and save user
     self.accountRepository.findOneBy({
         'userName': userObj.userName
     }, [], null, function (err, user) {
@@ -70,8 +69,13 @@ AccountService.prototype.create = function (accountProps, callback) {
 }
 
 AccountController.prototype.update = function (accountProps, callback) {
-    //validate props
     var self = this;
+    //validate props
+    var val = await validate(rule.checkAccount, accountProps);
+    if (val.numErr > 0){
+        return callback({type: "Bad Request", error: val.error});
+    }
+
 
     self.accountRepository.findeOneBy({
         accountId: accountProps.accountId
@@ -99,8 +103,13 @@ AccountController.prototype.update = function (accountProps, callback) {
 }
 
 AccountController.prototype.changePassword = function (accountObj, callback) {
-    // validate accountObj
     var self = this;
+    var val = await validate(rule.checkAccount, accountProps);
+    if (val.numErr > 0){
+        return callback({type: "Bad Request", error: val.error});
+    }
+
+
     self.accountRepository.update(accountObj, null, function (err, result) {
         if (err) {
             callback(err);
@@ -116,8 +125,13 @@ AccountController.prototype.changePassword = function (accountObj, callback) {
 }
 
 AccountController.prototype.changeUserName = function (accountProps, callback) {
-    // validate accountProps 
     var self = this;
+    // validate accountProps 
+    var val = await validate(rule.checkAccount, accountProps);
+    if (val.numErr > 0){
+        return callback({type: "Bad Request", error: val.error});
+    }
+
     self.accountRepository.findeOneBy({
         userName: accountProps.userName
     }, [], null, function (err, dup) {
@@ -155,3 +169,15 @@ AccountController.prototype.changeUserName = function (accountProps, callback) {
     })
 
 }
+
+function validate(rule, obj){
+    return new Promise(function(resole){
+        nv.run(rule, obj, function(numErr, err){
+            if (numErr){
+                console.error(err);
+                resole({numErr: numErr, error: err});
+            }
+        });
+    })
+}
+module.exports = AccountService;

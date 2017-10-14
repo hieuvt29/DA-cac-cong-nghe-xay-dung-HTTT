@@ -2,7 +2,9 @@ var config = require('./config');
 var dbContext = require('./server/repository/data-context')(config.db);
 // dbContext.sequelize.sync();
 var uuidv4 = require('uuid/v4');
-// Repositories
+
+
+/* Check Sequelize Association
 var ProductRepository = require('./server/repository/product-repository');
 var productRepository = new ProductRepository(dbContext);
 
@@ -40,4 +42,22 @@ supplierRepository.save(accountObj, [dbContext.Account.Supplier], function(err, 
         console.log(result);
         console.log("done");
     }
-}) 
+})  */
+
+function getInfo() {
+    return new Promise(resolve => {
+      setTimeout(() => {
+          console.error("async done");
+        resolve(10);
+      }, 2000);
+    });
+  }
+  
+  
+  async function add1(x) {
+    var a = await getInfo();
+    console.log(a);
+    console.log("askjfl;aksjdf");
+  }
+
+  add1(2);

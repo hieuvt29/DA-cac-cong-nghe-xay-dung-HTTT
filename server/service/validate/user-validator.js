@@ -24,7 +24,7 @@ var checkCustomer = nv.isAnyObject()
 
 var checkSupplier = nv.isAnyObject()
 .withRequired('supplierName', nv.isString({min: 5, max: 200}))
-.withRequired('email', nv.isEmail())
+.withRequired('email', nv.isString({regex: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/}))
 .withOptional('supplierId', nv.isString({regex: /^[a-zA-Z0-9_-]{36}$/}))
 .withOptional('accountId', nv.isString({regex: /^[a-zA-Z0-9_-]{36}$/}))
 .withOptional('type', nv.isString({regex: /^[0-9]{4,50}$/}))

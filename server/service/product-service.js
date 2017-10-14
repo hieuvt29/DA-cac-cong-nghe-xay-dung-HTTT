@@ -35,13 +35,11 @@ ProductService.prototype.getMany = function(condition, orderBy, select, page, li
     })
 }
 
-ProductService.prototype.create = function(productProps, callback){
-    
-    // nv.run(rule, productProps, function(numErr, err){
-    //     if (numErr){
-    //         return callback(err);
-    //     }
-    // })
+ProductService.prototype.create = async function(productProps, callback){
+    var val = await validate(rule, productProps);
+    if (val.numErr > 0){
+        return callback({type: "Bad Request", error: val.error});
+    }
 
     this.productRepository.save(productProps, null, function(err, result){
         if (err) {
@@ -54,12 +52,12 @@ ProductService.prototype.create = function(productProps, callback){
     });
 }
 
-ProductService.prototype.update = function(productProps, callback){
-    // nv.run(rule, productProps, function(numErr, err){
-    //     if (numErr){
-    //         return callback(err);
-    //     }
-    // })
+ProductService.prototype.update = async function(productProps, callback){
+    var val = await validate(rule, productProps);
+    if (val.numErr > 0){
+        return callback({type: "Bad Request", error: val.error});
+    }
+
     var condition = {
         productId: productProps.productId,
         isActive: true,
@@ -101,4 +99,14 @@ ProductService.prototype.delete = function(productProps, callback){
     })
 }
 
+function validate(rule, obj){
+    return new Promise(function(resole){
+        nv.run(rule, obj, function(numErr, err){
+            if (numErr){
+                console.error(err);
+                resole({numErr: numErr, error: err});
+            }
+        });
+    })
+}
 module.exports = ProductService;
