@@ -7,34 +7,34 @@ class HomePage extends Component {
     render() {
         console.log('---TuyenTN---', this.props.latestProducts);
         return (
-            <div className="App">
-                <p className="App-intro">
-                    this is Home Page!
-                    <br />
-                    count: {this.props.count}
-                    <button
-                        onClick={() => this.props.increase()}
-                    >Increase</button>
+            // <div className="App">
+            //     <p className="App-intro">
+            //         this is Home Page!
+            //         <br />
+            //         count: {this.props.count}
+            //         <button
+            //             onClick={() => this.props.increase()}
+            //         >Increase</button>
                     
-                </p>
-            </div>
+            //     </p>
+            // </div>
             <div className="span9">
                 <div className="well well-small">
                     <h4>Featured Products <small className="pull-right">200+ featured products</small></h4>
-                    <div class="row-fluid">
-                        <div id="featured" class="carousel slide">
-							<div class="carousel-inner">
-								<div class="item active">
-                                    <ul class="thumbnails">
+                    <div className="row-fluid">
+                        <div id="featured" className="carousel slide">
+							<div className="carousel-inner">
+								<div className="item active">
+                                    <ul className="thumbnails">
                                     </ul>
                                 </div>
-                                <div class="item">
-                                    <ul class="thumbnails">
+                                <div className="item">
+                                    <ul className="thumbnails">
                                     </ul>
                                 </div>
                             </div>
-                            <a class="left carousel-control" href="#featured" data-slide="prev">‹</a>
-							<a class="right carousel-control" href="#featured" data-slide="next">›</a>
+                            <a className="left carousel-control" href="#featured" data-slide="prev">‹</a>
+							<a className="right carousel-control" href="#featured" data-slide="next">›</a>
                         </div>
                     </div>
                 </div>
