@@ -41,7 +41,7 @@ var ProductService = require('../service/product-service');
 var productService = new ProductService(productRepository);
 
 var AccountService = require('../service/product-service');
-var accountService = new ProductService(accountRepository);
+var accountService = new AccountService(accountRepository);
 
 // Controllers
 var ProductController = require('./controllers/product-controller');

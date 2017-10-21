@@ -22,7 +22,7 @@ module.exports = function (app, accountController, passport) {
                 if (!user) {
                     return res.json({
                         errorCode: 1,
-                        message: 'Login Failed',
+                        message: info.message,
                         data: null
                     });
                 }
