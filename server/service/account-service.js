@@ -1,8 +1,10 @@
 var nv = require('node-validator');
 var rule = require('./validate/user-validator');
 
-var AccountService = function (accountRepository) {
+var AccountService = function (accountRepository, customerService, supplierService) {
     this.accountRepository = accountRepository;
+    this.customerService = customerService;
+    this.supplierService = supplierService;
 }
 AccountService.prototype.getOne = function (condition, select, callback) {
     condition.isDelete = false;
@@ -47,7 +49,7 @@ AccountService.prototype.create = function (accountProps, callback) {
     }
 
     self.accountRepository.findOneBy({
-        'userName': userObj.userName
+        'userName': accountProps.userName
     }, [], null, function (err, user) {
         if (err) {
             next(err);
@@ -57,7 +59,27 @@ AccountService.prototype.create = function (accountProps, callback) {
                 if (err) {
                     return callback(err);
                 } else {
-                    return callback(null, newAccount);
+                    if (newAccount.role == 1) {
+                        // customer
+                        self.customerService.create(accountProps, function(err, newCustomer){
+                            if (err) {
+                                next(err);
+                            } else {
+                                newAccount.Customer = newCustomer;
+                                return callback(null, newAccount);
+                            }
+                        })
+                    } else if (newAccount.role == 2){
+                        // supplier
+                        self.supplierService.create(accountProps, function(err, newSupplier){
+                            if (err) {
+                                next(err);
+                            } else {
+                                newAccount.Supplier = newSupplier;
+                                return callback(null, newAccount);
+                            }
+                        })
+                    }
                 }
             })
         } else {
@@ -68,7 +90,7 @@ AccountService.prototype.create = function (accountProps, callback) {
     })
 }
 
-AccountController.prototype.update = function (accountProps, callback) {
+AccountService.prototype.update = function (accountProps, callback) {
     var self = this;
     //validate props
     var val = await validate(rule.checkAccount, accountProps);
@@ -102,7 +124,7 @@ AccountController.prototype.update = function (accountProps, callback) {
     })
 }
 
-AccountController.prototype.changePassword = function (accountObj, callback) {
+AccountService.prototype.changePassword = function (accountObj, callback) {
     var self = this;
     var val = await validate(rule.checkAccount, accountProps);
     if (val.numErr > 0){
@@ -124,7 +146,7 @@ AccountController.prototype.changePassword = function (accountObj, callback) {
 
 }
 
-AccountController.prototype.changeUserName = function (accountProps, callback) {
+AccountService.prototype.changeUserName = function (accountProps, callback) {
     var self = this;
     // validate accountProps 
     var val = await validate(rule.checkAccount, accountProps);
@@ -165,6 +187,49 @@ AccountController.prototype.changeUserName = function (accountProps, callback) {
                     });
                 }
             })
+        }
+    })
+
+}
+
+
+AccountService.prototype.delete = async function (accountProps, callback) {
+    var val = await validate(rule.checkAccount, accountProps);
+    if (val.numErr > 0) {
+        return callback({
+            type: "Bad Request",
+            error: val.error
+        });
+    }
+
+    var condition = {
+        accountId: accountProps.accountId,
+        isActive: true,
+        isDelete: false
+    }
+    
+    this.accountRepository.findOneBy(condition, [], null, function (err, accountObj) {
+        if (err) {
+            return callback(err);
+        } else if (accountObj) {
+            accountProps.isDelete = true;
+            accountObj = Object.assign({}, accountObj, accountProps);
+            
+            this.accountRepository.update(accountObj, null, function (err, result) {
+                if (err) {
+                    return callback(err);
+                } else if (result) {
+                    return callback({type: "Deleted"});
+                } else {
+                    return callback({
+                        type: 'Bad Request'
+                    });
+                }
+            })
+        } else {
+            return callback({
+                type: 'Not Found'
+            });
         }
     })
 

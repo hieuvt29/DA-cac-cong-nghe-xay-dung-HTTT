@@ -1,61 +1,97 @@
 var nv = require('node-validator');
 var rule = require('./validate/product-validator');
 
-var ProductService = function(productRepository) {
+var ProductService = function (productRepository) {
     this.productRepository = productRepository;
 }
 
-ProductService.prototype.getOne = function(condition, select, callback) {
-    condition.isDelete = false;
-    condition.isActive = true;
+ProductService.prototype.fulltextSearch = function (keywords, select, page, limit, callback) {
     
-    this.productRepository.findOneBy(condition, select, function(err, result){
-        if (err){
+    this.productRepository.fulltextSearch(keywords, [], select, page, limit, function (err, result) {
+        if (err) {
             return callback(err);
         } else if (result) {
             return callback(null, result);
         } else {
-            return callback({type: "Not Found"});
+            return callback({
+                type: "Not Found"
+            });
         }
     })
 }
 
-ProductService.prototype.getMany = function(condition, orderBy, select, page, limit, callback){
+ProductService.prototype.getOne = function (condition, select, callback) {
     condition.isDelete = false;
     condition.isActive = true;
-    
-    this.productRepository.findAllBy(condition, null, orderBy, select, page, limit, function(err, result){
+
+    this.productRepository.findOneBy(condition, select, [], function (err, result) {
         if (err) {
             return callback(err);
-        } else if (result){
+        } else if (result) {
             return callback(null, result);
         } else {
-            return callback({type: "Not Found"});
+            return callback({
+                type: "Not Found"
+            });
         }
     })
 }
 
-ProductService.prototype.create = async function(productProps, callback){
-    var val = await validate(rule, productProps);
-    if (val.numErr > 0){
-        return callback({type: "Bad Request", error: val.error});
+ProductService.prototype.getMany = function (condition, orderBy, select, page, limit, callback) {
+    condition.isDelete = false;
+    condition.isActive = true;
+
+    if (condition.minPrice | condition.maxPrice){
+        condition['price'] = Object.assign({}, condition['price'], {
+                $gte: condition.minPrice,
+                $lte: condition.maxPrice
+        });
+        delete condition.minPrice;
+        delete condition.maxPrice;
     }
 
-    this.productRepository.save(productProps, null, function(err, result){
+    this.productRepository.findAllBy(condition, null, orderBy, select, page, limit, function (err, result) {
         if (err) {
             return callback(err);
         } else if (result) {
             return callback(null, result);
         } else {
-            return callback({type: "Bad Request"});
+            return callback({
+                type: "Not Found"
+            });
+        }
+    })
+}
+
+ProductService.prototype.create = async function (productProps, callback) {
+    var val = await validate(rule, productProps);
+    if (val.numErr > 0) {
+        return callback({
+            type: "Bad Request",
+            error: val.error
+        });
+    }
+
+    this.productRepository.save(productProps, null, function (err, result) {
+        if (err) {
+            return callback(err);
+        } else if (result) {
+            return callback(null, result);
+        } else {
+            return callback({
+                type: "Bad Request"
+            });
         }
     });
 }
 
-ProductService.prototype.update = async function(productProps, callback){
+ProductService.prototype.update = async function (productProps, callback) {
     var val = await validate(rule, productProps);
-    if (val.numErr > 0){
-        return callback({type: "Bad Request", error: val.error});
+    if (val.numErr > 0) {
+        return callback({
+            type: "Bad Request",
+            error: val.error
+        });
     }
 
     var condition = {
@@ -63,48 +99,83 @@ ProductService.prototype.update = async function(productProps, callback){
         isActive: true,
         isDelete: false
     }
-    this.productRepository.findOneBy(condition, [], null, function(err, productObj){
+    this.productRepository.findOneBy(condition, [], null, function (err, productObj) {
         if (err) {
             return callback(err);
         } else if (productObj) {
             productObj = Object.assign({}, productObj, productProps);
-            // validate productObj
-            this.productRepository.update(productObj, null, function(err, result){
+            
+            this.productRepository.update(productObj, null, function (err, result) {
                 if (err) {
                     return callback(err);
                 } else if (result) {
                     return callback(null, productObj);
                 } else {
-                    return callback({type: 'Bad Request'});
+                    return callback({
+                        type: 'Bad Request'
+                    });
                 }
             })
         } else {
-            return callback({type: 'Not Found'});
+            return callback({
+                type: 'Not Found'
+            });
         }
     })
-    
+
 }
 
-ProductService.prototype.delete = function(productProps, callback){
-    productProps.isDelete = true;
+ProductService.prototype.delete = async function (productProps, callback) {
+    var val = await validate(rule, productProps);
+    if (val.numErr > 0) {
+        return callback({
+            type: "Bad Request",
+            error: val.error
+        });
+    }
 
-    this.productRepository.update(productProps, null, function(err, result){
+    var condition = {
+        productId: productProps.productId,
+        isActive: true,
+        isDelete: false
+    }
+    
+    this.productRepository.findOneBy(condition, [], null, function (err, productObj) {
         if (err) {
             return callback(err);
-        } else if (result) {
-            return callback({type: "Deleted"});
+        } else if (productObj) {
+            productProps.isDelete = true;
+            productObj = Object.assign({}, productObj, productProps);
+            
+            this.productRepository.update(productObj, null, function (err, result) {
+                if (err) {
+                    return callback(err);
+                } else if (result) {
+                    return callback({type: "Deleted"});
+                } else {
+                    return callback({
+                        type: 'Bad Request'
+                    });
+                }
+            })
         } else {
-            return callback({type: "Bad Request"});
+            return callback({
+                type: 'Not Found'
+            });
         }
     })
+
 }
 
-function validate(rule, obj){
-    return new Promise(function(resole){
-        nv.run(rule, obj, function(numErr, err){
-            if (numErr){
+function validate(rule, obj) {
+    return new Promise(function (resole) {
+        nv.run(rule, obj, function (numErr, err) {
+            if (numErr) {
                 console.error(err);
-                resole({numErr: numErr, error: err});
+                resole({
+                    numErr: numErr,
+                    error: err
+                });
             }
         });
     })
