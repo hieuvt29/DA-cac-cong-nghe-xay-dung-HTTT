@@ -40,7 +40,7 @@ AccountService.prototype.getMany = function (condition, orderBy, select, page, l
     })
 }
 
-AccountService.prototype.create = function (accountProps, callback) {
+AccountService.prototype.create = async function (accountProps, callback) {
     var self = this;
     //validate props
     var val = await validate(rule.checkAccount, accountProps);
@@ -52,18 +52,19 @@ AccountService.prototype.create = function (accountProps, callback) {
         'userName': accountProps.userName
     }, [], null, function (err, user) {
         if (err) {
-            next(err);
+            return callback(err);
         }
         if (!user) {
-            self.accountRepository.create(accountProps, null, function (err, newAccount) {
+            self.accountRepository.save(accountProps, null, function (err, newAccount) {
                 if (err) {
                     return callback(err);
                 } else {
+                    accountProps.accountId = newAccount.accountId;
                     if (newAccount.role == 1) {
                         // customer
                         self.customerService.create(accountProps, function(err, newCustomer){
                             if (err) {
-                                next(err);
+                                return callback(err);
                             } else {
                                 newAccount.Customer = newCustomer;
                                 return callback(null, newAccount);
@@ -73,7 +74,7 @@ AccountService.prototype.create = function (accountProps, callback) {
                         // supplier
                         self.supplierService.create(accountProps, function(err, newSupplier){
                             if (err) {
-                                next(err);
+                                return callback(err);
                             } else {
                                 newAccount.Supplier = newSupplier;
                                 return callback(null, newAccount);
@@ -90,7 +91,7 @@ AccountService.prototype.create = function (accountProps, callback) {
     })
 }
 
-AccountService.prototype.update = function (accountProps, callback) {
+AccountService.prototype.update = async function (accountProps, callback) {
     var self = this;
     //validate props
     var val = await validate(rule.checkAccount, accountProps);
@@ -124,19 +125,18 @@ AccountService.prototype.update = function (accountProps, callback) {
     })
 }
 
-AccountService.prototype.changePassword = function (accountObj, callback) {
+AccountService.prototype.changePassword = async function (accountProps, callback) {
     var self = this;
     var val = await validate(rule.checkAccount, accountProps);
     if (val.numErr > 0){
         return callback({type: "Bad Request", error: val.error});
     }
 
-
-    self.accountRepository.update(accountObj, null, function (err, result) {
+    self.accountRepository.update(accountProps, null, function (err, result) {
         if (err) {
             callback(err);
         } else if (result) {
-            callback(null, accountObj);
+            callback(null, accountProps);
         } else {
             callback({
                 type: 'Bad Request'
@@ -146,7 +146,7 @@ AccountService.prototype.changePassword = function (accountObj, callback) {
 
 }
 
-AccountService.prototype.changeUserName = function (accountProps, callback) {
+AccountService.prototype.changeUserName = async function (accountProps, callback) {
     var self = this;
     // validate accountProps 
     var val = await validate(rule.checkAccount, accountProps);
@@ -235,14 +235,22 @@ AccountService.prototype.delete = async function (accountProps, callback) {
 
 }
 
-function validate(rule, obj){
-    return new Promise(function(resole){
-        nv.run(rule, obj, function(numErr, err){
-            if (numErr){
+function validate(rule, obj) {
+    return new Promise(function (resolve, reject) {
+        nv.run(rule, obj, function (numErr, err) {
+            if (numErr) {
                 console.error(err);
-                resole({numErr: numErr, error: err});
+                return resolve({
+                    numErr: numErr,
+                    error: err
+                });
+            } else {
+                return resolve({
+                    numErr: 0
+                })
             }
         });
     })
 }
+
 module.exports = AccountService;

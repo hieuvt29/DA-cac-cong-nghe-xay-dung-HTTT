@@ -17,6 +17,8 @@ module.exports = {
                 message: 'password changed',
                 account: res.account
             });
+        } else if (res.error) {
+            res.status(400).send(res.error);
         } else {
             res.status(404).send({message: "Not Found"});
         }

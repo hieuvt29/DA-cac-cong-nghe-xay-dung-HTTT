@@ -36,12 +36,25 @@ var customerRepository = new CustomerRepository(dbContext);
 var SupplierRepository = require('../repository/supplier-repository');
 var supplierRepository = new SupplierRepository(dbContext);
 
+var CategoryRepository = require('../repository/category-repository');
+var categoryRepository = new CategoryRepository(dbContext);
+
+
 // Services
 var ProductService = require('../service/product-service');
 var productService = new ProductService(productRepository);
 
-var AccountService = require('../service/product-service');
-var accountService = new AccountService(accountRepository);
+var SupplierService = require('../service/supplier-service');
+var supplierService = new SupplierService(supplierRepository);
+
+var CustomerService = require('../service/customer-service');
+var customerService = new CustomerService(customerRepository);
+
+var AccountService = require('../service/account-service');
+var accountService = new AccountService(accountRepository, customerService, supplierService);
+
+var CategoryService = require('../service/category-service');
+var categoryService = new CategoryService(categoryRepository);
 
 // Controllers
 var ProductController = require('./controllers/product-controller');
@@ -49,6 +62,15 @@ var productController = new ProductController(productService);
 
 var AccountController = require('./controllers/account-controller');
 var accountController = new AccountController(accountService);
+
+var SupplierController = require('./controllers/supplier-controller');
+var supplierController = new SupplierController(supplierService);
+
+var CustomerController = require('./controllers/customer-controller');
+var customerController = new CustomerController(customerService);
+
+var CategoryController = require('./controllers/category-controller');
+var categoryController = new CategoryController(categoryService);
 
 //config the passport 
 require('../config/passport')(passport, accountRepository, supplierRepository, customerRepository);
@@ -66,6 +88,10 @@ app.use(passport.session());
 // Routers
 require('./routes/product-route')(app, productController);
 require('./routes/account-route')(app, accountController, passport);
+require('./routes/supplier-route')(app, supplierController);
+require('./routes/category-route')(app, categoryController);
+require('./routes/customer-route')(app, customerController);
+
 app.use(function(err, req, res, next) {
     console.error(new Date() + " - " + JSON.stringify(err, null, '\t'));
     

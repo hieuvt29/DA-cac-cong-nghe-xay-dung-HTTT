@@ -38,7 +38,7 @@ CustomerService.prototype.getMany = function (condition, orderBy, select, page, 
     })
 }
 
-CustomerService.prototype.create = function (customerProps, callback) {
+CustomerService.prototype.create = async function (customerProps, callback) {
     var self = this;
     //validate props
     var val = await validate(rule.checkCustomer, customerProps);
@@ -50,10 +50,10 @@ CustomerService.prototype.create = function (customerProps, callback) {
         'accountId': customerProps.accountId
     }, [], null, function (err, user) {
         if (err) {
-            next(err);
+            return callback(err);
         }
         if (!user) {
-            self.customerRepository.create(customerProps, null, function (err, newCustomer) {
+            self.customerRepository.save(customerProps, null, function (err, newCustomer) {
                 if (err) {
                     return callback(err);
                 } else {
@@ -68,7 +68,7 @@ CustomerService.prototype.create = function (customerProps, callback) {
     })
 }
 
-CustomerService.prototype.update = function (customerProps, callback) {
+CustomerService.prototype.update = async function (customerProps, callback) {
     var self = this;
     //validate props
     var val = await validate(rule.checkCustomer, customerProps);
@@ -144,12 +144,20 @@ CustomerService.prototype.delete = async function (customerProps, callback) {
 
 }
 
-function validate(rule, obj){
-    return new Promise(function(resole){
-        nv.run(rule, obj, function(numErr, err){
-            if (numErr){
+
+function validate(rule, obj) {
+    return new Promise(function (resolve, reject) {
+        nv.run(rule, obj, function (numErr, err) {
+            if (numErr) {
                 console.error(err);
-                resole({numErr: numErr, error: err});
+                return resolve({
+                    numErr: numErr,
+                    error: err
+                });
+            } else {
+                return resolve({
+                    numErr: 0
+                })
             }
         });
     })

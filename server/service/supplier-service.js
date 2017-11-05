@@ -38,7 +38,7 @@ SupplierService.prototype.getMany = function (condition, orderBy, select, page, 
     })
 }
 
-SupplierService.prototype.create = function (supplierProps, callback) {
+SupplierService.prototype.create = async function (supplierProps, callback) {
     var self = this;
     //validate props
     var val = await validate(rule.checkSupplier, supplierProps);
@@ -50,10 +50,10 @@ SupplierService.prototype.create = function (supplierProps, callback) {
         'accountId': supplierProps.accountId
     }, [], null, function (err, user) {
         if (err) {
-            next(err);
+            return callback(err);
         }
         if (!user) {
-            self.supplierRepository.create(supplierProps, null, function (err, newSupplier) {
+            self.supplierRepository.save(supplierProps, null, function (err, newSupplier) {
                 if (err) {
                     return callback(err);
                 } else {
@@ -68,7 +68,7 @@ SupplierService.prototype.create = function (supplierProps, callback) {
     })
 }
 
-SupplierService.prototype.update = function (supplierProps, callback) {
+SupplierService.prototype.update = async function (supplierProps, callback) {
     var self = this;
     //validate props
     var val = await validate(rule.checkSupplier, supplierProps);
@@ -144,12 +144,20 @@ SupplierService.prototype.delete = async function (supplierProps, callback) {
 
 }
 
-function validate(rule, obj){
-    return new Promise(function(resole){
-        nv.run(rule, obj, function(numErr, err){
-            if (numErr){
+
+function validate(rule, obj) {
+    return new Promise(function (resolve, reject) {
+        nv.run(rule, obj, function (numErr, err) {
+            if (numErr) {
                 console.error(err);
-                resole({numErr: numErr, error: err});
+                return resolve({
+                    numErr: numErr,
+                    error: err
+                });
+            } else {
+                return resolve({
+                    numErr: 0
+                })
             }
         });
     })

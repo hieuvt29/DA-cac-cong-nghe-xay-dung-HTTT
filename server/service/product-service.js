@@ -168,14 +168,18 @@ ProductService.prototype.delete = async function (productProps, callback) {
 }
 
 function validate(rule, obj) {
-    return new Promise(function (resole) {
+    return new Promise(function (resolve, reject) {
         nv.run(rule, obj, function (numErr, err) {
             if (numErr) {
                 console.error(err);
-                resole({
+                return resolve({
                     numErr: numErr,
                     error: err
                 });
+            } else {
+                return resolve({
+                    numErr: 0
+                })
             }
         });
     })
