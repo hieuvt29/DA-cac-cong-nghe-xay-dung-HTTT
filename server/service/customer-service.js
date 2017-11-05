@@ -77,7 +77,7 @@ CustomerService.prototype.update = async function (customerProps, callback) {
     }
 
 
-    self.customerRepository.findeOneBy({
+    self.customerRepository.findOneBy({
         customerId: customerProps.customerId
     }, [], null, function (err, customerObj) {
         if (err) {
@@ -87,7 +87,7 @@ CustomerService.prototype.update = async function (customerProps, callback) {
                 customerObj,
                 customerProps
             );
-            repository.update(customerObj, null, function (err, result) {
+            self.customerRepository.update(customerObj, null, function (err, result) {
                 if (err) {
                     callback(err);
                 } else if (result) {

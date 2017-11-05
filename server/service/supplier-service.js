@@ -77,7 +77,7 @@ SupplierService.prototype.update = async function (supplierProps, callback) {
     }
 
 
-    self.supplierRepository.findeOneBy({
+    self.supplierRepository.findOneBy({
         supplierId: supplierProps.supplierId
     }, [], null, function (err, supplierObj) {
         if (err) {
@@ -87,7 +87,7 @@ SupplierService.prototype.update = async function (supplierProps, callback) {
                 supplierObj,
                 supplierProps
             );
-            repository.update(supplierObj, null, function (err, result) {
+            self.supplierRepository.update(supplierObj, null, function (err, result) {
                 if (err) {
                     callback(err);
                 } else if (result) {

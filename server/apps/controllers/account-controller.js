@@ -33,10 +33,10 @@ AccountController.prototype.changePassword = function (req, res, next) {
     if (!oldPass) {
         res.error = {
             errorCode: 1,
-            message: 'Missing argument \'password\'',
+            message: 'Missing argument \'old password\'',
             data: null,
         };
-        next();
+        return next();
     }
     if (!newPass) {
         res.error = {
@@ -44,7 +44,7 @@ AccountController.prototype.changePassword = function (req, res, next) {
             message: 'Missing argument \'new password\'',
             data: null,
         };
-        next();
+        return next();
     }
     if (!bcrypt.compareSync(oldPass, req.user.password)) {
         res.error = {
@@ -52,7 +52,7 @@ AccountController.prototype.changePassword = function (req, res, next) {
             message: 'Password mismatch',
             data: null
         };
-        next();
+        return next();
     }
 
     var userProps = Object.assign({}, req.user, {password: bcrypt.hashSync(newPass)});

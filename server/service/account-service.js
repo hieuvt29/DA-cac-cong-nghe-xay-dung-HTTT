@@ -100,7 +100,7 @@ AccountService.prototype.update = async function (accountProps, callback) {
     }
 
 
-    self.accountRepository.findeOneBy({
+    self.accountRepository.findOneBy({
         accountId: accountProps.accountId
     }, [], null, function (err, accountObj) {
         if (err) {
@@ -110,7 +110,7 @@ AccountService.prototype.update = async function (accountProps, callback) {
                 accountObj,
                 accountProps
             );
-            repository.update(accountObj, null, function (err, result) {
+            accountRepository.update(accountObj, null, function (err, result) {
                 if (err) {
                     callback(err);
                 } else if (result) {
@@ -154,17 +154,17 @@ AccountService.prototype.changeUserName = async function (accountProps, callback
         return callback({type: "Bad Request", error: val.error});
     }
 
-    self.accountRepository.findeOneBy({
+    self.accountRepository.findOneBy({
         userName: accountProps.userName
     }, [], null, function (err, dup) {
         if (err) {
             callback(err);
         } else if (dup) {
             callback({
-                type: 'Duplicate'
+                type: 'Duplicated'
             });
         } else {
-            self.accountRepository.findeOneBy({
+            self.accountRepository.findOneBy({
                 accountId: accountProps.accountId
             }, [], null, function (err, accountObj) {
                 if (err) {
@@ -174,7 +174,7 @@ AccountService.prototype.changeUserName = async function (accountProps, callback
                         accountObj,
                         accountProps
                     );
-                    repository.update(accountObj, null, function (err, result) {
+                    self.accountRepository.update(accountObj, null, function (err, result) {
                         if (err) {
                             callback(err);
                         } else if (result) {

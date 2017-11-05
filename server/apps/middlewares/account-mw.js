@@ -6,6 +6,8 @@ module.exports = {
                 message: 'created',
                 account: res.account
             });
+        } else if (res.error) {
+            res.status(400).send(res.error);
         } else {
             res.status(404).send({message: "Not Found"});
         }
@@ -30,6 +32,8 @@ module.exports = {
                 message: 'username changed',
                 account: res.account
             });
+        }  else if (res.error) {
+            res.status(400).send(res.error);
         } else {
             res.status(404).send({message: "Not Found"});
         }
