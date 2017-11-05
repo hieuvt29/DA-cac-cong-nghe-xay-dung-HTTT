@@ -55,5 +55,9 @@ module.exports = function(sequelize, DataTypes) {
             allowNull: false,
             defaultValue: false
         }
+    }, {
+        indexes: [
+            {type: 'FULLTEXT', fields: ["productName", "description"]}
+        ]
     })
 }

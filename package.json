@@ -19,6 +19,7 @@
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.18.2",
+    "chai": "^4.1.2",
     "compression": "^1.7.0",
     "cors": "^2.8.4",
     "express": "^4.15.4",

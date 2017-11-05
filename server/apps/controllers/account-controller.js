@@ -27,24 +27,24 @@ AccountController.prototype.create = function (req, res, next) {
 
 
 AccountController.prototype.changePassword = function (req, res, next) {
-    var oldPass = req.body.password;
+    var oldPass = req.body.oldPassword;
     var newPass = req.body.newPassword;
 
     if (!oldPass) {
         res.error = {
             errorCode: 1,
-            message: 'Missing argument \'password\'',
+            message: 'Missing argument \'old password\'',
             data: null,
         };
-        next();
+        return next();
     }
-    if (!newPassword) {
+    if (!newPass) {
         res.error = {
             errorCode: 1,
             message: 'Missing argument \'new password\'',
             data: null,
         };
-        next();
+        return next();
     }
     if (!bcrypt.compareSync(oldPass, req.user.password)) {
         res.error = {
@@ -52,14 +52,15 @@ AccountController.prototype.changePassword = function (req, res, next) {
             message: 'Password mismatch',
             data: null
         };
-        next();
+        return next();
     }
 
-    req.user.password = bcrypt.hashSync(newPass);
-    dependencies.accountService.changePassword(req.user, function(err, result){
+    var userProps = Object.assign({}, req.user, {password: bcrypt.hashSync(newPass)});
+    dependencies.accountService.changePassword(userProps, function(err, result){
         if (err) {
             next(err);
         } else {
+            req.user = result;
             res.account = result;
             next();
         }
@@ -67,14 +68,15 @@ AccountController.prototype.changePassword = function (req, res, next) {
 }
 
 AccountController.prototype.changeUserName = function (req, res, next) {
-    var newUserName = req.body.userName;
+    var newUserName = req.body.newUserName;
     
-    dependencies.accountService.changeUserName(req.user, function(err, result){
+    var accountProps = Object.assign({}, req.user, {userName: newUserName});
+    dependencies.accountService.changeUserName(accountProps, function(err, result){
         if (err) {
             next(err);
         } else {
             res.account = result;
-            req.user.userName = newUserName;
+            req.user = result;
             next();
         }
     })

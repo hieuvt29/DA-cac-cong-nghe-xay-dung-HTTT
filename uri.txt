@@ -1,0 +1,62 @@
+//account Controllers
+app.route('/login')
+    params: {
+        userName,
+        password
+    }
+    return res.json({
+        errorCode: 0,
+        message: 'Login successfully',
+        user: user
+    });
+
+app.route('/logout')
+        res.json({
+            errorCode: 0,
+            message: "Logout successfully",
+            data: null
+        });
+    });
+
+app.route('/register')
+    {
+        userName,
+        password,
+        role,
+        // Nếu cho đăng ký luôn customer hoặc supplier thì thêm thông tin vào đây
+    }
+    res.status(200).send({
+        status: 200,
+        message: 'created',
+        account: res.account
+    });
+
+app.route('/user/info')
+    
+    res.json({
+        errorCode: 0,
+        message: "user info",
+        user: req.user
+    });
+
+app.route('/user/change-password')
+    {
+        oldPassword,
+        newPassword
+    }
+    res.status(200).send({
+        status: 200,
+        message: 'password changed',
+        account: res.account
+    });
+
+app.route('/user/change-username')
+    {
+        newUserName
+    }
+    res.status(200).send({
+        status: 200,
+        message: 'username changed',
+        account: res.account
+    });
+

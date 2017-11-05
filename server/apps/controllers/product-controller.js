@@ -26,14 +26,25 @@ ProductController.prototype.getMany = function(req, res, next){
     var page = req.options.skip;
     var limit = req.options.limit;
 
-    dependencies.productService.getMany(condition, orderBy, select, page, limit, function(err, products){
-        if (err) {
-            next(err);
-        } else {
-            res.products = products;
-            next();
-        }
-    })
+    if (!condition['keywords']){
+        dependencies.productService.getMany(condition, orderBy, select, page, limit, function(err, products){
+            if (err) {
+                next(err);
+            } else {
+                res.products = products;
+                next();
+            }
+        })
+    } else {
+        dependencies.productService.fulltextSearch(condition['keywords'], select, page, limit, function(err, products){
+            if (err) {
+                next(err);
+            } else {
+                res.products = products;
+                next();
+            }
+        })
+    }
 }
 
     

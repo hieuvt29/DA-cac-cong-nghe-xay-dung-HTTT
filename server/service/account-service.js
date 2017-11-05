@@ -1,8 +1,10 @@
 var nv = require('node-validator');
 var rule = require('./validate/user-validator');
 
-var AccountService = function (accountRepository) {
+var AccountService = function (accountRepository, customerService, supplierService) {
     this.accountRepository = accountRepository;
+    this.customerService = customerService;
+    this.supplierService = supplierService;
 }
 AccountService.prototype.getOne = function (condition, select, callback) {
     condition.isDelete = false;
@@ -38,7 +40,7 @@ AccountService.prototype.getMany = function (condition, orderBy, select, page, l
     })
 }
 
-AccountService.prototype.create = function (accountProps, callback) {
+AccountService.prototype.create = async function (accountProps, callback) {
     var self = this;
     //validate props
     var val = await validate(rule.checkAccount, accountProps);
@@ -47,17 +49,38 @@ AccountService.prototype.create = function (accountProps, callback) {
     }
 
     self.accountRepository.findOneBy({
-        'userName': userObj.userName
+        'userName': accountProps.userName
     }, [], null, function (err, user) {
         if (err) {
-            next(err);
+            return callback(err);
         }
         if (!user) {
-            self.accountRepository.create(accountProps, null, function (err, newAccount) {
+            self.accountRepository.save(accountProps, null, function (err, newAccount) {
                 if (err) {
                     return callback(err);
                 } else {
-                    return callback(null, newAccount);
+                    accountProps.accountId = newAccount.accountId;
+                    if (newAccount.role == 1) {
+                        // customer
+                        self.customerService.create(accountProps, function(err, newCustomer){
+                            if (err) {
+                                return callback(err);
+                            } else {
+                                newAccount.Customer = newCustomer;
+                                return callback(null, newAccount);
+                            }
+                        })
+                    } else if (newAccount.role == 2){
+                        // supplier
+                        self.supplierService.create(accountProps, function(err, newSupplier){
+                            if (err) {
+                                return callback(err);
+                            } else {
+                                newAccount.Supplier = newSupplier;
+                                return callback(null, newAccount);
+                            }
+                        })
+                    }
                 }
             })
         } else {
@@ -68,7 +91,7 @@ AccountService.prototype.create = function (accountProps, callback) {
     })
 }
 
-AccountController.prototype.update = function (accountProps, callback) {
+AccountService.prototype.update = async function (accountProps, callback) {
     var self = this;
     //validate props
     var val = await validate(rule.checkAccount, accountProps);
@@ -77,7 +100,7 @@ AccountController.prototype.update = function (accountProps, callback) {
     }
 
 
-    self.accountRepository.findeOneBy({
+    self.accountRepository.findOneBy({
         accountId: accountProps.accountId
     }, [], null, function (err, accountObj) {
         if (err) {
@@ -87,7 +110,7 @@ AccountController.prototype.update = function (accountProps, callback) {
                 accountObj,
                 accountProps
             );
-            repository.update(accountObj, null, function (err, result) {
+            accountRepository.update(accountObj, null, function (err, result) {
                 if (err) {
                     callback(err);
                 } else if (result) {
@@ -102,19 +125,18 @@ AccountController.prototype.update = function (accountProps, callback) {
     })
 }
 
-AccountController.prototype.changePassword = function (accountObj, callback) {
+AccountService.prototype.changePassword = async function (accountProps, callback) {
     var self = this;
     var val = await validate(rule.checkAccount, accountProps);
     if (val.numErr > 0){
         return callback({type: "Bad Request", error: val.error});
     }
 
-
-    self.accountRepository.update(accountObj, null, function (err, result) {
+    self.accountRepository.update(accountProps, null, function (err, result) {
         if (err) {
             callback(err);
         } else if (result) {
-            callback(null, accountObj);
+            callback(null, accountProps);
         } else {
             callback({
                 type: 'Bad Request'
@@ -124,7 +146,7 @@ AccountController.prototype.changePassword = function (accountObj, callback) {
 
 }
 
-AccountController.prototype.changeUserName = function (accountProps, callback) {
+AccountService.prototype.changeUserName = async function (accountProps, callback) {
     var self = this;
     // validate accountProps 
     var val = await validate(rule.checkAccount, accountProps);
@@ -132,17 +154,17 @@ AccountController.prototype.changeUserName = function (accountProps, callback) {
         return callback({type: "Bad Request", error: val.error});
     }
 
-    self.accountRepository.findeOneBy({
+    self.accountRepository.findOneBy({
         userName: accountProps.userName
     }, [], null, function (err, dup) {
         if (err) {
             callback(err);
         } else if (dup) {
             callback({
-                type: 'Duplicate'
+                type: 'Duplicated'
             });
         } else {
-            self.accountRepository.findeOneBy({
+            self.accountRepository.findOneBy({
                 accountId: accountProps.accountId
             }, [], null, function (err, accountObj) {
                 if (err) {
@@ -152,7 +174,7 @@ AccountController.prototype.changeUserName = function (accountProps, callback) {
                         accountObj,
                         accountProps
                     );
-                    repository.update(accountObj, null, function (err, result) {
+                    self.accountRepository.update(accountObj, null, function (err, result) {
                         if (err) {
                             callback(err);
                         } else if (result) {
@@ -170,14 +192,65 @@ AccountController.prototype.changeUserName = function (accountProps, callback) {
 
 }
 
-function validate(rule, obj){
-    return new Promise(function(resole){
-        nv.run(rule, obj, function(numErr, err){
-            if (numErr){
+
+AccountService.prototype.delete = async function (accountProps, callback) {
+    var val = await validate(rule.checkAccount, accountProps);
+    if (val.numErr > 0) {
+        return callback({
+            type: "Bad Request",
+            error: val.error
+        });
+    }
+
+    var condition = {
+        accountId: accountProps.accountId,
+        isActive: true,
+        isDelete: false
+    }
+    
+    this.accountRepository.findOneBy(condition, [], null, function (err, accountObj) {
+        if (err) {
+            return callback(err);
+        } else if (accountObj) {
+            accountProps.isDelete = true;
+            accountObj = Object.assign({}, accountObj, accountProps);
+            
+            this.accountRepository.update(accountObj, null, function (err, result) {
+                if (err) {
+                    return callback(err);
+                } else if (result) {
+                    return callback({type: "Deleted"});
+                } else {
+                    return callback({
+                        type: 'Bad Request'
+                    });
+                }
+            })
+        } else {
+            return callback({
+                type: 'Not Found'
+            });
+        }
+    })
+
+}
+
+function validate(rule, obj) {
+    return new Promise(function (resolve, reject) {
+        nv.run(rule, obj, function (numErr, err) {
+            if (numErr) {
                 console.error(err);
-                resole({numErr: numErr, error: err});
+                return resolve({
+                    numErr: numErr,
+                    error: err
+                });
+            } else {
+                return resolve({
+                    numErr: 0
+                })
             }
         });
     })
 }
+
 module.exports = AccountService;
