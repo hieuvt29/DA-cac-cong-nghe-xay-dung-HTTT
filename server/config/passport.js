@@ -51,7 +51,19 @@ module.exports = function (passport, accountRepository, supplierRepository, cust
                         message: 'Incorrect password.'
                     });
                 }
-                return done(null, user);
+                if (user.role == 1) {
+                    customerRepository.findOneBy({accountId: user.accountId}, [], null, function(err, customer){
+                        user.customer = customer;
+                        done(err, user);
+                    });
+                } else if (user.role == 2) {
+                    supplierRepository.findOneBy({accountId: user.accountId}, [], null, function(err, supplier){
+                        user.supplier = supplier;
+                        done(err, user);
+                    });
+                } else {
+                    return done(null, user);
+                }
             });
         }
     ));
