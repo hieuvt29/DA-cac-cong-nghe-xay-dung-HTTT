@@ -6,9 +6,8 @@ var CustomerService = function (customerRepository) {
 }
 CustomerService.prototype.getOne = function (condition, select, callback) {
     condition.isDelete = false;
-    condition.isActive = true;
 
-    this.customerRepository.findOneBy(condition, select, function (err, result) {
+    this.customerRepository.findOneBy(condition, select, null, function (err, result) {
         if (err) {
             return callback(err);
         } else if (result) {
@@ -23,7 +22,6 @@ CustomerService.prototype.getOne = function (condition, select, callback) {
 
 CustomerService.prototype.getMany = function (condition, orderBy, select, page, limit, callback) {
     condition.isDelete = false;
-    condition.isActive = true;
 
     this.customerRepository.findAllBy(condition, null, orderBy, select, page, limit, function (err, result) {
         if (err) {
@@ -113,7 +111,6 @@ CustomerService.prototype.delete = async function (customerProps, callback) {
 
     var condition = {
         customerId: customerProps.customerId,
-        isActive: true,
         isDelete: false
     }
     
