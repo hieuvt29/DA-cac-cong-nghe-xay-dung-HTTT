@@ -10,11 +10,14 @@ class AccountManager extends React.Component {
             data: []
         }
     }
+    shouldComponentUpdate(nextState) {
+        return this.state.data !== nextState.data;
+    }
     componentDidMount(){
         console.info("AccountManager DidMount");
         $.get('/customers', res => {
             console.log("get customers: ", res);
-            this.setState({...this.state, data: res.customers});
+            this.setState({data: res.customers});
         });
     }
     render () {
@@ -31,7 +34,6 @@ class AccountManager extends React.Component {
                 </ol>
                 </section>
                 <DataTable data={this.state.data} tableName="Customers"/>
-                <h2> {JSON.stringify(this.state.data)} </h2>
             </div>
         )
     }

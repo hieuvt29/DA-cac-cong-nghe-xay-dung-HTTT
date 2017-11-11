@@ -8,7 +8,7 @@ import 'datatables.net-responsive';
 // import 'datatables.net-editor';
 // import 'datatables.altEditor.free/js/altEditor/dataTables.altEditor.free.js';
 // import {LargeModal} from './Modal';
-import {Modal, Button, ButtonGroup} from 'react-bootstrap';
+import {Modal, Button, ButtonToolbar} from 'react-bootstrap';
 
 class DataTable extends React.Component {
   constructor(props) {
@@ -24,17 +24,33 @@ class DataTable extends React.Component {
 
   edit(e) {
     e.preventDefault();
-    console.log("hihi");;
-  }
+    let table = this.refs.dataTable;
+    let rowInfo = [];
+    let columns = [];
+    $(table).find('th').each(function() {
+      columns.push($(this).text());
+    });
+    $(table).find('.selected').find('td').each(function() {
+      rowInfo.push($(this).text());
+    });
 
-  shouldComponentUpdate(nextState){
-    return this.state.data !== nextState.data;
+    console.log("selected: ", rowInfo, columns );
+    if (rowInfo.length !== 0) {
+      this.setState({ modalShow: true, modalData: {data: rowInfo, columns: columns} });
+    }
   }
+  
   componentWillReceiveProps(nextProps) {
     console.log("Props recieved: ", nextProps.data);
-    this.setState({ data: nextProps.data });
+    let changed = this.state.data !== nextProps.data;
+    changed?this.setState({ changed: true, data: nextProps.data }):null;
+  }
+
+  componentWillUnMount() {
+    $(this.refs.dataTable).DataTable().destroy(true);
   }
   renderTable(data) {
+    console.log("table rendered");
     let tableTemplate = this.refs.dataTable;
     if (data.length === 0){
       $(tableTemplate).DataTable({
@@ -61,7 +77,11 @@ class DataTable extends React.Component {
   }
 
   render () {
-    this.renderTable(this.state.data);
+    if (this.state.changed) {
+      
+      this.renderTable(this.state.data);
+      this.setState({changed: false});
+    } 
     return (
       <section className="content">
         <div className="row">
@@ -71,12 +91,15 @@ class DataTable extends React.Component {
                 <h3 className="box-title">{this.state.tableName}</h3>
               </div>
               <div className="box-body">
-              <ButtonGroup>
-                <Button className="create_btn">New</Button>
-                <Button className="edit_btn" onClick={() => this.setState({modalShow: true})}>Edit</Button>
-                <Button className="delete_btn">Delete</Button>
-              </ButtonGroup>
-              <LargeModal onHide={() => this.setState({modalShow: false})} show={this.state.modalShow} />
+                <ButtonToolbar>
+                  <Button className="create_btn">New</Button>
+                  <a className="btn btn-primary" onClick={this.edit}>
+                    Edit
+                  </a>
+                  <Button className="delete_btn">Delete</Button>
+                  <LargeModal show={this.state.modalShow}  onHide={() => this.setState({modalShow: false})} />
+                </ButtonToolbar>
+                <hr />
                 <table id="example1" className="dataTable table table-bordered table-striped" ref="dataTable">
                   
                 </table>
@@ -90,7 +113,9 @@ class DataTable extends React.Component {
   }
 }
 class LargeModal extends React.Component {
+  
   render() {
+    console.log("props: ", this.props);
     return (
       <Modal {...this.props} bsSize="large" aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
