@@ -16,28 +16,11 @@ class DataTable extends React.Component {
     this.state = {
       data: props.data,
       tableName: props.tableName,
-      modalShow: false
+      modalShow: false,
+      modalData: {}
     }
 
     this.edit = this.edit.bind(this);
-  }
-
-  edit(e) {
-    e.preventDefault();
-    let table = this.refs.dataTable;
-    let rowInfo = [];
-    let columns = [];
-    $(table).find('th').each(function() {
-      columns.push($(this).text());
-    });
-    $(table).find('.selected').find('td').each(function() {
-      rowInfo.push($(this).text());
-    });
-
-    console.log("selected: ", rowInfo, columns );
-    if (rowInfo.length !== 0) {
-      this.setState({ modalShow: true, modalData: {data: rowInfo, columns: columns} });
-    }
   }
   
   componentWillReceiveProps(nextProps) {
@@ -76,6 +59,23 @@ class DataTable extends React.Component {
     }
   }
 
+  edit(e) {
+    e.preventDefault();
+    let table = this.refs.dataTable;
+    let rowInfo = [];
+    let columns = [];
+    $(table).find('th').each(function() {
+      columns.push($(this).text());
+    });
+    $(table).find('.selected').find('td').each(function() {
+      rowInfo.push($(this).text());
+    });
+
+    console.log("selected: ", rowInfo, columns );
+    if (rowInfo.length !== 0) {
+      this.setState({ modalAction: "edit", modalShow: true, modalData: {data: rowInfo, columns: columns} });
+    }
+  }
   render () {
     if (this.state.changed) {
       
@@ -97,7 +97,7 @@ class DataTable extends React.Component {
                     Edit
                   </a>
                   <Button className="delete_btn">Delete</Button>
-                  <LargeModal show={this.state.modalShow}  onHide={() => this.setState({modalShow: false})} />
+                  <LargeModal action={this.state.modalAction} show={this.state.modalShow} modaldata={this.state.modalData} onHide={() => this.setState({modalShow: false})}/>
                 </ButtonToolbar>
                 <hr />
                 <table id="example1" className="dataTable table table-bordered table-striped" ref="dataTable">
@@ -108,30 +108,46 @@ class DataTable extends React.Component {
           </div>
         </div>
       </section>
-      
     )
   }
 }
 class LargeModal extends React.Component {
-  
   render() {
-    console.log("props: ", this.props);
+    console.log("state: ", this.props);
     return (
       <Modal {...this.props} bsSize="large" aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">Modal heading</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <h4>Wrapped Text</h4>
-          <p>Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
-          <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.</p>
-          <p>Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>
-          <p>Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
-          <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.</p>
-          <p>Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>
-          <p>Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
-          <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.</p>
-          <p>Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>
+          <form role="form">
+            <div className="box-body">
+              {this.props.show?this.props.modaldata.columns.map((column, index) => {
+                let action = this.props.action;
+                let val = action==="edit"?this.props.modaldata.data[index]:"";
+                console.log(val);
+                if(!column.includes('is')){
+                  return (
+                  <div key={"index-" + column} className="form-group">
+                    <label htmlFor={column}>{column}</label>
+                    <input type="text" className="form-control" id={column} name={column} placeholder={"Enter " + column} value={val}/>
+                  </div>
+                  )
+                } else {
+                  return (
+                  <div className="checkbox" key={"index-" + column}>
+                    <label>
+                      <input type="checkbox" id={column} name={column} defaultChecked={val}/>{column}
+                    </label>
+                  </div>
+                  )
+                }}):null}
+            </div>
+
+            <div className="box-footer">
+              <button type="submit" className="btn btn-primary">Submit</button>
+            </div>
+          </form>
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={this.props.onHide}>Close</Button>
