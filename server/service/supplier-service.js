@@ -6,9 +6,8 @@ var SupplierService = function (supplierRepository) {
 }
 SupplierService.prototype.getOne = function (condition, select, callback) {
     condition.isDelete = false;
-    condition.isActive = true;
 
-    this.supplierRepository.findOneBy(condition, select, function (err, result) {
+    this.supplierRepository.findOneBy(condition, select, null, function (err, result) {
         if (err) {
             return callback(err);
         } else if (result) {
@@ -23,7 +22,6 @@ SupplierService.prototype.getOne = function (condition, select, callback) {
 
 SupplierService.prototype.getMany = function (condition, orderBy, select, page, limit, callback) {
     condition.isDelete = false;
-    condition.isActive = true;
 
     this.supplierRepository.findAllBy(condition, null, orderBy, select, page, limit, function (err, result) {
         if (err) {
@@ -113,7 +111,6 @@ SupplierService.prototype.delete = async function (supplierProps, callback) {
 
     var condition = {
         supplierId: supplierProps.supplierId,
-        isActive: true,
         isDelete: false
     }
     

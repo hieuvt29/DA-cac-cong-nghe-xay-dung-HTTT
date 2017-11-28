@@ -8,9 +8,10 @@ var DataContext = function(config) {
     var Product = sequelize.import('./model/product');
     var Supplier = sequelize.import('./model/supplier');
     var Account = sequelize.import('./model/account');
-    
+    var Admin = sequelize.import('./model/admin');
+
     Account.Customer = Account.hasOne(Customer, {foreignKey: 'accountId'});
-    Account.Supplier = Account.hasOne(Supplier, {foreignKey: 'accountId'});
+    Account.Admin = Account.hasOne(Admin, {foreignKey: 'accountId'});
     
     Product.Supplier = Product.belongsTo(Supplier, {foreignKey: 'supplierId'});
 
@@ -22,6 +23,7 @@ var DataContext = function(config) {
     return {
         Account: Account,
         Category: Category,
+        Admin: Admin,
         Customer: Customer,
         Product: Product, 
         Supplier: Supplier,
