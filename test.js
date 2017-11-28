@@ -114,7 +114,7 @@ dbContext.sequelize.sync().then(function () {
         console.log("creating admin...: ");
         
         let accountsProps = {
-            userName: hieuvt,
+            userName: "hieuvt",
             password: '123321',
             role: 0,
             Admin: {
@@ -123,7 +123,9 @@ dbContext.sequelize.sync().then(function () {
             }
         }
         // create account along with admin
-        dbContext.Account.create(accountsProps, {association: [dbContext.Account.Admin]})
+        dbContext.Account.create(accountsProps, {
+                include: [dbContext.Account.Admin]
+            })
             .then((account) => {
                 console.log("account created: ", account);
                 console.log("creating suppliers...");
@@ -134,7 +136,7 @@ dbContext.sequelize.sync().then(function () {
                         console.log("supplers: ", suppliers);
                         //feed data
                         console.log("creating products");
-/*
+
                         let allItems = [];
                         for (let i in suppliers) {
                             let supplier = suppliers[i];
@@ -175,7 +177,7 @@ dbContext.sequelize.sync().then(function () {
 
                                 })
                             }).catch(err => console.log("err: ", err));
-  */
+
                     }).catch((err) => console.log("error: ", err));
                     
             }).catch(err => console.log("error: ", err));

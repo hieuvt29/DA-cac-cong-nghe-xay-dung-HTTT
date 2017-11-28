@@ -4,8 +4,8 @@ var rule = require('./validate/user-validator');
 var AdminService = function (adminRepository) {
     this.adminRepository = adminRepository;
 }
+
 AdminService.prototype.getOne = function (condition, select, callback) {
-    condition.isDelete = false;
 
     this.adminRepository.findOneBy(condition, select, function (err, result) {
         if (err) {
@@ -21,7 +21,6 @@ AdminService.prototype.getOne = function (condition, select, callback) {
 }
 
 AdminService.prototype.getMany = function (condition, orderBy, select, page, limit, callback) {
-    condition.isDelete = false;
 
     this.adminRepository.findAllBy(condition, null, orderBy, select, page, limit, function (err, result) {
         if (err) {
