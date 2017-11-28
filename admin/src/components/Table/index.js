@@ -26,7 +26,7 @@ class DataTable extends React.Component {
   componentWillReceiveProps(nextProps) {
     console.log("Props recieved: ", nextProps.data);
     let changed = this.state.data !== nextProps.data;
-    changed?this.setState({ changed: true, data: nextProps.data }):null;
+    changed? this.renderTable(nextProps.data): null;
   }
 
   componentWillUnMount() {
@@ -77,11 +77,6 @@ class DataTable extends React.Component {
     }
   }
   render () {
-    if (this.state.changed) {
-      
-      this.renderTable(this.state.data);
-      this.setState({changed: false});
-    } 
     return (
       <section className="content">
         <div className="row">

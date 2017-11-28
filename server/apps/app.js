@@ -33,6 +33,9 @@ var accountRepository = new AccountRepository(dbContext);
 var CustomerRepository = require('../repository/customer-repository');
 var customerRepository = new CustomerRepository(dbContext);
 
+var AdminRepository = require('../repository/admin-repository');
+var adminRepository = new AdminRepository(dbContext);
+
 var SupplierRepository = require('../repository/supplier-repository');
 var supplierRepository = new SupplierRepository(dbContext);
 
@@ -50,8 +53,11 @@ var supplierService = new SupplierService(supplierRepository);
 var CustomerService = require('../service/customer-service');
 var customerService = new CustomerService(customerRepository);
 
+var AdminService = require('../service/admin-service');
+var adminService = new AdminService(adminRepository);
+
 var AccountService = require('../service/account-service');
-var accountService = new AccountService(accountRepository, customerService, supplierService);
+var accountService = new AccountService(accountRepository, customerService, adminService);
 
 var CategoryService = require('../service/category-service');
 var categoryService = new CategoryService(categoryRepository);
@@ -68,6 +74,9 @@ var supplierController = new SupplierController(supplierService);
 
 var CustomerController = require('./controllers/customer-controller');
 var customerController = new CustomerController(customerService);
+
+var AdminController = require('./controllers/admin-controller');
+var adminController = new AdminController(adminService);
 
 var CategoryController = require('./controllers/category-controller');
 var categoryController = new CategoryController(categoryService);
@@ -89,6 +98,7 @@ app.use(passport.session());
 require('./routes/product-route')(app, productController);
 require('./routes/account-route')(app, accountController, passport);
 require('./routes/supplier-route')(app, supplierController);
+require('./routes/admin-route')(app, adminController);
 require('./routes/category-route')(app, categoryController);
 require('./routes/customer-route')(app, customerController);
 

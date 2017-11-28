@@ -1,12 +1,12 @@
 var dependencies = {
 } // solve problem "this" keyword does not reference to this class
 
-var ProductController = function (supplierService) {
+var SupplierController = function (supplierService) {
     dependencies.supplierService = supplierService;
 
 }
 
-ProductController.prototype.getOne = function (req, res, next) {
+SupplierController.prototype.getOne = function (req, res, next) {
     var supplierId = req.params.supplierId;
 
     dependencies.supplierService.getOne({ 'supplierId': supplierId }, [], function (err, supplier) {
@@ -19,7 +19,7 @@ ProductController.prototype.getOne = function (req, res, next) {
     })
 }
 
-ProductController.prototype.getMany = function (req, res, next) {
+SupplierController.prototype.getMany = function (req, res, next) {
     var condition = req.where;
     var orderBy = req.options.sort;
     var select = req.fields ? req.fields : [];
@@ -37,7 +37,7 @@ ProductController.prototype.getMany = function (req, res, next) {
 }
 
 
-ProductController.prototype.create = function (req, res, next) {
+SupplierController.prototype.create = function (req, res, next) {
     var supplierProps = req.body;
 
     dependencies.supplierService.create(supplierProps, function (err, supplier) {
@@ -50,7 +50,7 @@ ProductController.prototype.create = function (req, res, next) {
     })
 }
 
-ProductController.prototype.update = function (req, res, next) {
+SupplierController.prototype.update = function (req, res, next) {
     var supplierId = req.params.supplierId;
     var supplierProps = req.body;
     supplierProps.supplierId = supplierId;
@@ -65,7 +65,7 @@ ProductController.prototype.update = function (req, res, next) {
     })
 }
 
-ProductController.prototype.delete = function (req, res, next) {
+SupplierController.prototype.delete = function (req, res, next) {
     var supplierId = req.params.supplierId;
 
     dependencies.supplierService.delete({ 'supplierId': supplierId }, function (err, result) {
@@ -78,4 +78,4 @@ ProductController.prototype.delete = function (req, res, next) {
     })
 }
 
-module.exports = ProductController;
+module.exports = SupplierController;

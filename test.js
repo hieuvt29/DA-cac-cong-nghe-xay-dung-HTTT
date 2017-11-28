@@ -95,86 +95,89 @@ sequelize.query(
 })
  */
 
-// import data
+// IMPORT DATA
 console.log("start...");
 // load data
 let data = fs.readFileSync('./crawl-data.json', {
     encoding: 'utf8'
 });
 data = JSON.parse(data);
-dbContext.sequelize.sync().then(function(){
+dbContext.sequelize.sync().then(function () {
+    // create categories
     dbContext.Category.bulkCreate([{
         categoryName: "Sản phẩm mới"
     }, {
         categoryName: "Sản phẩm giảm giá"
     }])
     .then((categories) => {
-        console.log("categories created: ", categories);
-        console.log("creating account...: ");
-        let supplierNames = Object.keys(data);
-        let accountsProps = supplierNames.map(supplierName => {
-            return {
-                userName: supplierName,
-                password: supplierName,
-                role: 2,
-                Supplier: {
-                    supplierName: supplierName
-                }
+        console.log("------ categories created ------ ");
+        console.log("creating admin...: ");
+        
+        let accountsProps = {
+            userName: hieuvt,
+            password: '123321',
+            role: 0,
+            Admin: {
+                firstName: "vu",
+                lastName: "hieu"
             }
-        });
-        dbContext.Account.bulkCreate(accountsProps, {individualHooks: true})
-            .then((accounts) => {
-                console.log("accounts created: ", accounts);
-                let supplierObjs = [];
-                for (let j in accountsProps){
-                    supplierObjs.push(Object.assign({}, accountsProps[j].Supplier,{accountId: accounts[j].accountId}));
-                };
+        }
+        // create account along with admin
+        dbContext.Account.create(accountsProps, {association: [dbContext.Account.Admin]})
+            .then((account) => {
+                console.log("account created: ", account);
+                console.log("creating suppliers...");
+                let supplierNames = Object.keys(data);
+                let supplierObjs = supplierNames.map(supplierName => ({supplierName: supplierName}));
                 dbContext.Supplier.bulkCreate(supplierObjs)
-                .then(suppliers => {
-                    console.log("supplers: ", suppliers);
-                    //feed data
-                    console.log("creating products");
+                    .then(suppliers => {
+                        console.log("supplers: ", suppliers);
+                        //feed data
+                        console.log("creating products");
+/*
+                        let allItems = [];
+                        for (let i in suppliers) {
+                            let supplier = suppliers[i];
+                            let items = data[supplier.supplierName];
+                            items = items.map((item) => {
+                                item.productName = item.name;
+                                item.categoryId = categories[0]['categoryId'];
+                                item.supplierId = supplier.supplierId;
+                                item.image = item.imgLinks[0];
+                                let description = {
+                                    info: item.info,
+                                    productName: item.name,
+                                    imgLinks: item.imgLinks
+                                }
+                                item.description = JSON.stringify(description);
+                                delete item.name;
+                                delete item.productId;
+                                delete item.imgLinks;
+                                delete item.info;
+                                return item;
+                            });
+                            allItems = allItems.concat(items);
+                        };
+                        console.log("allitems: ", allItems);
+                        dbContext.Product.bulkCreate(allItems)
+                            .then(res => {
+                                console.log("products created: ", res);
+                                categories.forEach(category => {
+                                    dbContext.Product.findAll({
+                                            where: {
+                                                categoryId: category.categoryId
+                                            }
+                                        })
+                                        .then(relvProducts => {
+                                            category.setProducts(relvProducts);
+                                            console.log("done");
+                                        }).catch(err => console.log("err: ", err));
+
+                                })
+                            }).catch(err => console.log("err: ", err));
+  */
+                    }).catch((err) => console.log("error: ", err));
                     
-                    let allItems = [];
-                    for (let i in suppliers) {
-                        let supplier = suppliers[i];
-                        let items = data[supplier.supplierName];
-                        items = items.map((item) => {
-                            item.productName = item.name;
-                            item.categoryId = categories[0]['categoryId'];
-                            item.supplierId = supplier.supplierId;
-                            item.image = item.imgLinks[0];
-                            let description = {
-                                info: item.info,
-                                productName: item.name,
-                                imgLinks: item.imgLinks
-                            }
-                            item.description = JSON.stringify(description);
-                            delete item.name;
-                            delete item.productId;
-                            delete item.imgLinks;
-                            delete item.info;
-                            return item;
-                        });
-                        allItems = allItems.concat(items);
-                    };
-                    console.log("allitems: ", allItems);
-                    dbContext.Product.bulkCreate(allItems)
-                    .then(res => {
-                        console.log("products created: ", res);
-                        dbContext.Category.findAll().then(categories => {
-                            categories.forEach(category => {
-                                dbContext.Product.findAll({where: {categoryId: category.categoryId}})
-                                .then(relvProducts => {
-                                    category.setProducts(relvProducts);
-                                    console.log("done");
-                                }).catch(err => console.log("err: ", err));
-                            })
-                        }).catch(err => console.log("err: ", err));
-                        
-                    }).catch(err => console.log("err: ", err));
-                }).catch(err => console.log("err: ", err));
-                
-            }).catch((err) => console.log("error: ", err));
-    }).catch(err => console.log("error: ", err));
+            }).catch(err => console.log("error: ", err));
+    })
 })

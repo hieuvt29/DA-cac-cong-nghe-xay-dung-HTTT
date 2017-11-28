@@ -39,11 +39,6 @@ module.exports = function(sequelize, DataTypes) {
         address : {
             type: DataTypes.TEXT,
             allowNull: true
-        },
-        isDelete: {
-            type: DataTypes.BOOLEAN,
-            allowNull: false,
-            defaultValue: false 
         }
     })
 }
