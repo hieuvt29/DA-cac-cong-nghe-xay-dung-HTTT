@@ -68,7 +68,7 @@ AccountService.prototype.create = async function (accountProps, callback) {
                                 newAccount.destroy();
                                 return callback(err);
                             } else {
-                                newAccount.Customer = newCustomer;
+                                newAccount = Object.assign(newAccount.dataValues, newCustomer.dataValues);
                                 return callback(null, newAccount);
                             }
                         })
@@ -79,10 +79,13 @@ AccountService.prototype.create = async function (accountProps, callback) {
                                 newAccount.destroy();
                                 return callback(err);
                             } else {
-                                newAccount.Admin = newAdmin;
+                                newAccount = Object.assign(newAccount.dataValues, newAdmin.dataValues);
                                 return callback(null, newAccount);
                             }
                         })
+                    } else {
+                        newAccount.destroy();
+                        return callback({type: "Bad Request"});
                     }
                 }
             })
