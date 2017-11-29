@@ -42,6 +42,9 @@ var supplierRepository = new SupplierRepository(dbContext);
 var CategoryRepository = require('../repository/category-repository');
 var categoryRepository = new CategoryRepository(dbContext);
 
+var OrderRepository = require('../repository/order-repository');
+var orderRepository = new OrderRepository(dbContext);
+
 
 // Services
 var ProductService = require('../service/product-service');
@@ -62,6 +65,9 @@ var accountService = new AccountService(accountRepository, customerService, admi
 var CategoryService = require('../service/category-service');
 var categoryService = new CategoryService(categoryRepository);
 
+var OrderService = require('../service/order-service');
+var orderService = new OrderService(orderRepository);
+
 // Controllers
 var ProductController = require('./controllers/product-controller');
 var productController = new ProductController(productService);
@@ -81,6 +87,8 @@ var adminController = new AdminController(adminService);
 var CategoryController = require('./controllers/category-controller');
 var categoryController = new CategoryController(categoryService);
 
+var OrderController = require('./controllers/order-controller');
+var orderController = new OrderController(orderService);
 //config the passport 
 require('../config/passport')(passport, accountRepository, supplierRepository, customerRepository);
 
@@ -101,6 +109,7 @@ require('./routes/supplier-route')(app, supplierController);
 require('./routes/admin-route')(app, adminController);
 require('./routes/category-route')(app, categoryController);
 require('./routes/customer-route')(app, customerController);
+require('./routes/order-route')(app, orderController);
 
 app.use(function(err, req, res, next) {
     console.error(new Date() + " - " + JSON.stringify(err, null, '\t'));

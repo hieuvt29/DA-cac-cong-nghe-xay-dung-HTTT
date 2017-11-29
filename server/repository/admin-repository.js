@@ -56,7 +56,7 @@ AdminRepository.prototype.save = function(adminObj, association, callback) {
     })
     .then(function(result){
         if (result){   
-            callback(null, result.dataValues);
+            callback(null, result);
         } else {
             callback(null, null);
         }

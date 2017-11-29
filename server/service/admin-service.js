@@ -1,17 +1,28 @@
 var nv = require('node-validator');
 var rule = require('./validate/user-validator');
 
-var AdminService = function (adminRepository) {
+var AdminService = function (adminRepository, accountService) {
     this.adminRepository = adminRepository;
+    this.accountService = accountService;
 }
 
 AdminService.prototype.getOne = function (condition, select, callback) {
+    var self = this;
 
-    this.adminRepository.findOneBy(condition, select, function (err, result) {
+    this.adminRepository.findOneBy(condition, select, null, function (err, admin) {
         if (err) {
             return callback(err);
-        } else if (result) {
-            return callback(null, result);
+        } else if (admin) {
+            // aggregate accountInfo
+            // self.accountService.getOne({accountId: result.accountId}, null, function(err, adminAcc){
+            //     if (err) {
+            //         return callback(err);
+            //     } else {
+            //         admin = Object.assign(admin, adminAcc);
+            //         return callback(null, admin); 
+            //     }
+            // })
+            return callback(null, admin); 
         } else {
             return callback({
                 type: "Not Found"
@@ -21,12 +32,23 @@ AdminService.prototype.getOne = function (condition, select, callback) {
 }
 
 AdminService.prototype.getMany = function (condition, orderBy, select, page, limit, callback) {
+    var self = this;
 
-    this.adminRepository.findAllBy(condition, null, orderBy, select, page, limit, function (err, result) {
+    this.adminRepository.findAllBy(condition, null, orderBy, select, page, limit, function (err, admins) {
         if (err) {
             return callback(err);
-        } else if (result) {
-            return callback(null, result);
+        } else if (admins) {
+            // aggregate accountInfo
+            // var accountIds = admins.map(o => o.accountId);
+            // self.accountService.getMany({accountId: accountIds}, null, null, 0, 100, function(err, adminAccs){
+            //     if (err) {
+            //         return callback(err);
+            //     } else {
+            //         admins = admins.map((admin, index) => (Object.assign(admin, adminAccs[index])));
+            //         return callback(null, admins);
+            //     }
+            // })
+            return callback(null, admins);
         } else {
             return callback({
                 type: "Not Found"

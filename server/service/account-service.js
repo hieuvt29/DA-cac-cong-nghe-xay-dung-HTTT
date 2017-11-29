@@ -6,6 +6,7 @@ var AccountService = function (accountRepository, customerService, adminService)
     this.customerService = customerService;
     this.adminService = adminService;
 }
+
 AccountService.prototype.getOne = function (condition, select, callback) {
     condition.isDelete = false;
     condition.isActive = true;

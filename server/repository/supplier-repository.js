@@ -56,7 +56,7 @@ SupplierRepository.prototype.save = function(supplierObj, association, callback)
     })
     .then(function(result){
         if (result){   
-            callback(null, result.dataValues);
+            callback(null, result);
         } else {
             callback(null, null);
         }

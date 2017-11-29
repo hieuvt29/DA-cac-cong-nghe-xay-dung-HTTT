@@ -3,3 +3,7 @@
 - Supplier không có email
 - Trường contact của supplier so với trường telephone của Customer?
 - Trường type của Supplier
+
+
+--------------
+- Liên kết giữa Product với Category

@@ -1,10 +1,10 @@
-var AccountRepository = function(dbContext) {
+var OrderRepository = function(dbContext) {
     this.dbContext = dbContext;
-    this.Account = dbContext.Account;
+    this.Order = dbContext.Order;
 }
 
-AccountRepository.prototype.findOneBy = function(condition, select, association, callback) {
-    this.Account
+OrderRepository.prototype.findOneBy = function(condition, select, association, callback) {
+    this.Order
         .findOne({
             attributes: select.length ? select : null,
             where: condition ? condition: null,
@@ -23,8 +23,8 @@ AccountRepository.prototype.findOneBy = function(condition, select, association,
         });
 }
 
-AccountRepository.prototype.findAllBy = function (condition, association, orderBy, select, page, limit, callback) {
-    this.Account
+OrderRepository.prototype.findAllBy = function (condition, association, orderBy, select, page, limit, callback) {
+    this.Order
         .findAll({
             attributes: select.length ? select : null,
             where: condition ? condition : null,
@@ -49,13 +49,13 @@ AccountRepository.prototype.findAllBy = function (condition, association, orderB
         });
 }
 
-AccountRepository.prototype.save = function(accountObj, association, callback) {
-    this.Account
-    .create(accountObj, {
+OrderRepository.prototype.save = function(orderObj, association, callback) {
+    this.Order
+    .create(orderObj, {
         include: association
     })
     .then(function(result){
-        if (result){
+        if (result){   
             callback(null, result);
         } else {
             callback(null, null);
@@ -67,10 +67,10 @@ AccountRepository.prototype.save = function(accountObj, association, callback) {
     })
 }
 
-AccountRepository.prototype.update = function(accountObj, association, callback) {
-    this.Account
-    .update(accountObj, {
-        where: { accountId : accountObj.accountId},
+OrderRepository.prototype.update = function(orderObj, association, callback) {
+    this.Order
+    .update(orderObj, {
+        where: { orderId : orderObj.orderId},
         include: association
     })
     .then(function(result){
@@ -87,4 +87,4 @@ AccountRepository.prototype.update = function(accountObj, association, callback)
     })
 }
 
-module.exports = AccountRepository;
+module.exports = OrderRepository;
