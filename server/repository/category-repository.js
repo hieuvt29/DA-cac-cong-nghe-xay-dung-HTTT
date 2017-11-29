@@ -56,7 +56,7 @@ CategoryRepository.prototype.save = function(categoryObj, association, callback)
     })
     .then(function(result){
         if (result){   
-            callback(null, result.dataValues);
+            callback(null, result);
         } else {
             callback(null, null);
         }

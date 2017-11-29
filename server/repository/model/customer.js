@@ -29,8 +29,7 @@ module.exports = function(sequelize, DataTypes) {
         },
         email : {
             type: DataTypes.STRING(40),
-            allowNull: false,
-            unique: true
+            allowNull: false
         },
         telephone: {
             type: DataTypes.STRING(20),
@@ -39,11 +38,6 @@ module.exports = function(sequelize, DataTypes) {
         address : {
             type: DataTypes.TEXT,
             allowNull: true
-        },
-        isDelete: {
-            type: DataTypes.BOOLEAN,
-            allowNull: false,
-            defaultValue: false 
         }
     })
 }

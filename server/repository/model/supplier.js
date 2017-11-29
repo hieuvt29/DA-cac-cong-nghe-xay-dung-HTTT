@@ -6,11 +6,6 @@ module.exports = function(sequelize, DataTypes) {
             primaryKey: true,
             defaultValue: DataTypes.UUIDV4
         },
-        accountId: {
-            type: DataTypes.UUID,
-            allowNull: false,
-            unique: true
-        },
         supplierName: {
             type: DataTypes.TEXT,
             allowNull: false
