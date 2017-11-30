@@ -1,5 +1,5 @@
 var nv = require('node-validator');
-var rule = require('./validate/user-validator');
+var rule = require('./validate/order-validator');
 
 var OrderService = function (orderRepository) {
     this.orderRepository = orderRepository;
@@ -37,7 +37,7 @@ OrderService.prototype.getMany = function (condition, orderBy, select, page, lim
 OrderService.prototype.create = async function (orderProps, callback) {
     var self = this;
     //validate props
-    var val = await validate(rule.checkOrder, orderProps);
+    var val = await validate(rule, orderProps);
     if (val.numErr > 0){
         return callback({type: "Bad Request", error: val.error});
     }
@@ -67,7 +67,7 @@ OrderService.prototype.create = async function (orderProps, callback) {
 OrderService.prototype.update = async function (orderProps, callback) {
     var self = this;
     //validate props
-    var val = await validate(rule.checkOrder, orderProps);
+    var val = await validate(rule, orderProps);
     if (val.numErr > 0){
         return callback({type: "Bad Request", error: val.error});
     }

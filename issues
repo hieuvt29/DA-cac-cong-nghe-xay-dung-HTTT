@@ -5,5 +5,6 @@
 - Trường type của Supplier
 
 
---------------
 - Liên kết giữa Product với Category
+--------------
+- Tạo product, cần thêm xử lý liên kết bảng
