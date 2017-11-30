@@ -56,7 +56,7 @@ CustomerRepository.prototype.save = function(customerObj, association, callback)
     })
     .then(function(result){
         if (result){   
-            callback(null, result.dataValues);
+            callback(null, result);
         } else {
             callback(null, null);
         }

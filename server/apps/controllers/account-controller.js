@@ -8,7 +8,6 @@ var AccountController = function (accountService) {
 
 AccountController.prototype.create = function (req, res, next) {
 
-    //validate
     var accountProps = Object.assign({},
         req.body, {
             password: bcrypt.hashSync(req.body.password)

@@ -42,6 +42,11 @@
                 ],
                 "cwd": "${workspaceRoot}",
                 "runtimeExecutable": null
+            },{
+                "name": "test",
+                "type": "node",
+                "request": "launch",
+                "program": "/media/hieu/DATA/DATA/Subjects/Project 3/DA-cac-cong-nghe-xay-dung-HTTT/test.js"
             }
         ]
     }

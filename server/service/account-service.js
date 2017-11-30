@@ -1,11 +1,12 @@
 var nv = require('node-validator');
 var rule = require('./validate/user-validator');
 
-var AccountService = function (accountRepository, customerService, supplierService) {
+var AccountService = function (accountRepository, customerService, adminService) {
     this.accountRepository = accountRepository;
     this.customerService = customerService;
-    this.supplierService = supplierService;
+    this.adminService = adminService;
 }
+
 AccountService.prototype.getOne = function (condition, select, callback) {
     condition.isDelete = false;
     condition.isActive = true;
@@ -64,22 +65,27 @@ AccountService.prototype.create = async function (accountProps, callback) {
                         // customer
                         self.customerService.create(accountProps, function(err, newCustomer){
                             if (err) {
+                                newAccount.destroy();
                                 return callback(err);
                             } else {
-                                newAccount.Customer = newCustomer;
+                                newAccount = Object.assign(newAccount.dataValues, newCustomer.dataValues);
                                 return callback(null, newAccount);
                             }
                         })
-                    } else if (newAccount.role == 2){
-                        // supplier
-                        self.supplierService.create(accountProps, function(err, newSupplier){
+                    } else if (newAccount.role == 0){
+                        // admin
+                        self.adminService.create(accountProps, function(err, newAdmin){
                             if (err) {
+                                newAccount.destroy();
                                 return callback(err);
                             } else {
-                                newAccount.Supplier = newSupplier;
+                                newAccount = Object.assign(newAccount.dataValues, newAdmin.dataValues);
                                 return callback(null, newAccount);
                             }
                         })
+                    } else {
+                        newAccount.destroy();
+                        return callback({type: "Bad Request"});
                     }
                 }
             })

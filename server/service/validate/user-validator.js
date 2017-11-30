@@ -22,6 +22,7 @@ var checkCustomer = nv.isAnyObject()
 .withOptional('isActive', nv.isBoolean())
 .withOptional('isDelete', nv.isBoolean());
 
+
 var checkSupplier = nv.isAnyObject()
 .withRequired('supplierName', nv.isString({regex: /^.{4,50}$/}))
 .withRequired('email', nv.isString({regex: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/}))
@@ -33,8 +34,18 @@ var checkSupplier = nv.isAnyObject()
 .withOptional('isActive', nv.isBoolean())
 .withOptional('isDelete', nv.isBoolean());
 
+var checkAdmin = nv.isAnyObject()
+.withRequired('firstName', nv.isString({regex: /^.{0,50}/}))
+.withRequired('lastName', nv.isString({regex: /^.{0,50}/}))
+.withRequired('email', nv.isString({regex: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/}))
+.withOptional('adminId', nv.isString({regex: /^[a-zA-Z0-9_-]{36}$/}))
+.withOptional('accountId', nv.isString({regex: /^[a-zA-Z0-9_-]{36}$/}))
+.withOptional('telephone', nv.isString({regex: /^[0-9]{10,20}$/}))
+.withOptional('isDelete', nv.isBoolean());
+
 module.exports = {
     checkAccount: checkAccount,
     checkCustomer: checkCustomer,
+    checkAdmin: checkAdmin,
     checkSupplier: checkSupplier
 }

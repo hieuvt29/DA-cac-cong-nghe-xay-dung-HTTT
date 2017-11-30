@@ -92,7 +92,7 @@ ProductRepository.prototype.save = function (productObj, association, callback) 
         .then(function (result) {
             if (result) {
                 result.description ? result.description = JSON.parse(result.description) : null;
-                callback(null, result.dataValues);
+                callback(null, result);
             } else {
                 callback(null, null);
             }

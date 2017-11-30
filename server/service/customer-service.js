@@ -1,18 +1,28 @@
 var nv = require('node-validator');
 var rule = require('./validate/user-validator');
 
-var CustomerService = function (customerRepository) {
+var CustomerService = function (customerRepository, accountService) {
     this.customerRepository = customerRepository;
+    this.accountService = accountService;
 }
-CustomerService.prototype.getOne = function (condition, select, callback) {
-    condition.isDelete = false;
-    condition.isActive = true;
 
-    this.customerRepository.findOneBy(condition, select, function (err, result) {
+CustomerService.prototype.getOne = function (condition, select, callback) {
+    var self = this;
+
+    this.customerRepository.findOneBy(condition, select, null, function (err, customer) {
         if (err) {
             return callback(err);
-        } else if (result) {
-            return callback(null, result);
+        } else if (customer) {
+            // aggregate accountInfo
+            // self.accountService.getOne({accountId: result.accountId}, null, function(err, customerAcc){
+            //     if (err) {
+            //         return callback(err);
+            //     } else {
+            //         customer = Object.assign(customer, customerAcc);
+            //         return callback(null, customer); 
+            //     }
+            // })
+            return callback(null, customer); 
         } else {
             return callback({
                 type: "Not Found"
@@ -22,14 +32,23 @@ CustomerService.prototype.getOne = function (condition, select, callback) {
 }
 
 CustomerService.prototype.getMany = function (condition, orderBy, select, page, limit, callback) {
-    condition.isDelete = false;
-    condition.isActive = true;
+    var self = this;
 
-    this.customerRepository.findAllBy(condition, null, orderBy, select, page, limit, function (err, result) {
+    this.customerRepository.findAllBy(condition, null, orderBy, select, page, limit, function (err, customers) {
         if (err) {
             return callback(err);
-        } else if (result) {
-            return callback(null, result);
+        } else if (customers) {
+            // aggregate accountInfo
+            // var accountIds = customers.map(o => o.accountId);
+            // self.accountService.getMany({accountId: accountIds}, null, null, 0, 100, function(err, customerAccs){
+            //     if (err) {
+            //         return callback(err);
+            //     } else {
+            //         customers = customers.map((customer, index) => (Object.assign(customer, customerAccs[index])));
+            //         return callback(null, customers);
+            //     }
+            // })
+            return callback(null, customers);
         } else {
             return callback({
                 type: "Not Found"
@@ -113,7 +132,6 @@ CustomerService.prototype.delete = async function (customerProps, callback) {
 
     var condition = {
         customerId: customerProps.customerId,
-        isActive: true,
         isDelete: false
     }
     

@@ -55,8 +55,8 @@ AccountRepository.prototype.save = function(accountObj, association, callback) {
         include: association
     })
     .then(function(result){
-        if (result){   
-            callback(null, result.dataValues);
+        if (result){
+            callback(null, result);
         } else {
             callback(null, null);
         }
