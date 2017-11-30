@@ -6,14 +6,37 @@
   animation: App-logo-spin infinite 20s linear;
   height: 80px;
 }
+@media only screen and (min-width: 980px) {
+  .navbar-inner #submitButton{
+    margin-top: 16px;
+  }
+  .item ul li .thumbnail {
+    min-height: 260px;
+  }
+  .item ul li .thumbnail .caption{
+    position: absolute;
+    bottom: 0;
+  }
+  .item ul li .thumbnail .caption h4{ margin-bottom: 0px;}
+  .thumbnails li div.thumbnail{
+    min-height: 300px;
+    word-break: break-all;
+  }
+  .thumbnails li div.thumbnail .caption{
+    position: absolute;
+    bottom: 0;
+  }
 
+}
 .App-header {
   /* background-color: #222;
   height: 150px;
   padding: 20px;
   color: white; */
 }
-
+.thumbnail .caption {
+  word-break: break-all;
+}
 .App-title {
   /* font-size: 1.5em; */
 }

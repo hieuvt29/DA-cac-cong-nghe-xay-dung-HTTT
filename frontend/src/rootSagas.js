@@ -4,7 +4,7 @@ import appSaga from './containers/App/saga';
 import homepagesaga from './containers/HomePage/saga';
 import signupsaga from './containers/Signup/saga';
 import signinsaga from './containers/Header/saga';
-
+import productdetailsaga from './containers/ProductDetail/saga';
 
 export default function* rootSaga() {
     yield [
@@ -12,5 +12,6 @@ export default function* rootSaga() {
         fork(homepagesaga),
         fork(signupsaga),
         fork(signinsaga),
+        fork(productdetailsaga),
     ];
 }

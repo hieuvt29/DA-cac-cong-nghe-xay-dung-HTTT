@@ -9,12 +9,15 @@ function* postForm(action) {
         const url = `${address}/login/`;
         // console.log(url,':',action.username,':',action.password);
         let response;
-        yield axios.post(url, {
+        const account = {
             userName: action.username,
             password: action.password,
-        })
+        };
+        // console.log("before call signin", response);
+        yield axios.post(url, account)
         .then(res => {
             response = res;
+            // console.log('RESPONSE saga = ', response);
         });
         yield put({ type: "RES_SIGNIN", response });
     } catch (e) {
@@ -22,8 +25,22 @@ function* postForm(action) {
     }
 }
 
-function* signinsaga() {
-  yield takeLatest("SIGNIN", postForm);
+function* search(action) {
+    const url = 'http://localhost:3001/products?keywords='+'\''+action.searchKey+'\'';
+    let response;    
+    yield fetch(url)
+    .then(res => { return res.json();})
+    .then(responseJson => { response = responseJson });
+    // console.log('---TuyenTN---', response);
+    yield put({ type: "RES_SEARCH", response });
 }
 
+function* signinsaga() {
+  yield takeLatest("SIGNIN", postForm);
+  yield takeLatest("SEARCH", search);
+}
+
+
 export default signinsaga;
+
+

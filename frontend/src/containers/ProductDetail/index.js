@@ -1,24 +1,28 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { get_product } from './actions';
 
 class ProductDetail extends Component {
     constructor (props) {
       super(props);
-      this.state = {
-        prodDetail: {},
-      }
+      // this.state = {
+      //   prodDetail: {},
+      // }
     }
     componentDidMount () {
         // console.log('---TuyenTN---didmount');
         // this.props.req_products();'
-        const that = this;
-        const url = `http://localhost:3001/products/${this.props.match.params.id}`
-        fetch(url).then(response => response.json)
-        .then(res_json => that.setState({ prodDetail: res_json }))
-        .catch(error => console.log('---TuyenTN---', error));
+        // const that = this;
+        // const url = `http://localhost:3001/products/${this.props.match.params.id}`;
+        // fetch(url).then(res => { return res.json();})
+        // .then(res_json => that.setState({ prodDetail: res_json }))
+        // .catch(error => console.log('---TuyenTN---', error));
+    }
+    componentWillMount() {
+      this.props.get_product(this.props.match.params.id);
     }
     render() {
-      const {prodDetail} = this.state;
+      const {prodDetail} = this.props;
         return (
             <div className="span9">
             <ul className="breadcrumb">
@@ -28,15 +32,21 @@ class ProductDetail extends Component {
             </ul>	
             <div className="row">	  
                     <div id="gallery" className="span3">
-                    <a href="themes/images/products/large/f1.jpg" title="Fujifilm FinePix S2950 Digital Camera">
-                        <img src="themes/images/products/large/3.jpg" style={{ width: "100%" }} alt="Fujifilm FinePix S2950 Digital Camera"/>
+                    <a href="#" title={prodDetail.productName}>
+                        <img src={prodDetail.image} style={{ width: "100%" }} alt={prodDetail.productName}/>
                     </a>
                     <div id="differentview" className="moreOptopm carousel slide">
+                        {console.log('---PRODETAIL---', prodDetail)}
                         <div className="carousel-inner">
                           <div className="item active">
-                           <a href="themes/images/products/large/f1.jpg"> <img style={{ width: "100%" }} src="themes/images/products/large/f1.jpg" alt=""/></a>
-                           <a href="themes/images/products/large/f2.jpg"> <img style={{ width: "29%" }} src="themes/images/products/large/f2.jpg" alt=""/></a>
-                           <a href="themes/images/products/large/f3.jpg" > <img style={{ width: "29%" }} src="themes/images/products/large/f3.jpg" alt=""/></a>
+                            {(prodDetail.description) ? prodDetail.description.imgLinks.map((image, index) => {
+                              if (index < 3) {
+                                return (
+                                  <a href="#"> 
+                                    <img style={{ width: "100%" }} src={image} alt="" />
+                                  </a>
+                                )}
+                            }): ""}
                           </div>
                           <div className="item">
                            <a href="themes/images/products/large/f3.jpg" > <img style={{ width: "29%" }} src="themes/images/products/large/f3.jpg" alt=""/></a>
@@ -58,8 +68,8 @@ class ProductDetail extends Component {
                     </div>
                     </div>
                     <div className="span6">
-                        <h3>{prodDetail.name !== undefined && prodDetail.name}  </h3>
-                        <small>- (14MP, 18x Optical Zoom) 3-inch LCD</small>
+                        <h3>{prodDetail.productName !== undefined && prodDetail.productName}  </h3>
+                        <small>- (AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) 3-inch LCD</small>
                         <hr className="soft"/>
                         <form className="form-horizontal qtyFrm">
                           <div className="control-group">
@@ -419,11 +429,11 @@ class ProductDetail extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    
+  prodDetail: state.appReducer.resDetailProduct,
 });
 
 const mapDispatchToProps = ({
-
+  get_product,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductDetail);

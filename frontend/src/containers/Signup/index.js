@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { signup } from './actions';
 
 class Signup extends React.Component {
@@ -39,7 +40,7 @@ class Signup extends React.Component {
             this.setState({ error: 'Please check that you\'ve entered and confirmed your password!' });
         }
         else if(this.state.password === this.state.repassword) {
-            if(this.state.password.length < 6) {
+            if(this.state.password.length < 4) {
               this.setState({ error: 'Password must contain at least six characters!', password: '' });
             }
             if(this.state.password === this.state.username) {
@@ -63,29 +64,29 @@ class Signup extends React.Component {
         return (
             <div className="span9">
                 <ul className="breadcrumb">
-                    <li><a href="index.html">Home</a> <span className="divider">/</span></li>
-                    <li className="active">Registration</li>
+                    <li><Link to="/home">Trang chủ</Link> <span className="divider">/</span></li>
+                    <li className="active">Đăng kí tài khoản </li>
                 </ul>
-                <h3> Registration</h3>
+                <h3> Đăng kí tài khoản </h3>
                 <div className="well">
 
                     <form className="form-horizontal" >
-                        <h4>Your personal information</h4>
+                        <h4> Thông tin tài khoản </h4>
                         <div className="control-group">
-                            <label className="control-label" htmlFor="input_username">Username <sup>*</sup></label>
+                            <label className="control-label" htmlFor="input_username">Tên đăng nhập <sup>*</sup></label>
                             <div className="controls">
                                 <input type="text" id="input_username" autoComplete="false" name="username" onChange={this.change} value={this.state.username} placeholder="Username" />
                             </div>
                         </div>
                         <div className="control-group">
-                            <label className="control-label" htmlFor="inputPassword1">Password <sup>*</sup></label>
+                            <label className="control-label" htmlFor="inputPassword1">Mật khẩu <sup>*</sup></label>
                             <div className="controls">
                                 <input type="password" id="inputPassword1" name="password" onChange={this.change} value={this.state.password} placeholder="Password" />
                             </div>
                         </div>
 
                         <div className="control-group">
-                            <label className="control-label" htmlFor="inputPassword2">Retype Password <sup>*</sup></label>
+                            <label className="control-label" htmlFor="inputPassword2">Nhập lại mật khẩu <sup>*</sup></label>
                             <div className="controls">
                                 <input type="password" id="inputPassword2" name="repassword" onChange={this.change} value={this.state.repassword} placeholder="Retype Password" />
                             </div>
@@ -96,11 +97,11 @@ class Signup extends React.Component {
                             <strong>{this.state.error}</strong>
                         </div>
 
-                        <p><sup>*</sup>Required field	</p>
+                        <p><sup>*</sup>Bắt buộc	</p>
                     </form>
                     <div className="control-group">
                         <div className="controls">
-                            <button className="btn btn-large btn-success" onClick={this.submit}>Register</button>
+                            <button className="btn btn-large btn-success" onClick={this.submit}>Đăng kí</button>
                         </div>
                     </div>
                 </div>

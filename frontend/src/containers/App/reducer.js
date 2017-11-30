@@ -1,46 +1,26 @@
+import { getCookie, setCookie } from '../../globalFunc';
 const initialState = {
     count: 88,
+    cartAmount: 0,
     listItems: [
         {name: "tuyen1", price: "100", category: "ahihi"},
         {name: "tuyen2", price: "200", category: "ahihi"},
         {name: "tuyen3", price: "300", category: "ahihi"},
     ],
-    featuredProducts: [
-        { id: "1", name: "tuyen1", price: "100", category: "ahihi"},
-        { id: "2", name: "tuyen2", price: "200", category: "ahihi"},
-        { id: "3", name: "tuyen3", price: "300", category: "ahihi"},
-        { id: "4", name: "tuyen4", price: "100", category: "ahihi"},
-        { id: "5", name: "tuyen5", price: "200", category: "ahihi"},
-        { id: "6", name: "tuyen6", price: "300", category: "ahihi"},
-        { id: "7", name: "tuyen7", price: "100", category: "ahihi"},
-        { id: "8", name: "tuyen8", price: "200", category: "ahihi"},
-        { id: "9", name: "tuyen9", price: "300", category: "ahihi"},
-        { id: "10", name: "tuyen10", price: "100", category: "ahihi"},
-        { id: "11", name: "tuyen11", price: "200", category: "ahihi"},
-        { id: "12", name: "tuyen12", price: "300", category: "ahihi"},
-        { id: "13", name: "tuyen13", price: "100", category: "ahihi"},
-        { id: "14", name: "tuyen14", price: "200", category: "ahihi"},
-        { id: "15", name: "tuyen15", price: "300", category: "ahihi"},
-        { id: "16", name: "tuyen16", price: "300", category: "ahihi"},        
-    ],
+    featuredProducts: [],
     latestProducts: [
         {name: "san pham 1", price: "100"},
         {name: "san pham 2", price: "100"},
         {name: "san pham 3", price: "100"},
     ],
-    account: {
-        // username: '',
-        // password: '',
-        // role: '',
-        // firstname: '',
-        // lastname: '',
-        // gender: '',
-        // dob: '',
-        // email: '',
-        // telephone: '',
-        // address: '',
-    },
+    account: {},
     listProducts: [],
+    cartTotal: 0,
+    cartQuantity: 0,
+    errorLogin: '',
+    prevPath: '',
+    resSearch: [],
+    resDetailProduct: {},
 };
 
 function appReducer(state = initialState, action) {
@@ -48,17 +28,82 @@ function appReducer(state = initialState, action) {
     case 'INCREASE': {
         return { ...state, count: state.count + 1 };
     }
+    case 'SIGNOUT': {
+        setCookie('account', '');
+        return { ...state, account: '' };
+    }
+    case 'INIT_ACCOUNT': {
+        let raw = (getCookie('account'));
+        let account = (raw)? JSON.parse(raw) : '';
+        return { ...state, account: account};
+    }
+    case 'INIT_CART': {
+        let cartTotal = parseFloat(getCookie('cartTotal'));
+        let cartQuantity = parseInt(getCookie('cartQuantity'), 10);        
+        return { ...state, cartTotal: cartTotal, cartQuantity: cartQuantity};
+    }
     case 'RES_PRODUCTS': {
-        console.log('Action.rés', action.response );
-        return { ...state, listProducts: action.response.data.products};
+        let featuredProducts = [];
+        let temp = [];
+        action.response.data.products.map((item, index) => {
+            if (index % 4 === 3) {
+                temp.push(item);
+                featuredProducts.push(temp);
+                temp = [];
+            } else {
+                temp.push(item);
+            }
+        });
+        return { ...state, featuredProducts: featuredProducts, listProducts: action.response.data.products};
     }
     case 'RES_SIGNUP': {
-        console.log('Action.rés', action.response );
+        console.log('---TuyenTN---', action.response);
         return { ...state, account: action.response};
     }
+    case 'RES_SEARCH': {
+        // console.log('---TuyenTN---', action.response);
+        return { ...state, resSearch: action.response.products};
+    }
     case 'RES_SIGNIN': {
-        console.log('Action.rés', action.response );
-        return { ...state, account: action.response};
+        // console.log('---Signin res:---', action.response);
+        if (action.response.data.errorCode === 1) {
+            return { ...state, errorLogin: 'Sai tên đăng nhập hoặc mật khẩu'};
+        } else {
+            setCookie('account', JSON.stringify(action.response.data.user));
+            return { ...state, account: action.response.data.user};
+        }
+    }
+    case 'RES_PRODUCTDETAIL': {
+        console.log('---RES_PRODUCTDETAIL---', action.response.product);
+        return { ...state, resDetailProduct: action.response.product};
+    }
+    case 'UPDATECART': {
+        return { ...state, cartTotal: action.cartTotal, cartQuantity: action.cartQuantity };
+    }
+    case 'ADDTOCART': {
+        const cartString = getCookie('cart');
+        let newCart = [];
+        if (cartString === '') {
+            newCart = [];
+        } else {
+            newCart = JSON.parse(cartString);
+        }
+        let i;
+        for (i = 0; i < newCart.length; i++) {
+            if (action.product.productId === newCart[i].productId) {
+                newCart[i].quantity += 1;
+                break;
+            }
+        }
+        if (i === newCart.length) {
+            newCart.push(action.product);
+        }
+        let cartTotal = parseFloat(getCookie('cartTotal'))+action.product.price;
+        let cartQuantity = parseInt(getCookie('cartQuantity'), 10)+1;
+        setCookie('cart', JSON.stringify(newCart));
+        setCookie('cartQuantity', JSON.stringify(cartQuantity));
+        setCookie('cartTotal', JSON.stringify(cartTotal));
+        return { ...state, cartTotal: cartTotal, cartQuantity: cartQuantity };
     }
     default:
       return state;

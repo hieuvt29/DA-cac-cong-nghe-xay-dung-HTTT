@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
-
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import '../..//App.css';
 
-class App extends Component {
+class Sidebar extends Component {
     render() {
         return (
             <div className="App">
                 <div id="sidebar" className="span3">
-                    <div className="well well-small"><a id="myCart" href="product_summary.html"><img src="themes/images/ico-cart.png" alt="cart" />3 Items in your cart  <span className="badge badge-warning pull-right">$155.00</span></a></div>
+                    <div className="well well-small"><Link to="/product_summary" id="myCart"><img src="themes/images/ico-cart.png" alt="cart" />{this.props.cartQuantity} Sản phẩm
+                        <span className="badge badge-warning pull-right">{ this.props.cartTotal }đ</span></Link>
+                    </div>
                     <ul id="sideManu" className="nav nav-tabs nav-stacked">
                         <li className="subMenu open"><a> ELECTRONICS [230]</a>
                             <ul>
@@ -71,4 +74,14 @@ class App extends Component {
     }
 }
 
-export default App;
+const mapStateToProps = (state) => ({
+    account: state.appReducer.account,
+    cartTotal: state.appReducer.cartTotal,
+    cartQuantity: state.appReducer.cartQuantity,
+  });
+
+const mapDispatchToProps = ({
+    
+});
+  
+export default connect(mapStateToProps, mapDispatchToProps)(Sidebar);

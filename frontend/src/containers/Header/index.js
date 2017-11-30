@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { signin } from './actions';
+import { signin, initCart, initAccount, signout, search } from './actions';
 // import logo from '../../logo.svg';
 import '../..//App.css';
 import $ from 'jquery';
+import { setCookie, getCookie } from '../../globalFunc';
 
 class Header extends Component {
   constructor(props) {
@@ -12,6 +13,7 @@ class Header extends Component {
     this.state = {
       username: '',
       password: '',
+      searchKey: '',
       openLogin: false,
       cssOpenLogin: "modal hide fade in",
     };
@@ -24,25 +26,30 @@ class Header extends Component {
     // $(".closeLogin").click(() => {
     //   $("#login").fadeOut(0);
     // });
+    console.log('---didmount Account---', this.props.account);
+    this.props.initCart();
+    this.props.initAccount();
   }
 
   signin = () => {
-    // this.props.signin(this.state.username, this.state.password);
-    const url = 'http:localhost:3001/signin';
-    const req_body = {
-      userName: this.state.username,
-      password: this.state.password,
-    }
-    fetch(url, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(req_body),
-    })
-    .then(response => response.json())
-    .then(responseJson => console.log('---TuyenTN---bafvvhas', responseJson))
+    this.props.signin(this.state.username, this.state.password);
+    (this.props.errorLogin) ? this.setState({ openLogin: false }) : null;
+    // const url = 'http://localhost:3001/login';
+    // const req_body = {
+    //   userName: this.state.username,
+    //   password: this.state.password,
+    // }
+    // fetch(url, {
+    //   method: 'POST',
+    //   body: req_body,
+    // })
+    // .then(response => { console.log('---RES = ---', response);})
+    // .then(responseJson => console.log('---TuyenTN---bafvvhas', responseJson))
+  }
+
+  search = () => {
+    
+    this.props.search(this.state.searchKey);
   }
 
   change = (e) => {
@@ -55,17 +62,19 @@ class Header extends Component {
         <div id="header">
           <div className="container">
             <div id="welcomeLine" className="row">
-              <div className="span6">Welcome!<strong> {(this.props.account.username !== '')? (this.props.account.fistname + this.props.account.lastname):  'Guest' }</strong></div>
+              <div className="span6">Chào mừng <strong> {(this.props.account.userName)? (this.props.account.userName):  'Guest' } !</strong>
+                {(this.props.account.userName)? (<span><a style={{ cursor: 'pointer', marginLeft: '10px' }} onClick={ () => this.props.signout() }>  [Đăng xuất]</a></span>): ''}
+              </div>
               <div className="span6">
                 <div className="pull-right">
-                  <a href="product_summary.html"><span className="">Fr</span></a>
-                  <a href="product_summary.html"><span className="">Es</span></a>
                   <span className="btn btn-mini">En</span>
-                  <a href="product_summary.html"><span>&pound;</span></a>
-                  <span className="btn btn-mini">$155.00</span>
-                  <Link to="/product_summary"><span className="">$</span></Link>
+                  <span className="btn btn-mini">{ this.props.cartTotal }</span>
+                  <Link to="/product_summary"><span className="">đ </span></Link>
                   <Link to="/product_summary">
-                    <span className="btn btn-mini btn-primary"><i className="icon-shopping-cart icon-white"></i> [ 3 ] Itemes in your cart </span>
+                    <span className="btn btn-mini btn-primary">
+                      <i className="icon-shopping-cart icon-white"></i>
+                      [ { this.props.cartQuantity } ] sản phẩm
+                    </span>
                   </Link>
                 </div>
               </div>
@@ -79,53 +88,54 @@ class Header extends Component {
               </a>
               <div className="navbar-inner">
                 <Link className="brand" to="/"><img src="themes/images/logo.png" alt="Bootsshop" /></Link>
-                <form className="form-inline navbar-search" method="post" action="products.html" >
-                  <input id="srchFld" className="srchTxt" type="text" />
+                <form className="form-inline navbar-search" disabled="disabled">
+                  <input id="srchFld" className="srchTxt" type="text" name="searchKey" onChange={this.change} value={this.state.searchKey} />
                   <select className="srchTxt">
-                    <option>All</option>
-                    <option>CLOTHES </option>
-                    <option>FOOD AND BEVERAGES </option>
-                    <option>HEALTH & BEAUTY </option>
-                    <option>SPORTS & LEISURE </option>
-                    <option>BOOKS & ENTERTAINMENTS </option>
+                    <option>Tất cả</option>
+                    <option>Laptop </option>
+                    <option>Điện thoại di động </option>
+                    <option>PC và linh kiện </option>
+                    <option>Máy tính bảng </option>
+                    <option>Phụ kiện </option>
                   </select>
-                  <button type="submit" id="submitButton" className="btn btn-primary">Go</button>
                 </form>
+                <button id="submitButton" className="btn btn-primary" onClick={ this.search }>Go</button>
                 <ul id="topMenu" className="nav pull-right">
-                  <li className=""><a href="special_offer.html">Specials Offer</a></li>
-                  <li className=""><a href="normal.html">Delivery</a></li>
-                  <li className=""><a href="contact.html">Contact</a></li>
-                  {(this.props.account.username === '')? (
+                  <li className=""><a href="special_offer.html">Khuyến mại </a></li>
+                  <li className=""><a href="normal.html">Tin tức</a></li>
+                  <li className=""><a href="contact.html">Hỗ trợ</a></li>
+                  {(!this.props.account.userName)? (
                     <li className="">
                     <a id="loginBtn" role="button" data-toggle="modal" style={{ paddingRight:0 }}
                       onClick={() => this.setState({ openLogin: true })}
                     >
-                      <span className="btn btn-large btn-success">Login</span>
+                      <span className="btn btn-large btn-success"> Đăng nhập </span>
                     </a>
                     {this.state.openLogin && <div id="login" className={"modal fade in"} tabIndex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
                       <div className="modal-header">
                         <button type="button" className="close closeLogin" onClick={() => this.setState({ openLogin: false })} data-dismiss="modal" aria-hidden="true">×</button>
-                        <h3>Login</h3>
+                        <h3> Đăng nhập </h3>
                       </div>
                       <div className="modal-body">
+                        <span> { this.props.errorLogin } </span>
                         <form className="form-horizontal loginFrm">
                           <div className="control-group">
-                            <input type="text" id="inputUsername" name="username" onChange={this.change} placeholder="Username" value={this.state.username} />
+                            <input type="text" id="inputUsername" name="username" onChange={this.change} placeholder="Tên đăng nhập" value={this.state.username} />
                           </div>
                           <div className="control-group">
-                            <input type="password" id="inputPassword" name="password" onChange={this.change} placeholder="Password" value={this.state.password} />
+                            <input type="password" id="inputPassword" name="password" onChange={this.change} placeholder="Mật khẩu" value={this.state.password} />
                           </div>
                           <div className="control-group">
                             <label className="checkbox">
-                              <input type="checkbox" /> <span>Remember me</span>
+                              <input type="checkbox" /> <span>Ghi nhớ</span>
 				                    </label>
                           </div>
                         </form>
                         <button className="input-group-btn">
-                          <Link to="/signup" onClick={ () => {$("#login").fadeOut(0);} }>Sign Up</Link>
+                          <Link to="/signup" onClick={ () => {$("#login").fadeOut(0);} }> Đăng kí </Link>
                         </button>
-                        <button type="submit" onClick={this.signin} className="btn btn-success">Sign in</button>
-                        <button className="btn closeLogin" onClick={() => this.setState({ openLogin: false })} data-dismiss="modal" aria-hidden="true">Close</button>
+                        <button type="submit" onClick={this.signin} className="btn btn-success"> Đăng nhập </button>
+                        <button className="btn closeLogin" onClick={() => this.setState({ openLogin: false })} data-dismiss="modal" aria-hidden="true"> Đóng </button>
                       </div>
                     </div>}
                   </li>
@@ -141,7 +151,7 @@ class Header extends Component {
           onClick={() => {
             this.setState({ openLogin: false });
           }}
-          class="modal-backdrop fade in"></div> }
+          className="modal-backdrop fade in"></div> }
       </header>
     );
   }
@@ -149,10 +159,13 @@ class Header extends Component {
 
 const mapStateToProps = (state) => ({
   account: state.appReducer.account,
+  cartTotal: state.appReducer.cartTotal,
+  cartQuantity: state.appReducer.cartQuantity,
+  errorLogin: state.appReducer.errorLogin,
 });
 
 const mapDispatchToProps = ({
-  signin,
+  signin, initCart, initAccount, signout, search,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

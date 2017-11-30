@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import $ from 'jquery';
+import { updateCart } from './actions';
 import { getCookie, setCookie } from '../../globalFunc';
 
 class Cart extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cart: {},
+      cart: [],
+      cartTotal: 0,
+      cartQuantity: 0,
     };
   }
 
@@ -19,36 +21,101 @@ class Cart extends Component {
     // $(".closeLogin").click(() => {
     //   $("#login").fadeOut(0);
     // });
-    this.setState({ cart: getCookie('cart') });
+    // console.log('-Cart String-  =', getCookie('cart'));
+    let cartArr = [];
+    const cartString = getCookie('cart');
+    cartArr = (cartString === '') ? [] : JSON.parse(cartString);
+    // console.log('CART Array =', cartArr);
+    let cartTotal = parseFloat(getCookie('cartTotal'));
+    let cartQuantity = parseInt(getCookie('cartQuantity'), 10);
+    this.setState({ cart: cartArr });
+    this.setState({ cartTotal: cartTotal });
+    this.setState({ cartQuantity: cartQuantity });
+    // console.log('---TuyenTN---', (this.state.cart));
   }
 
   change = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   }
 
+  incQuantity = (item) => {
+    let cartArr = this.state.cart;
+    let index = this.lookCart(item, cartArr);
+    cartArr[index].quantity += 1;
+    let cartTotal = this.state.cartTotal + item.price;
+    let cartQuantity = this.state.cartQuantity + 1;
+    this.setState({ cart: cartArr });
+    this.setState({ cartTotal: cartTotal });
+    this.setState({ cartQuantity: cartQuantity });    
+    setCookie('cart', JSON.stringify(cartArr));
+    setCookie('cartTotal', JSON.stringify(cartTotal));
+    setCookie('cartQuantity', JSON.stringify(cartQuantity));
+    this.props.updateCart(cartTotal, cartQuantity);
+  }
+  decQuantity = (item) => {
+    if (item.quantity === 0) return;
+    let cartArr = this.state.cart;
+    let index = this.lookCart(item, cartArr);
+    cartArr[index].quantity -= 1;
+    let cartTotal = this.state.cartTotal - item.price;
+    let cartQuantity = this.state.cartQuantity - 1;
+    this.setState({ cart: cartArr });
+    this.setState({ cartTotal: cartTotal });
+    this.setState({ cartQuantity: cartQuantity });
+    setCookie('cart', JSON.stringify(cartArr));
+    setCookie('cartTotal', JSON.stringify(cartTotal));
+    setCookie('cartQuantity', JSON.stringify(cartQuantity));
+    this.props.updateCart(cartTotal, cartQuantity);    
+  }
+  remove = (item) => {
+    let cartArr = this.state.cart;
+    let index = this.lookCart(item, cartArr);
+    cartArr.splice(index, 1);
+    let cartTotal = this.state.cartTotal - item.price*item.quantity;
+    let cartQuantity = this.state.cartQuantity - item.quantity;
+    this.setState({ cart: cartArr });
+    this.setState({ cartTotal: cartTotal });
+    this.setState({ cartQuantity: cartQuantity });    
+    setCookie('cart', JSON.stringify(cartArr));
+    setCookie('cartTotal', JSON.stringify(cartTotal));
+    setCookie('cartQuantity', JSON.stringify(cartQuantity));
+    this.props.updateCart(cartTotal, cartQuantity);    
+  }
+  lookCart = (item, cartArr) => {
+    let i;
+    for (i = 0; i < cartArr.length; i++) {
+      if (cartArr[i].productId === item.productId) {
+        break;
+      }
+    }
+    return i;
+  }
+
   render() {
     return (
         <div className="span9">
         <ul className="breadcrumb">
-            <li><a href="index.html">Home</a> <span className="divider">/</span></li>
-            <li className="active"> SHOPPING CART</li>
+            <li><a href="index.html">Trang chủ</a> <span className="divider">/</span></li>
+            <li className="active"> GIỎ HÀNG</li>
         </ul>
-        <h3>  SHOPPING CART [ <small>3 Item(s) </small>]
-        <Link className="btn btn-large pull-right" to="/home"><i className="icon-arrow-left"></i> Continue Shopping </Link></h3>	
+        <h3>  GIỎ HÀNG  [ <small>{ this.state.cartQuantity } sản phẩm </small>]
+        <Link className="btn btn-large pull-right" to="/home"><i className="icon-arrow-left"></i> Tiếp tục mua </Link></h3>	
         <hr className="soft"/>
+        {(!this.props.account.userName)? (
         <table className="table table-bordered">
-            <tr><th> I AM ALREADY REGISTERED  </th></tr>
+          <tbody>
+            <tr><th> Đăng nhập  </th></tr>
              <tr> 
              <td>
                 <form className="form-horizontal">
                     <div className="control-group">
-                      <label className="control-label" for="inputUsername">Username</label>
+                      <label className="control-label" htmlFor="inputUsername">Username</label>
                       <div className="controls">
                         <input type="text" id="inputUsername" placeholder="Username" />
                       </div>
                     </div>
                     <div className="control-group">
-                      <label className="control-label" for="inputPassword1">Password</label>
+                      <label className="control-label" htmlFor="inputPassword1">Password</label>
                       <div className="controls">
                         <input type="password" id="inputPassword1" placeholder="Password" />
                       </div>
@@ -66,36 +133,51 @@ class Cart extends Component {
                 </form>
               </td>
               </tr>
+            </tbody>
         </table>		
-                
+        ): null}  
+
         <table className="table table-bordered">
                   <thead>
                     <tr>
-                      <th>Product</th>
-                      <th>Description</th>
-                      <th>Quantity/Update</th>
-                      <th>Price</th>
-                      <th>Discount</th>
-                      <th>Tax</th>
-                      <th>Total</th>
+                      <th>Sản phẩm</th>
+                      <th> Mô tả </th>
+                      <th>Cập nhật</th>
+                      <th> Giá</th>
+                      <th> Giảm giá</th>
+                      <th> Thuế</th>
+                      <th> Tổng</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td> <img width="60" src="themes/images/products/4.jpg" alt=""/></td>
-                      <td>MASSA AST<br/>Color : black, Material : metal</td>
+                    { this.state.cart.map((item, index) =>  (
+                    <tr key={item.productId}>
+                      <td> <img width="60" src={item.image} alt=""/></td>
+                      <td>{ item.productName }<br/>Color : black, Material : metal</td>
                       <td>
                         <div className="input-append">
-                            <input className="span1" style={{ maxWidth: "34px" }} placeholder="1" id="appendedInputButtons" size="16" type="text" />
-                            <button className="btn" type="button"><i className="icon-minus"></i></button>
-                            <button className="btn" type="button"><i className="icon-plus"></i></button>
-                            <button className="btn btn-danger" type="button"><i className="icon-remove icon-white"></i></button>
+                            <input className="span1" style={{ maxWidth: "34px" }} placeholder={item.quantity} id="appendedInputButtons" size="16" type="text" />
+                            <button className="btn" type="button" onClick={ () => this.decQuantity(item)}><i className="icon-minus"></i></button>
+                            <button className="btn" type="button" onClick={ () => this.incQuantity(item)}><i className="icon-plus"></i></button>
+                            <button className="btn btn-danger" type="button" onClick={ () => this.remove(item)}><i className="icon-remove icon-white"></i></button>
                         </div>
                       </td>
-                      <td>$120.00</td>
-                      <td>$25.00</td>
-                      <td>$15.00</td>
-                      <td>$110.00</td>
+                      <td>{ Number((item.price*item.quantity).toFixed(2)) }</td>
+                      <td>0</td>
+                      <td>{ 0 }</td>
+                      <td>{ Number((item.price*item.quantity).toFixed(2)) }</td>
+                    </tr>
+                    )
+                  )}
+                  <tr>
+                      <td> </td>
+                      <td></td>
+                      <td>
+                      </td>
+                      <td></td>
+                      <td></td>
+                      <td>Tổng</td>
+                      <td>{ this.state.cartTotal }</td>
                     </tr>
                     </tbody>
                 </table>
@@ -119,7 +201,7 @@ class Cart extends Component {
                     </tbody>
                 </table>
                 
-        <Link className="btn btn-large" to="/home"><i className="icon-arrow-left"></i> Continue Shopping </Link>
+        <Link className="btn btn-large" to="/home"><i className="icon-arrow-left"></i> Tiếp tục mua </Link>
         <a href="login.html" className="btn btn-large pull-right">Next <i className="icon-arrow-right"></i></a>
         
     </div>
@@ -128,11 +210,11 @@ class Cart extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  
+  account: state.appReducer.account,  
 });
 
 const mapDispatchToProps = ({
-  
+  updateCart,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Cart);

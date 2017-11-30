@@ -10,6 +10,7 @@ import Signup from '../Signup';
 import NotFound from '../NotFound';
 import ProductDetail from '../ProductDetail';
 import Cart from '../Cart';
+// import Demo from '../Demo';
 
 import '../..//App.css';
 
@@ -17,8 +18,11 @@ import { getCookie, setCookie } from '../../globalFunc';
 
 class App extends Component {
   componentDidMount() {
-    setCookie('username', 'heo');
-    setCookie('age', '');
+    if (getCookie('username') === '') setCookie('username', 'heo');
+    if (getCookie('age') === '') setCookie('age', '');
+    if (getCookie('cart') === '') setCookie('cart', '');
+    if (getCookie('cartQuantity') === '') setCookie('cartQuantity', '0');
+    if (getCookie('cartTotal') === '') setCookie('cartTotal', '0.0');
   }
 
   render() {
@@ -38,6 +42,13 @@ class App extends Component {
         <Footer/>
       </div>
     );
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.location !== this.props.location) {
+      this.setState({ prevPath: this.props.location })
+    }
+    console.log('Index App -> this.state.prevPath', this.state.prevPath);
   }
 }
 
