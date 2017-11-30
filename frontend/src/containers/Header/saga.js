@@ -26,6 +26,16 @@ function* postForm(action) {
 }
 
 function* search(action) {
+    const url = `${address}/categories/`;
+    let response;    
+    yield fetch(url)
+    .then(res => { return res.json();})
+    .then(responseJson => { response = responseJson });
+    // console.log('---TuyenTN---', response);
+    yield put({ type: "RES_SEARCH", response });
+}
+
+function* getCategories(action) {
     const url = 'http://localhost:3001/products?keywords='+'\''+action.searchKey+'\'';
     let response;    
     yield fetch(url)
@@ -38,8 +48,8 @@ function* search(action) {
 function* signinsaga() {
   yield takeLatest("SIGNIN", postForm);
   yield takeLatest("SEARCH", search);
+  yield takeLatest("REQ_CATEGORIES", getCategories);
 }
-
 
 export default signinsaga;
 

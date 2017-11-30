@@ -31,3 +31,9 @@ export const search = (searchKey) => {
         searchKey,
     }
 };
+
+export const reqCategories = () => {
+    return {
+        type: 'REQ_CATEGORIES',
+    }
+};

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { signin, initCart, initAccount, signout, search } from './actions';
+import { signin, initCart, initAccount, signout, search, reqCategories } from './actions';
 // import logo from '../../logo.svg';
 import '../..//App.css';
 import $ from 'jquery';
@@ -26,9 +26,10 @@ class Header extends Component {
     // $(".closeLogin").click(() => {
     //   $("#login").fadeOut(0);
     // });
-    console.log('---didmount Account---', this.props.account);
+    // console.log('---didmount Account---', this.props.account);
     this.props.initCart();
     this.props.initAccount();
+    this.props.reqCategories();
   }
 
   signin = () => {
@@ -165,7 +166,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = ({
-  signin, initCart, initAccount, signout, search,
+  signin, initCart, initAccount, signout, search, reqCategories,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);
