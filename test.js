@@ -136,7 +136,6 @@ dbContext.sequelize.sync().then(function () {
                         console.log("supplers: ", suppliers);
                         //feed data
                         console.log("creating products");
-
                         let allItems = [];
                         for (let i in suppliers) {
                             let supplier = suppliers[i];
@@ -177,7 +176,6 @@ dbContext.sequelize.sync().then(function () {
 
                                 })
                             }).catch(err => console.log("err: ", err));
-
                     }).catch((err) => console.log("error: ", err));
                     
             }).catch(err => console.log("error: ", err));

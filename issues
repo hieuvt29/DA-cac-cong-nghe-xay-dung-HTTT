@@ -8,3 +8,11 @@
 - Liên kết giữa Product với Category
 --------------
 - Tạo product, cần thêm xử lý liên kết bảng
+-----------------
+- xóa check account role là supplier, thay vào đó là admin
+- bỏ hết liên kết của supplier với account
+
+----------------
+- Thống kê: 
++ sản phẩm bán chạy
++ Khách hàng mua hàng nhiều
