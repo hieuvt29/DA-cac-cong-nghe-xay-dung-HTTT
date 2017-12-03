@@ -64,8 +64,8 @@ function getInfo() {
 
   add1(2);
  */
-
-/* Check fulltext search
+/* 
+// Check fulltext search
 var db = config.db;
 var sequelize = new Sequelize(db.database, db.username, db.password, db);
 var Tests = sequelize.define('test', {
@@ -83,14 +83,32 @@ var Tests = sequelize.define('test', {
 });
 
 // sequelize.sync();
-var keywords = "sử dụng"
-var fields = ['b']
-var callback = (err, result) => {console.error(err); console.log(result)}
+var keywords = "-";
+var fields = ['a', 'b'];
+var condition = {
+    a: 10
+};
+
+var callback = (err, result) => {
+    if (err) {
+        console.log("Something fail: ", err);
+    } else {
+        let res = result.map(val => val.dataValues);
+        console.log("res: ", res);
+    }
+}
 sequelize.query(
-    'SELECT ' + (fields.length?fields.join(','):'*') +' FROM tests WHERE MATCH (b) AGAINST (:keywords)',{ replacements: {keywords: keywords}, model: Tests, type: sequelize.QueryTypes.SELECT}
-).then(function(result){
+    'SELECT ' + (fields.length ? fields.join(',') : '*') + ' FROM tests WHERE MATCH (b) AGAINST (:keywords)', {
+        where: condition,
+        replacements: {
+            keywords: keywords
+        },
+        model: Tests,
+        type: sequelize.QueryTypes.SELECT
+    }
+).then(function (result) {
     callback(null, result);
-}).catch(function(err){
+}).catch(function (err) {
     callback(err);
 })
  */

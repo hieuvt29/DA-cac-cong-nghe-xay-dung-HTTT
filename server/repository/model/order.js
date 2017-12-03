@@ -8,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
         },
         customerId: {
             type: DataTypes.UUID,
-            allowNull: false
+            allowNull: null
         },
         createdAt: {
             type: DataTypes.DATE,
