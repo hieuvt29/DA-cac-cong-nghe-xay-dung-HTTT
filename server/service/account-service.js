@@ -1,20 +1,21 @@
 var nv = require('node-validator');
 var rule = require('./validate/user-validator');
 
-var AccountService = function (accountRepository, customerService, adminService) {
+var AccountService = function (accountRepository) {
     this.accountRepository = accountRepository;
-    this.customerService = customerService;
-    this.adminService = adminService;
 }
 
 AccountService.prototype.getOne = function (condition, select, callback) {
     condition.isDelete = false;
     condition.isActive = true;
 
-    this.accountRepository.findOneBy(condition, select, function (err, result) {
+    this.accountRepository.findOneBy(condition, select, null, function (err, result) {
         if (err) {
             return callback(err);
         } else if (result) {
+            delete result.isActive;
+            delete result.isDelete;
+            
             return callback(null, result);
         } else {
             return callback({
@@ -32,6 +33,10 @@ AccountService.prototype.getMany = function (condition, orderBy, select, page, l
         if (err) {
             return callback(err);
         } else if (result) {
+            for(i in result){
+                delete result[i].isActive;
+                delete result[i].isDelete;
+            }
             return callback(null, result);
         } else {
             return callback({
@@ -44,7 +49,7 @@ AccountService.prototype.getMany = function (condition, orderBy, select, page, l
 AccountService.prototype.create = async function (accountProps, callback) {
     var self = this;
     //validate props
-    var val = await validate(rule.checkAccount, accountProps);
+    var val = await validate(rule, accountProps);
     if (val.numErr > 0){
         return callback({type: "Bad Request", error: val.error});
     }
@@ -60,33 +65,9 @@ AccountService.prototype.create = async function (accountProps, callback) {
                 if (err) {
                     return callback(err);
                 } else {
-                    accountProps.accountId = newAccount.accountId;
-                    if (newAccount.role == 1) {
-                        // customer
-                        self.customerService.create(accountProps, function(err, newCustomer){
-                            if (err) {
-                                newAccount.destroy();
-                                return callback(err);
-                            } else {
-                                newAccount = Object.assign(newAccount.dataValues, newCustomer.dataValues);
-                                return callback(null, newAccount);
-                            }
-                        })
-                    } else if (newAccount.role == 0){
-                        // admin
-                        self.adminService.create(accountProps, function(err, newAdmin){
-                            if (err) {
-                                newAccount.destroy();
-                                return callback(err);
-                            } else {
-                                newAccount = Object.assign(newAccount.dataValues, newAdmin.dataValues);
-                                return callback(null, newAccount);
-                            }
-                        })
-                    } else {
-                        newAccount.destroy();
-                        return callback({type: "Bad Request"});
-                    }
+                    delete newAccount.isActive;
+                    delete newAccount.isDelete;
+                    return callback(null, newAccount);
                 }
             })
         } else {
@@ -100,11 +81,10 @@ AccountService.prototype.create = async function (accountProps, callback) {
 AccountService.prototype.update = async function (accountProps, callback) {
     var self = this;
     //validate props
-    var val = await validate(rule.checkAccount, accountProps);
+    var val = await validate(rule, accountProps);
     if (val.numErr > 0){
         return callback({type: "Bad Request", error: val.error});
     }
-
 
     self.accountRepository.findOneBy({
         accountId: accountProps.accountId
@@ -133,7 +113,7 @@ AccountService.prototype.update = async function (accountProps, callback) {
 
 AccountService.prototype.changePassword = async function (accountProps, callback) {
     var self = this;
-    var val = await validate(rule.checkAccount, accountProps);
+    var val = await validate(rule, accountProps);
     if (val.numErr > 0){
         return callback({type: "Bad Request", error: val.error});
     }
@@ -155,7 +135,7 @@ AccountService.prototype.changePassword = async function (accountProps, callback
 AccountService.prototype.changeUserName = async function (accountProps, callback) {
     var self = this;
     // validate accountProps 
-    var val = await validate(rule.checkAccount, accountProps);
+    var val = await validate(rule, accountProps);
     if (val.numErr > 0){
         return callback({type: "Bad Request", error: val.error});
     }
@@ -170,27 +150,11 @@ AccountService.prototype.changeUserName = async function (accountProps, callback
                 type: 'Duplicated'
             });
         } else {
-            self.accountRepository.findOneBy({
-                accountId: accountProps.accountId
-            }, [], null, function (err, accountObj) {
+            self.accountRepository.update(accountObj, null, function (err, result) {
                 if (err) {
                     callback(err);
-                } else if (accountObj) {
-                    accountObj = Object.assign({},
-                        accountObj,
-                        accountProps
-                    );
-                    self.accountRepository.update(accountObj, null, function (err, result) {
-                        if (err) {
-                            callback(err);
-                        } else if (result) {
-                            callback(null, accountObj)
-                        }
-                    })
-                } else {
-                    callback({
-                        type: 'Not Found'
-                    });
+                } else if (result) {
+                    callback(null, accountObj)
                 }
             })
         }
@@ -198,9 +162,8 @@ AccountService.prototype.changeUserName = async function (accountProps, callback
 
 }
 
-
 AccountService.prototype.delete = async function (accountProps, callback) {
-    var val = await validate(rule.checkAccount, accountProps);
+    var val = await validate(rule, accountProps);
     if (val.numErr > 0) {
         return callback({
             type: "Bad Request",

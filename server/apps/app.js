@@ -30,12 +30,6 @@ var productRepository = new ProductRepository(dbContext);
 var AccountRepository = require('../repository/account-repository');
 var accountRepository = new AccountRepository(dbContext);
 
-var CustomerRepository = require('../repository/customer-repository');
-var customerRepository = new CustomerRepository(dbContext);
-
-var AdminRepository = require('../repository/admin-repository');
-var adminRepository = new AdminRepository(dbContext);
-
 var SupplierRepository = require('../repository/supplier-repository');
 var supplierRepository = new SupplierRepository(dbContext);
 
@@ -53,14 +47,8 @@ var productService = new ProductService(productRepository);
 var SupplierService = require('../service/supplier-service');
 var supplierService = new SupplierService(supplierRepository);
 
-var CustomerService = require('../service/customer-service');
-var customerService = new CustomerService(customerRepository);
-
-var AdminService = require('../service/admin-service');
-var adminService = new AdminService(adminRepository);
-
 var AccountService = require('../service/account-service');
-var accountService = new AccountService(accountRepository, customerService, adminService);
+var accountService = new AccountService(accountRepository);
 
 var CategoryService = require('../service/category-service');
 var categoryService = new CategoryService(categoryRepository);
@@ -78,19 +66,13 @@ var accountController = new AccountController(accountService);
 var SupplierController = require('./controllers/supplier-controller');
 var supplierController = new SupplierController(supplierService);
 
-var CustomerController = require('./controllers/customer-controller');
-var customerController = new CustomerController(customerService);
-
-var AdminController = require('./controllers/admin-controller');
-var adminController = new AdminController(adminService);
-
 var CategoryController = require('./controllers/category-controller');
 var categoryController = new CategoryController(categoryService);
 
 var OrderController = require('./controllers/order-controller');
 var orderController = new OrderController(orderService);
 //config the passport 
-require('../config/passport')(passport, accountRepository, supplierRepository, customerRepository);
+require('../config/passport')(passport, accountService);
 
 //config the session for passport
 app.use(session({
@@ -103,12 +85,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routers
-require('./routes/product-route')(app, productController);
+require('./routes/product-route')(app, productController, passport);
 require('./routes/account-route')(app, accountController, passport);
 require('./routes/supplier-route')(app, supplierController);
-require('./routes/admin-route')(app, adminController);
 require('./routes/category-route')(app, categoryController);
-require('./routes/customer-route')(app, customerController);
 require('./routes/order-route')(app, orderController);
 
 app.use(function(err, req, res, next) {
@@ -117,7 +97,7 @@ app.use(function(err, req, res, next) {
     if(err.type) {
         switch(err.type) {
             case 'Bad Request':
-                return res.status(400).send({ error: err });
+                return res.status(400).send(err);
                 break;
             case 'Request Failed':
                 return res.status(502).send({ error: 'Request Failed' });

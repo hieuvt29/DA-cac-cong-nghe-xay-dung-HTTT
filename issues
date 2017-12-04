@@ -37,4 +37,6 @@ Tác dụng của Service:
 
 --------- Task -----------
 - Tìm kiếm category: Sub-Category, parent category
+- change databases: merge customer, admin, account => account with full information
+
 

@@ -135,15 +135,13 @@ dbContext.sequelize.sync().then(function () {
             userName: "hieuvt",
             password: '123321',
             role: 0,
-            Admin: {
-                firstName: "vu",
-                lastName: "hieu"
-            }
+            firstName: "vu",
+            lastName: "hieu",
+            gender: "male",
+            email: "hieuvt@gmail.com"
         }
         // create account along with admin
-        dbContext.Account.create(accountsProps, {
-                include: [dbContext.Account.Admin]
-            })
+        dbContext.Account.create(accountsProps)
             .then((account) => {
                 console.log("account created: ", account);
                 console.log("creating suppliers...");

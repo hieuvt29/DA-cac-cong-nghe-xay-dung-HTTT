@@ -3,7 +3,7 @@ var ProductRepository = function (dbContext) {
     this.Product = dbContext.Product;
 }
 
-ProductRepository.prototype.fulltextSearch = function (, association, select, page, limit, callback) {
+ProductRepository.prototype.fulltextSearch = function (keywords, association, select, page, limit, callback) {
     this.dbContext.sequelize.query(
         "SELECT " + (select.length?select.join(','):'*') + ", MATCH (productName, description) AGAINST (:keywords IN BOOLEAN MODE) AS score FROM Products WHERE MATCH (productName, description) AGAINST (:keywords IN BOOLEAN MODE) AND isActive = 1 AND isDelete = 0 LIMIT :limit OFFSET :page ", {
             replacements: {

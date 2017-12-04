@@ -28,6 +28,8 @@ ProductService.prototype.getOne = function (condition, select, callback) {
         if (err) {
             return callback(err);
         } else if (result) {
+            delete result.isDelete;
+            delete result.isActive;
             return callback(null, result);
         } else {
             return callback({
@@ -54,6 +56,10 @@ ProductService.prototype.getMany = function (condition, orderBy, select, page, l
         if (err) {
             return callback(err);
         } else if (result) {
+            for(i in result) {
+                delete result[i].isDelete;
+                delete result[i].isActive;
+            }
             return callback(null, result);
         } else {
             return callback({
@@ -76,6 +82,9 @@ ProductService.prototype.create = async function (productProps, callback) {
         if (err) {
             return callback(err);
         } else if (result) {
+            delete result.isDelete;
+            delete result.isActive;
+            result.setCategories()
             return callback(null, result);
         } else {
             return callback({
