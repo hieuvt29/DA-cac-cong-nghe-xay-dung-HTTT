@@ -16,3 +16,27 @@
 - Thống kê: 
 + sản phẩm bán chạy
 + Khách hàng mua hàng nhiều
+
+- Thanh toán giỏ hàng
+- Quản lý đơn hàng
+- Quản lý bài viết
+- Quản lý Khách hàng
+- Quản lý Danh Mục
+- Quản lý Nhà Cung Cấp
+
+
+--------------
+Tác dụng của Controller: 
++ Có thể kết hợp các Service
++ Phục vụ các chức năng tương ứng với thao tác của người dùng
+
+Tác dụng của Service: 
++ Có thể giao tiếp với nhau
++ Validate đầu vào
++ Handle các lỗi
+
+--------- Task -----------
+- Tìm kiếm category: Sub-Category, parent category
+- change databases: merge customer, admin, account => account with full information
+
+

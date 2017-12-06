@@ -12,7 +12,9 @@ AccountRepository.prototype.findOneBy = function(condition, select, association,
         })
         .then(function(result) {
             if (result){
-                callback(null, result.dataValues);
+                delete result.dataValues.isDelete;
+                delete result.dataValues.isActive;
+                callback(null, result);
             } else {
                 callback(null, null);
             }
@@ -35,10 +37,11 @@ AccountRepository.prototype.findAllBy = function (condition, association, orderB
         })
         .then(function (result) {
             if (result){
-                let res = result.map(function(val){
-                    return val.dataValues
+                result.forEach(function(o){
+                    delete o.dataValues.isDelete;
+                    delete o.dataValues.isActive;
                 })
-                callback(null, res);
+                callback(null, result);
             } else {
                 callback(null, null);
             }
@@ -56,6 +59,8 @@ AccountRepository.prototype.save = function(accountObj, association, callback) {
     })
     .then(function(result){
         if (result){
+            delete result.dataValues.isDelete;
+            delete result.dataValues.isActive;
             callback(null, result);
         } else {
             callback(null, null);

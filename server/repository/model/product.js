@@ -10,10 +10,6 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.TEXT,
             allowNull: false
         },
-        categoryId : {
-            type: DataTypes.UUID,
-            allowNull: false
-        },
         supplierId : {
             type: DataTypes.UUID,
             allowNull: false
