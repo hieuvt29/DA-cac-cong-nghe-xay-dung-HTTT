@@ -1,20 +1,36 @@
-var dependencies = {
-} // solve problem "this" keyword does not reference to this class
+var rule = require('../../common/validate/order-validator');
+var validate = require('../../common/validate-function');
 
-var OrderController = function (orderService) {
-    dependencies.orderService = orderService;
+var dependencies = {} // solve problem "this" keyword does not reference to this class
 
+var OrderController = function (orderRepository) {
+    dependencies.orderRepository = orderRepository;
 }
 
 OrderController.prototype.getOne = function (req, res, next) {
+    var select = req.fields ? req.fields : [];
     var orderId = req.params.orderId;
 
-    dependencies.orderService.getOne({ 'orderId': orderId }, [], function (err, order) {
+    var condition = {
+        'orderId': orderId
+    }
+
+    var association = [{
+        model: dependencies.orderRepository.dbContext.Product, 
+        through: {
+            attributes: ['orderQuantity', 'productId']
+        }
+    }];
+    dependencies.orderRepository.findOneBy(condition, association, select, function (err, result) {
         if (err) {
-            next(err);
+            return next(err);
+        } else if (result) {
+            res.order = result;
+            return next();
         } else {
-            res.order = order;
-            next();
+            return next({
+                type: "Not Found"
+            });
         }
     })
 }
@@ -26,55 +42,119 @@ OrderController.prototype.getMany = function (req, res, next) {
     var page = req.options.skip;
     var limit = req.options.limit;
 
-    dependencies.orderService.getMany(condition, orderBy, select, page, limit, function (err, orders) {
+    var association = [{
+        model: dependencies.orderRepository.dbContext.Product, 
+        through: {
+            attributes: ['orderQuantity', 'productId']
+        }
+    }];
+    dependencies.orderRepository.findAllBy(condition, association, orderBy, select, page, limit, function (err, result) {
         if (err) {
-            next(err);
+            return next(err);
+        } else if (result) {
+            res.orders = result;
+            return next();
         } else {
-            res.orders = orders;
-            next();
+            return next({
+                type: "Not Found"
+            });
         }
     })
 }
 
-OrderController.prototype.create = function (req, res, next) {
+OrderController.prototype.create = async function (req, res, next) {
     var orderProps = req.body;
+    //validate props
+    var val = await validate(rule, orderProps);
+    if (val.numErr > 0) {
+        return next({
+            type: "Bad Request",
+            error: val.error
+        });
+    }
 
-    dependencies.orderService.create(orderProps, function (err, order) {
+    dependencies.orderRepository.saveWithTransaction(orderProps, function (err, result) {
         if (err) {
             next(err);
         } else {
-            res.order = order;
+            res.order = result;
             next();
         }
     })
 }
 
-OrderController.prototype.update = function (req, res, next) {
+OrderController.prototype.update = async function (req, res, next) {
     var orderId = req.params.orderId;
     var orderProps = req.body;
     orderProps.orderId = orderId;
 
-    dependencies.orderService.update(orderProps, function (err, order) {
+    //validate props
+    var val = await validate(rule, orderProps);
+    if (val.numErr > 0) {
+        return next({
+            type: "Bad Request",
+            error: val.error
+        });
+    }
+    var condition = {
+        orderId: orderProps.orderId
+    }
+    var association = [{
+        model: dependencies.orderRepository.dbContext.Product
+    }];
+    dependencies.orderRepository.findOneBy(condition, association, [], function (err, orderObj) {
         if (err) {
             next(err);
+        } else if (orderObj) {
+            orderObj.dataValues = Object.assign({}, orderObj.dataValues, orderProps);
+
+            dependencies.orderRepository.updateWithTransaction(orderObj, function (err, result) {
+                if (err) {
+                    return next(err);
+                } else {
+                    res.order = orderObj.dataValues;
+                    return next();
+                }
+            })
         } else {
-            res.order = order;
-            next();
+            next({
+                type: 'Not Found'
+            });
         }
     })
 }
-
-OrderController.prototype.delete = function (req, res, next) {
+/* 
+OrderController.prototype.delete = async function (req, res, next) {
     var orderId = req.params.orderId;
 
-    dependencies.orderService.delete({ 'orderId': orderId }, function (err, result) {
+    var condition = {
+        orderId: orderProps.orderId
+    }
+
+    dependencies.orderRepository.findOneBy(condition, [], null, function (err, orderObj) {
         if (err) {
-            next(err);
+            return next(err);
+        } else if (orderObj) {
+
+            dependencies.orderRepository.update(orderObj, null, function (err, result) {
+                if (err) {
+                    return next(err);
+                } else if (result) {
+                    return next({
+                        type: "Deleted"
+                    });
+                } else {
+                    return next({
+                        type: 'Bad Request'
+                    });
+                }
+            })
         } else {
-            res.result = result;
-            next();
+            return next({
+                type: 'Not Found'
+            });
         }
     })
-}
+} */
 
 module.exports = OrderController;

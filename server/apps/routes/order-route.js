@@ -21,8 +21,8 @@ module.exports = function(app, orderController){
         orderMw.update
     );
 
-    app.delete('/orders/:orderId',
+/*     app.delete('/orders/:orderId',
         orderController.delete,
         orderMw.delete
-    )
+    ) */
 }

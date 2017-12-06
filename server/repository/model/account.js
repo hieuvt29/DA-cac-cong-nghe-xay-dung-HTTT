@@ -23,6 +23,34 @@ module.exports = function(sequelize, DataTypes) {
             allowNull: false,
             defaultValue: 1
         },
+        firstName: {
+            type: DataTypes.STRING(20),
+            allowNull: false
+        },
+        lastName: {
+            type: DataTypes.STRING(20),
+            allowNull: false
+        },
+        gender : {
+            type: DataTypes.STRING(10),
+            allowNull: false
+        },
+        dob : {
+            type: DataTypes.DATE,
+            allowNull: true
+        },
+        email : {
+            type: DataTypes.STRING(40),
+            allowNull: false
+        },
+        telephone: {
+            type: DataTypes.STRING(20),
+            allowNull: true
+        },
+        address : {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
         isActive: {
             type: DataTypes.BOOLEAN,
             allowNull: false,

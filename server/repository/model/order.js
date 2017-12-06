@@ -1,3 +1,4 @@
+var orderStates = require('../../common/order-states');
 module.exports = function(sequelize, DataTypes) {
     return sequelize.define('Order', {
         orderId: {
@@ -6,7 +7,7 @@ module.exports = function(sequelize, DataTypes) {
             primaryKey: true,
             defaultValue: DataTypes.UUIDV4
         },
-        customerId: {
+        accountId: {
             type: DataTypes.UUID,
             allowNull: null
         },
@@ -25,7 +26,7 @@ module.exports = function(sequelize, DataTypes) {
         state: {
             type: DataTypes.STRING(20),
             allowNull: false,
-            defaultValue: "Pending"
+            defaultValue: orderStates.PENDING
         }
     })
 }
