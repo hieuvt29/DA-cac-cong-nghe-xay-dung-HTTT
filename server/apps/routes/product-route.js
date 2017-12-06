@@ -24,6 +24,11 @@ module.exports = function(app, productController){
         productMw.getMany
     );
 
+    app.get('/search',
+        productController.fulltextSearch,
+        productMw.getMany
+    );
+
     app.post('/products', 
         isLoggedIn,
         productController.create,

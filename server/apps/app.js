@@ -39,40 +39,23 @@ var categoryRepository = new CategoryRepository(dbContext);
 var OrderRepository = require('../repository/order-repository');
 var orderRepository = new OrderRepository(dbContext);
 
-
-// Services
-var ProductService = require('../service/product-service');
-var productService = new ProductService(productRepository);
-
-var SupplierService = require('../service/supplier-service');
-var supplierService = new SupplierService(supplierRepository);
-
-var AccountService = require('../service/account-service');
-var accountService = new AccountService(accountRepository);
-
-var CategoryService = require('../service/category-service');
-var categoryService = new CategoryService(categoryRepository);
-
-var OrderService = require('../service/order-service');
-var orderService = new OrderService(orderRepository);
-
 // Controllers
 var ProductController = require('./controllers/product-controller');
-var productController = new ProductController(productService);
+var productController = new ProductController(productRepository, categoryRepository, supplierRepository);
 
 var AccountController = require('./controllers/account-controller');
-var accountController = new AccountController(accountService);
+var accountController = new AccountController(accountRepository);
 
 var SupplierController = require('./controllers/supplier-controller');
-var supplierController = new SupplierController(supplierService);
+var supplierController = new SupplierController(supplierRepository);
 
 var CategoryController = require('./controllers/category-controller');
-var categoryController = new CategoryController(categoryService);
+var categoryController = new CategoryController(categoryRepository);
 
 var OrderController = require('./controllers/order-controller');
-var orderController = new OrderController(orderService);
-//config the passport 
-require('../config/passport')(passport, accountService);
+var orderController = new OrderController(orderRepository);
+//config the passport
+require('../config/passport')(passport, accountRepository);
 
 //config the session for passport
 app.use(session({
@@ -100,19 +83,19 @@ app.use(function(err, req, res, next) {
                 return res.status(400).send(err);
                 break;
             case 'Request Failed':
-                return res.status(502).send({ error: 'Request Failed' });
+                return res.status(502).send({ message: 'Request Failed' });
                 break;
             case 'Not Found':
-                return res.status(404).send({ error: 'Not Found' });
+                return res.status(404).send({ message: 'Not Found' });
                 break;
             case 'Duplicated':
-                return res.status(400).send({ error: 'Duplicated' });
+                return res.status(400).send({ message: 'Duplicated' });
                 break;
             case 'Deleted':
-                return res.status(200).send({ error: 'Deleted' });
+                return res.status(200).send({ message: 'Deleted' });
                 break;
             default:
-                return res.status(500).send({ error: 'Something failed!' });
+                return res.status(500).send({ message: 'Something failed!' });
             
         }
     } else {
@@ -121,7 +104,7 @@ app.use(function(err, req, res, next) {
 })
 
 app.use(function(err, req, res, next) {
-    res.status(500).send({ error: 'Something failed!' });
+    res.status(500).send({ message: 'Something failed!' });
 })
 
 var port = config.port;

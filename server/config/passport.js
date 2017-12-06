@@ -6,14 +6,14 @@ var passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
 
 
-module.exports = function (passport, accountService) {
+module.exports = function (passport, accountRepository) {
     //session configure
     passport.serializeUser(function (user, done) {
         done(null, user.accountId);
     });
 
     passport.deserializeUser(function (id, done) {
-        accountService.getOne({accountId: id}, [], function(err, account){
+        accountRepository.findOneBy({accountId: id}, [], [], function(err, account){
             return done(err, account);
         })
     });
@@ -24,7 +24,7 @@ module.exports = function (passport, accountService) {
             var condition = {
                 userName: username
             }
-            accountService.getOne(condition, [], function (err, user) {
+            accountRepository.findOneBy({accountId: id}, [], [], function(err, user){
                 if (err) {
                     return done(err);
                 }

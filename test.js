@@ -113,7 +113,7 @@ sequelize.query(
 })
  */
 
-// IMPORT DATA
+/* // IMPORT DATA
 console.log("start...");
 // load data
 let data = fs.readFileSync('./crawl-data.json', {
@@ -158,7 +158,7 @@ dbContext.sequelize.sync().then(function () {
                             let items = data[supplier.supplierName];
                             items = items.map((item) => {
                                 item.productName = item.name;
-                                item.categoryId = categories[0]['categoryId'];
+                                // item.categoryId = categories[0]['categoryId'];
                                 item.supplierId = supplier.supplierId;
                                 item.image = item.imgLinks[0];
                                 let description = {
@@ -177,23 +177,50 @@ dbContext.sequelize.sync().then(function () {
                         };
                         console.log("allitems: ", allItems);
                         dbContext.Product.bulkCreate(allItems)
-                            .then(res => {
-                                console.log("products created: ", res);
-                                categories.forEach(category => {
-                                    dbContext.Product.findAll({
-                                            where: {
-                                                categoryId: category.categoryId
-                                            }
-                                        })
-                                        .then(relvProducts => {
-                                            category.setProducts(relvProducts);
-                                            console.log("done");
-                                        }).catch(err => console.log("err: ", err));
-
-                                })
+                            .then(products => {
+                                console.log("products created: ", products);
+                                categories[0].setProducts(products).then(function(result){
+                                    console.log("RESULT: ", result);
+                                    console.log("DONE");
+                                }).catch(err => console.log("err: ", err));
                             }).catch(err => console.log("err: ", err));
                     }).catch((err) => console.log("error: ", err));
                     
             }).catch(err => console.log("error: ", err));
+    })
+})
+ */
+
+
+// CHECK SET/ADD/GET SEQUELIZE INSTANCES
+/*
+- setObject() will delete row that not satisfy both ids and add new rows in many2many-table that satisfied both two object ids;
+- addObject() will add a row in many2many-table with value correspond with object ids;
+- object.dataValues also contains association Object
+*/
+var db = config.db;
+var sequelize = new Sequelize(db.database, db.username, db.password, db);
+var test_user = sequelize.define('test_user', {
+    username: Sequelize.STRING
+});
+
+var test_task = sequelize.define('test_task', {
+    taskname: Sequelize.STRING
+});
+
+test_user.tasks = test_user.belongsToMany(test_task, {through: "user_tasks", foreignKey: 'ownerId'});
+test_task.owners = test_task.belongsToMany(test_user, {through: "user_tasks", foreignKey: 'taskId'});
+
+sequelize.sync().then(function() {
+    test_user.findOne({where: {id: 5}})
+    .then(user => {
+        test_task.findAll({where: {id: [1, 3]}}).then(task => {
+            user.setTest_tasks(task).then(tu => {
+                console.log("UserTask: ", tu);
+            })
+        })
+    })
+    .catch(err => {
+        console.log("ERR: ", err);
     })
 })

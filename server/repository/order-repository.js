@@ -12,7 +12,7 @@ OrderRepository.prototype.findOneBy = function(condition, select, association, c
         })
         .then(function(result) {
             if (result){
-                callback(null, result.dataValues);
+                callback(null, result);
             } else {
                 callback(null, null);
             }
@@ -35,10 +35,7 @@ OrderRepository.prototype.findAllBy = function (condition, association, orderBy,
         })
         .then(function (result) {
             if (result){
-                let res = result.map(function(val){
-                    return val.dataValues
-                })
-                callback(null, res);
+                callback(null, result);
             } else {
                 callback(null, null);
             }

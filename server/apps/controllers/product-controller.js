@@ -1,90 +1,246 @@
-var dependencies = { 
-} // solve problem "this" keyword does not reference to this class
+var rule = require('../../common/validate/product-validator');
+var validate = require('../../common/validate-function');
 
-var ProductController = function(productService){
-    dependencies.productService = productService;
+var dependencies = {} // solve problem "this" keyword does not reference to this class
 
+var ProductController = function (productRepository, categoryRepository, supplierRepository) {
+    dependencies.productRepository = productRepository;
+    dependencies.categoryRepository = categoryRepository;
+    dependencies.supplierRepository = productRepository;
 }
 
-ProductController.prototype.getOne = function(req, res, next){
+ProductController.prototype.getOne = function (req, res, next) {
+    var select = req.fields ? req.fields : [];
     var productId = req.params.productId;
 
-    dependencies.productService.getOne({'productId': productId}, [], function(err, product){
+    var condition = {
+        productId: productId
+    }
+    condition.isDelete = false;
+    condition.isActive = true;
+
+    var association = [{
+        model: dependencies.productRepository.dbContext.Category,
+    },{
+        model: dependencies.productRepository.dbContext.Supplier,
+    }]
+
+    dependencies.productRepository.findOneBy(condition, association, select, function (err, result) {
         if (err) {
-            next(err);
+            return next(err);
+        } else if (result) {
+            result = result.dataValues;
+            res.product = result;
+            return next();
         } else {
-            res.product = product;
-            next();
+            return next({
+                type: "Not Found"
+            });
         }
     })
 }
 
-ProductController.prototype.getMany = function(req, res, next){
+ProductController.prototype.fulltextSearch = function (req, res, next) {
     var condition = req.where;
-    var orderBy = req.options.sort;
-    var select = req.fields ? req.fields: [];
+    var select = req.fields ? req.fields : [];
     var page = req.options.skip;
     var limit = req.options.limit;
 
-    if (!condition['keywords']){
-        dependencies.productService.getMany(condition, orderBy, select, page, limit, function(err, products){
-            if (err) {
-                next(err);
-            } else {
-                res.products = products;
-                next();
-            }
-        })
-    } else {
-        dependencies.productService.fulltextSearch(condition['keywords'], select, page, limit, function(err, products){
-            if (err) {
-                next(err);
-            } else {
-                res.products = products;
-                next();
-            }
-        })
-    }
-}
+    var keywords = condition.keywords;
 
-    
-ProductController.prototype.create = function(req, res, next){
-    var productProps = req.body;
-    
-    dependencies.productService.create(productProps, function(err, product){
+    dependencies.productRepository.fulltextSearch(keywords, select, page, limit, function (err, result) {
         if (err) {
-            next(err);
+            return next(err);
+        } else if (result) {
+            result = result.map(function(val){
+                return val.dataValues;
+            })
+            res.products = result;
+            return next();
         } else {
-            res.product = product;
-            next();
+            return next({
+                type: "Not Found"
+            });
         }
     })
 }
 
-ProductController.prototype.update = function(req, res, next){
+ProductController.prototype.getMany = function (req, res, next) {
+    var condition = req.where;
+    var orderBy = req.options.sort;
+    var select = req.fields ? req.fields : [];
+    var page = req.options.skip;
+    var limit = req.options.limit;
+
+
+    condition.isDelete = false;
+    condition.isActive = true;
+
+    if (condition.minPrice | condition.maxPrice) {
+        condition['price'] = Object.assign({}, condition['price'], {
+            $gte: condition.minPrice,
+            $lte: condition.maxPrice
+        });
+        delete condition.minPrice;
+        delete condition.maxPrice;
+    }
+
+    var association = [{
+        model: dependencies.productRepository.dbContext.Category,
+    },{
+        model: dependencies.productRepository.dbContext.Supplier,
+    }]
+
+    dependencies.productRepository.findAllBy(condition, association, orderBy, select, page, limit, function (err, result) {
+        if (err) {
+            return next(err);
+        } else if (result) {
+            result = result.map(function(val){
+                return val.dataValues;
+            });
+            res.products = result;
+            return next();
+        } else {
+            return next({
+                type: "Not Found"
+            });
+        }
+    })
+}
+
+ProductController.prototype.create = async function (req, res, next) {
+    var productProps = req.body;
+
+    var val = await validate(rule, productProps);
+    if (val.numErr > 0) {
+        return next({
+            type: "Bad Request",
+            error: val.error
+        });
+    }
+
+    dependencies.productRepository.saveWithTransaction(productProps, function(err, result){
+        if (err){
+            next(err);
+        } else {
+            res.product = result;
+            next();
+        }
+    })
+    /* dependencies.productRepository.save(productProps, null, function (err, result) {
+        if (err) {
+            return next(err);
+        } else if (result) {
+            result.setCategories({
+                categoryId: result.categoryId
+            }).then(function (res1) {
+                console.log("ok");
+                res.product = result;
+                return next();
+            }).catch(function (err) {
+                if (err) {
+                    return next(err);
+                }
+            })
+        } else {
+            return next({
+                type: "Bad Request"
+            });
+        }
+    }); */
+}
+
+ProductController.prototype.update = async function (req, res, next) {
     var productId = req.params.productId;
     var productProps = req.body;
     productProps.productId = productId;
 
-    dependencies.productService.update(productProps, function(err, product){
+    var val = await validate(rule, productProps);
+    if (val.numErr > 0) {
+        return next({
+            type: "Bad Request",
+            error: val.error
+        });
+    }
+
+    var condition = {
+        productId: productProps.productId,
+        isActive: true,
+        isDelete: false
+    }
+
+    var association = [{
+        model: dependencies.productRepository.dbContext.Category,
+    },{
+        model: dependencies.productRepository.dbContext.Supplier,
+    }]
+
+    dependencies.productRepository.findOneBy(condition, association, [], function (err, productObj) {
         if (err) {
-            next(err);
+            return next(err);
+        } else if (productObj) {
+            productObj.dataValues = Object.assign({}, productObj.dataValues, productProps);
+
+            dependencies.productRepository.updateWithTransaction(productObj, function(err, result){
+                if (err){
+                    return next(err);
+                } else {
+                    res.product = productObj.dataValues;
+                    return next();
+                }
+            })
+            /* dependencies.productRepository.update(productObj, null, function (err, result) {
+                if (err) {
+                    return next(err);
+                } else if (result) {
+                    res.product = productObj;
+                    return next();
+                } else {
+                    return next({
+                        type: 'Bad Request'
+                    });
+                }
+            }) */
         } else {
-            res.product = product;
-            next();
+            return next({
+                type: 'Not Found'
+            });
         }
     })
 }
 
-ProductController.prototype.delete = function(req, res, next){
+ProductController.prototype.delete = async function (req, res, next) {
     var productId = req.params.productId;
-    
-    dependencies.productService.delete({'productId': productId}, function(err, result){
+
+    var condition = {
+        productId: productId,
+        isActive: true,
+        isDelete: false
+    }
+
+    dependencies.productRepository.findOneBy(condition, [], [], function (err, productObj) {
         if (err) {
-            next(err);
+            return next(err);
+        } else if (productObj) {
+            productObj.isDelete = true;
+
+            dependencies.productRepository.update(productObj, null, function (err, result) {
+                if (err) {
+                    return next(err);
+                } else if (result) {
+                    return next({
+                        type: "Deleted"
+                    });
+                } else {
+                    return next({
+                        type: 'Bad Request'
+                    });
+                }
+            })
         } else {
-            res.result = result;
-            next();
+            return next({
+                type: 'Not Found'
+            });
         }
     })
 }

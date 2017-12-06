@@ -1,20 +1,30 @@
-var dependencies = {
-} // solve problem "this" keyword does not reference to this class
+var rule = require('../../common/validate/user-validator');
+var validate = require('../../common/validate-function');
 
-var SupplierController = function (supplierService) {
-    dependencies.supplierService = supplierService;
+var dependencies = {} // solve problem "this" keyword does not reference to this class
 
+var SupplierController = function (supplierRepository) {
+    dependencies.supplierRepository = supplierRepository;
 }
 
 SupplierController.prototype.getOne = function (req, res, next) {
     var supplierId = req.params.supplierId;
 
-    dependencies.supplierService.getOne({ 'supplierId': supplierId }, [], function (err, supplier) {
+    var condition = {
+        'supplierId': supplierId
+    }
+    condition.isDelete = false;
+
+    dependencies.supplierRepository.findOneBy(condition, select, null, function (err, result) {
         if (err) {
-            next(err);
+            return next(err);
+        } else if (result) {
+            res.supplier = result;
+            return next();
         } else {
-            res.supplier = supplier;
-            next();
+            return next({
+                type: "Not Found"
+            });
         }
     })
 }
@@ -26,54 +36,138 @@ SupplierController.prototype.getMany = function (req, res, next) {
     var page = req.options.skip;
     var limit = req.options.limit;
 
-    dependencies.supplierService.getMany(condition, orderBy, select, page, limit, function (err, suppliers) {
+    condition.isDelete = false;
+
+    dependencies.supplierRepository.findAllBy(condition, null, orderBy, select, page, limit, function (err, result) {
         if (err) {
-            next(err);
+            return next(err);
+        } else if (result) {
+            res.suppliers = result;
+            return next();
         } else {
-            res.suppliers = suppliers;
-            next();
+            return next({
+                type: "Not Found"
+            });
         }
     })
 }
 
 
-SupplierController.prototype.create = function (req, res, next) {
+SupplierController.prototype.create = async function (req, res, next) {
     var supplierProps = req.body;
 
-    dependencies.supplierService.create(supplierProps, function (err, supplier) {
+/*     //validate props
+    var val = await validate(rule.checkSupplier, supplierProps);
+    if (val.numErr > 0) {
+        return next({
+            type: "Bad Request",
+            error: val.error
+        });
+    } */
+
+    dependencies.supplierRepository.findOneBy({
+        'accountId': supplierProps.accountId
+    }, [], null, function (err, user) {
         if (err) {
-            next(err);
+            return next(err);
+        }
+        if (!user) {
+            dependencies.supplierRepository.save(supplierProps, null, function (err, newSupplier) {
+                if (err) {
+                    return next(err);
+                } else {
+                    res.supplier = newSupplier;
+                    return next();
+                }
+            })
         } else {
-            res.supplier = supplier;
-            next();
+            next({
+                type: "Duplicated"
+            });
         }
     })
 }
 
-SupplierController.prototype.update = function (req, res, next) {
+SupplierController.prototype.update = async function (req, res, next) {
     var supplierId = req.params.supplierId;
     var supplierProps = req.body;
     supplierProps.supplierId = supplierId;
 
-    dependencies.supplierService.update(supplierProps, function (err, supplier) {
+    //validate props
+    var val = await validate(rule.checkSupplier, supplierProps);
+    if (val.numErr > 0) {
+        return next({
+            type: "Bad Request",
+            error: val.error
+        });
+    }
+
+    dependencies.supplierRepository.findOneBy({
+        supplierId: supplierProps.supplierId
+    }, [], null, function (err, supplierObj) {
         if (err) {
             next(err);
+        } else if (supplierObj) {
+            supplierObj = Object.assign({},
+                supplierObj,
+                supplierProps
+            );
+            dependencies.supplierRepository.update(supplierObj, null, function (err, result) {
+                if (err) {
+                    next(err);
+                } else if (result) {
+                    res.supplier = supplierObj;
+                    return next();
+                }
+            })
         } else {
-            res.supplier = supplier;
-            next();
+            next({
+                type: 'Not Found'
+            });
         }
     })
 }
 
-SupplierController.prototype.delete = function (req, res, next) {
+SupplierController.prototype.delete = async function (req, res, next) {
     var supplierId = req.params.supplierId;
 
-    dependencies.supplierService.delete({ 'supplierId': supplierId }, function (err, result) {
+    var val = await validate(rule.checkSupplier, supplierProps);
+    if (val.numErr > 0) {
+        return next({
+            type: "Bad Request",
+            error: val.error
+        });
+    }
+
+    var condition = {
+        supplierId: supplierProps.supplierId,
+        isDelete: false
+    }
+
+    dependencies.supplierRepository.findOneBy(condition, [], null, function (err, supplierObj) {
         if (err) {
-            next(err);
+            return next(err);
+        } else if (supplierObj) {
+            supplierProps.isDelete = true;
+            supplierObj = Object.assign({}, supplierObj, supplierProps);
+
+            dependencies.supplierRepository.update(supplierObj, null, function (err, result) {
+                if (err) {
+                    return next(err);
+                } else if (result) {
+                    return next({
+                        type: "Deleted"
+                    });
+                } else {
+                    return next({
+                        type: 'Bad Request'
+                    });
+                }
+            })
         } else {
-            res.result = result;
-            next();
+            return next({
+                type: 'Not Found'
+            });
         }
     })
 }
