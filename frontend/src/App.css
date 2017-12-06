@@ -28,6 +28,9 @@
   }
 
 }
+.caption h4 .pull-right{
+  font-size: 16px;
+}
 .App-header {
   /* background-color: #222;
   height: 150px;

@@ -9,9 +9,16 @@ function* postForm(action) {
         const url = `${address}/register/`;
         // console.log(url,':',action.username,':',action.password);
         let response;
+        let form = action.state;
         yield axios.post(url, {
-            userName: action.username,
-            password: action.password,
+            userName: form.username,
+            password: form.password,
+            firstName: form.firstName,
+            lastName: form.lastName,
+            email: form.email,
+            gender: form.gender,
+            address: form.address,
+            telephone: form.telephone,
         })
         .then(res => {
             response = res;

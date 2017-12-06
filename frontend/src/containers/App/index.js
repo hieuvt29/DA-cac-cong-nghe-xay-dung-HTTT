@@ -10,6 +10,7 @@ import Signup from '../Signup';
 import NotFound from '../NotFound';
 import ProductDetail from '../ProductDetail';
 import Cart from '../Cart';
+import Category from '../Category';
 // import Demo from '../Demo';
 
 import '../..//App.css';
@@ -36,7 +37,9 @@ class App extends Component {
             <Route path="/contact" component={Contact} />
             <Route path="/signup" component={Signup} />
             <Route path="/product_summary" component={Cart} />
+            <Route path="/product/" component={ProductDetail} />
             <Route path="/product/:id" component={ProductDetail} />
+            <Route path="/category/:id" component={Category} />
             <Route path="" component={NotFound} />
         </Switch>
         <Footer/>

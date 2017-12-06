@@ -32,7 +32,7 @@ class ProductManager extends React.Component {
                     <li className="active">Product Manager</li>
                 </ol>
                 </section>
-                <DataTable data={this.state.data}/>
+                <DataTable data={this.state.data} tableName="Products"/>
             </div>
         );
     }

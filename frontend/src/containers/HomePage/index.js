@@ -65,7 +65,7 @@ class HomePage extends Component {
         return (
             <div className="span9">
                 <div className="well well-small">
-                    <h4>Featured Products <small className="pull-right">200+ featured products</small></h4>
+                    <h4>Sản phẩm nổi bật <small className="pull-right">200+ featured products</small></h4>
                     <div className="row-fluid">
                         <div id="featured" className="carousel slide">
                             <div className="carousel-inner">
@@ -83,8 +83,8 @@ class HomePage extends Component {
                                                         <div className="caption">
                                                             <h5>{item.productName}</h5>
                                                             <h4><Link className="btn" to={`/product/${item.productId}`}>Chi tiết</Link>
-                                                            {/* <a className="btn" onClick={ () => this.addCart(item) }>Add to <i className="icon-shopping-cart"></i></a> */}
-                                                            <span className="pull-right">{item.price.toString().slice(0, (item.price.toString().length-3)).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")}K</span>
+                                                                <a className="btn" onClick={ () => this.addCart(item) }>Mua<i className="icon-shopping-cart"></i></a>                                    
+                                                                <span className="pull-right">{item.price.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")}Đ</span>                                                                                                    
                                                             </h4>
                                                         </div>
                                                     </div>
@@ -101,7 +101,7 @@ class HomePage extends Component {
                     </div>                    
                 </div>
 
-                <h4>Latest Products </h4>
+                <h4>Sản phẩm mới </h4>
                 <ul className="thumbnails">
                     {this.props.listProducts.map((item, index) => (
                         <li className="span3" key={index}>
@@ -111,8 +111,8 @@ class HomePage extends Component {
                                 <div className="caption">
                                     <h5>{item.productName}</h5>
                                     <h4><Link className="btn" to={`/product/${item.productId}`}>Chi tiết</Link>
-                                    {/* <a className="btn" onClick={ () => this.addCart(item) }>Add to <i className="icon-shopping-cart"></i></a> */}
-                                    <span className="pull-right">{item.price.toString().slice(0, (item.price.toString().length-3)).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")}K</span>
+                                    <a className="btn" onClick={ () => this.addCart(item) }>Mua<i className="icon-shopping-cart"></i></a>
+                                    <span className="pull-right">{item.price.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")}Đ</span>
                                     </h4>
                                 </div>
                             </div>
@@ -127,7 +127,7 @@ class HomePage extends Component {
             <div className="span9">
                 <h4>Kết quả tìm kiếm</h4>
                 <ul className="thumbnails">
-                    {this.props.resSearch.map((item, index) => {
+                    { (this.props.resSearch) ? this.props.resSearch.map((item, index) => {
                         return (
                         <li className="span3" key={index}>
                             <div className="thumbnail">
@@ -139,13 +139,14 @@ class HomePage extends Component {
                                         <span>{item.quantity}</span>
                                     </p>
                                     <h4><Link className="btn" to={`/product/${item.productId}`}> <i className="icon-zoom-in"></i></Link>
-                                        <a className="btn" onClick={() => this.addCart(item)}>Add to <i className="icon-shopping-cart"></i></a>
-                                        <a className="btn btn-primary" href="">{item.price}đ </a></h4>
+                                        <a className="btn" onClick={() => this.addCart(item)}>Mua <i className="icon-shopping-cart"></i></a>
+                                        <span className="pull-right">{item.price.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")}Đ</span>                                        
+                                        </h4>
                                 </div>
                             </div>
                         </li>
                         )
-                    })}
+                    }) : "Không tìm thấy"}
                 </ul>
             </div>
         );

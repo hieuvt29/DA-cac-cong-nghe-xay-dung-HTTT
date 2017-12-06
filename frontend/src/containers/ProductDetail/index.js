@@ -19,10 +19,23 @@ class ProductDetail extends Component {
         // .catch(error => console.log('---TuyenTN---', error));
     }
     componentWillMount() {
-      this.props.get_product(this.props.match.params.id);
+      const product_id = (this.props.match.params.id === '') ? this.props.match.params.id : '05774652-2812-44d3-8e48-85aee282bf66';
+      this.props.get_product(product_id);
     }
     render() {
       const {prodDetail} = this.props;
+        let arr = [];
+        //const prodDetailString = JSON.parse(prodDetail);
+        
+      if (prodDetail.description){
+        const info = JSON.parse(JSON.stringify(prodDetail.description.info));
+
+        Object.keys(prodDetail.description.info).forEach(function(key) {
+          arr.push({name: key, value: info[JSON.stringify(key)]});
+        });
+       
+        console.log('---All DES INFO---', JSON.stringify(prodDetail.description.info));
+      }
         return (
             <div className="span9">
             <ul className="breadcrumb">
@@ -42,7 +55,7 @@ class ProductDetail extends Component {
                             {(prodDetail.description) ? prodDetail.description.imgLinks.map((image, index) => {
                               if (index < 3) {
                                 return (
-                                  <a href="#"> 
+                                  <a href="#" key={index}> 
                                     <img style={{ width: "100%" }} src={image} alt="" />
                                   </a>
                                 )}
@@ -69,41 +82,39 @@ class ProductDetail extends Component {
                     </div>
                     <div className="span6">
                         <h3>{prodDetail.productName !== undefined && prodDetail.productName}  </h3>
-                        <small>- (AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) 3-inch LCD</small>
+                        <small>- () 3-inch LCD</small>
                         <hr className="soft"/>
                         <form className="form-horizontal qtyFrm">
                           <div className="control-group">
-                            <label className="control-label"><span>$222.00</span></label>
+                            <label className="control-label"><span>{prodDetail.price ? prodDetail.price.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") : '0'}Đ</span></label>
                             <div className="controls">
-                            <input type="number" className="span1" placeholder="Qty."/>
-                              <button type="submit" className="btn btn-large btn-primary pull-right"> Add to cart <i className=" icon-shopping-cart"></i></button>
+    
+                              <button type="submit" className="btn btn-large btn-primary pull-right"> Thêm vào giỏ <i className=" icon-shopping-cart"></i></button>
                             </div>
                           </div>
                         </form>
                         
                         <hr className="soft"/>
-                        <h4>100 items in stock</h4>
+                        <h4>Còn {prodDetail.quantity} sản phẩm</h4>
                         <form className="form-horizontal qtyFrm pull-right">
                           <div className="control-group">
-                            <label className="control-label"><span>Color</span></label>
+                            <label className="control-label"><span>Màu sắc</span></label>
                             <div className="controls">
                               <select className="span2">
-                                  <option>Black</option>
-                                  <option>Red</option>
-                                  <option>Blue</option>
-                                  <option>Brown</option>
+                                  <option>Đen</option>
+                                  <option>Đỏ</option>
+                                  <option>Xanh</option>
+                                  <option>Xám</option>
                                 </select>
                             </div>
                           </div>
                         </form>
                         <hr className="soft clr"/>
                         <p>
-                        14 Megapixels. 18.0 x Optical Zoom. 3.0-inch LCD Screen. Full HD photos and 1280 x 720p HD movie capture. ISO sensitivity ISO6400 at reduced resolution. 
-                        Tracking Auto Focus. Motion Panorama Mode. Face Detection technology with Blink detection and Smile and shoot mode. 4 x AA batteries not included. WxDxH 110.2 ×81.4x73.4mm. 
-                        Weight 0.341kg (excluding battery and memory card). Weight 0.437kg (including battery and memory card).
+                        { prodDetail.description ? JSON.stringify(prodDetail.description.info) : "null"}
                         
                         </p>
-                        <a className="btn btn-small pull-right" href="detail">More Details</a>
+                        <a className="btn btn-small pull-right" href="detail">Xem thêm</a>
                         <br className="clr"/>
                     <a href="" name="detail"></a>
                     <hr className="soft"/>
@@ -111,23 +122,25 @@ class ProductDetail extends Component {
                     
                     <div className="span9">
                     <ul id="productDetail" className="nav nav-tabs">
-                      <li className="active"><a href="home" data-toggle="tab">Product Details</a></li>
-                      <li><a href="profile" data-toggle="tab">Related Products</a></li>
+                      <li className="active"><a href="home" data-toggle="tab">Chi tiết sản phẩm</a></li>
+                      <li><a href="profile" data-toggle="tab">Sản phẩm liên quan</a></li>
                     </ul>
                     <div id="myTabContent" className="tab-content">
                       <div className="tab-pane fade active in" id="home">
-                      <h4>Product Information</h4>
-                        <table className="table table-bordered">
-                        <tbody>
-                        <tr className="techSpecRow"><th colSpan="2">Product Details</th></tr>
-                        <tr className="techSpecRow"><td className="techSpecTD1">Brand: </td><td className="techSpecTD2">Fujifilm</td></tr>
-                        <tr className="techSpecRow"><td className="techSpecTD1">Model:</td><td className="techSpecTD2">FinePix S2950HD</td></tr>
-                        <tr className="techSpecRow"><td className="techSpecTD1">Released on:</td><td className="techSpecTD2"> 2011-01-28</td></tr>
-                        <tr className="techSpecRow"><td className="techSpecTD1">Dimensions:</td><td className="techSpecTD2"> 5.50" h x 5.50" w x 2.00" l, .75 pounds</td></tr>
-                        <tr className="techSpecRow"><td className="techSpecTD1">Display size:</td><td className="techSpecTD2">3</td></tr>
-                        </tbody>
-                        </table>
-                        
+                      <h4>Thông tin sản phẩm</h4>
+                      {arr ? arr.map((des, index) => {
+                        return (
+                          <table className="table table-bordered">
+                            <tbody>
+                              {/* <tr className="techSpecRow"><th colSpan="2">Chi tiết sản phẩm</th></tr> */}
+                              
+                                <tr className="techSpecRow" key={index}><td className="techSpecTD1">{des.name} </td><td className="techSpecTD2">{des.value}</td></tr>
+                            
+                            </tbody>
+                          </table>
+                        )
+                      }) : null}
+
                         <h5>Features</h5>
                         <p>
                         14 Megapixels. 18.0 x Optical Zoom. 3.0-inch LCD Screen. Full HD photos and 1280 x 720p HD movie capture. ISO sensitivity ISO6400 at reduced resolution. Tracking Auto Focus. Motion Panorama Mode. Face Detection technology with Blink detection and Smile and shoot mode. 4 x AA batteries not included. WxDxH 110.2 ×81.4x73.4mm. Weight 0.341kg (excluding battery and memory card). Weight 0.437kg (including battery and memory card).<br/>

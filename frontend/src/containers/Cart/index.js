@@ -162,10 +162,10 @@ class Cart extends Component {
                             <button className="btn btn-danger" type="button" onClick={ () => this.remove(item)}><i className="icon-remove icon-white"></i></button>
                         </div>
                       </td>
-                      <td>{ Number((item.price*item.quantity).toFixed(2)) }</td>
+                      <td>{ Number((item.price*item.quantity).toFixed(2)).toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") }</td>
                       <td>0</td>
                       <td>{ 0 }</td>
-                      <td>{ Number((item.price*item.quantity).toFixed(2)) }</td>
+                      <td>{ Number((item.price*item.quantity).toFixed(2)).toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") }</td>
                     </tr>
                     )
                   )}
@@ -177,7 +177,7 @@ class Cart extends Component {
                       <td></td>
                       <td></td>
                       <td>Tổng</td>
-                      <td>{ this.state.cartTotal }</td>
+                      <td>{ this.state.cartTotal.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") }</td>
                     </tr>
                     </tbody>
                 </table>

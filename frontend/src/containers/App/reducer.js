@@ -20,7 +20,9 @@ const initialState = {
     errorLogin: '',
     prevPath: '',
     resSearch: [],
+    resCategories: [],
     resDetailProduct: {},
+    resProByCategory: [],
 };
 
 function appReducer(state = initialState, action) {
@@ -64,6 +66,10 @@ function appReducer(state = initialState, action) {
         // console.log('---TuyenTN---', action.response);
         return { ...state, resSearch: action.response.products};
     }
+    case 'RES_CATEGORIES': {
+        // console.log('---TuyenTN---', action.response);
+        return { ...state, resCategories: action.response.categories};
+    }
     case 'RES_SIGNIN': {
         // console.log('---Signin res:---', action.response);
         if (action.response.data.errorCode === 1) {
@@ -76,6 +82,11 @@ function appReducer(state = initialState, action) {
     case 'RES_PRODUCTDETAIL': {
         console.log('---RES_PRODUCTDETAIL---', action.response.product);
         return { ...state, resDetailProduct: action.response.product};
+    }
+    
+    case 'RES_PRODUCTBYCAT': {
+        console.log('---RES_PRODUCTBYCAT---', action.response.categories);
+        return { ...state, resProByCategory: action.response.categories};
     }
     case 'UPDATECART': {
         return { ...state, cartTotal: action.cartTotal, cartQuantity: action.cartQuantity };

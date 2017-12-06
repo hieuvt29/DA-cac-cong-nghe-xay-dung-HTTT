@@ -1,7 +1,6 @@
-export const signup = (username, password) => {
+export const signup = (state) => {
     return {
         type: 'SIGNUP',
-        username,
-        password,
+        state,
     }
 };

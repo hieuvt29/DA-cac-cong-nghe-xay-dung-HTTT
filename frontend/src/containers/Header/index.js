@@ -69,7 +69,7 @@ class Header extends Component {
               <div className="span6">
                 <div className="pull-right">
                   <span className="btn btn-mini">En</span>
-                  <span className="btn btn-mini">{ this.props.cartTotal }</span>
+                  <span className="btn btn-mini">{ this.props.cartTotal.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") }</span>
                   <Link to="/product_summary"><span className="">đ </span></Link>
                   <Link to="/product_summary">
                     <span className="btn btn-mini btn-primary">
@@ -163,6 +163,7 @@ const mapStateToProps = (state) => ({
   cartTotal: state.appReducer.cartTotal,
   cartQuantity: state.appReducer.cartQuantity,
   errorLogin: state.appReducer.errorLogin,
+  resCategories: state.appReducer.resCategories,
 });
 
 const mapDispatchToProps = ({

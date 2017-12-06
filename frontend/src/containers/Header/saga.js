@@ -26,8 +26,8 @@ function* postForm(action) {
 }
 
 function* search(action) {
-    const url = `${address}/categories/`;
-    let response;    
+    const url = `${address}/products?keywords=${action.searchKey}/`;
+    let response;
     yield fetch(url)
     .then(res => { return res.json();})
     .then(responseJson => { response = responseJson });
@@ -36,13 +36,13 @@ function* search(action) {
 }
 
 function* getCategories(action) {
-    const url = 'http://localhost:3001/products?keywords='+'\''+action.searchKey+'\'';
+    const url = `${address}/categories/`;    
     let response;    
     yield fetch(url)
     .then(res => { return res.json();})
     .then(responseJson => { response = responseJson });
     // console.log('---TuyenTN---', response);
-    yield put({ type: "RES_SEARCH", response });
+    yield put({ type: "RES_CATEGORIES", response });
 }
 
 function* signinsaga() {

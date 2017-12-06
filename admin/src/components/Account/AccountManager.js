@@ -7,7 +7,19 @@ class AccountManager extends React.Component {
         super(props);
 
         this.state = {
-            data: []
+            data: [],
+            username: '',
+            password: '',
+            repassword: '',
+            firstName: '',
+            lastName: '',
+            gender: 'khac',
+            dob: '',
+            email: '',
+            telephone: '',
+            address: '',
+            error: '',
+            showError: '',
         }
     }
     shouldComponentUpdate(nextState) {
