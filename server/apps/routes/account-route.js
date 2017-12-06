@@ -110,7 +110,7 @@ module.exports = function (app, accountController, passport) {
     );
 
     app.post('/admins',
-        isAdminLoggedIn,
+        // isAdminLoggedIn,
         accountController.createAdmin,
         accountMw.create
     );

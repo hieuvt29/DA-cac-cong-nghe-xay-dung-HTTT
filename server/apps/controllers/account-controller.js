@@ -2,7 +2,7 @@
 var bcrypt = require('bcrypt-nodejs');
 var dependencies = {}
 var roles = require('../../common/role'); 
-var rule = require('../../common/validate/order-validator');
+var rule = require('../../common/validate/user-validator');
 var validate = require('../../common/validate-function');
 
 var AccountController = function (accountRepository) {
@@ -11,7 +11,7 @@ var AccountController = function (accountRepository) {
 
 // SUPPORT FUNCTIONS
 
-AccountController.prototype.getOne = function (condition, select, callback) {
+dependencies.getOne = function (condition, select, callback) {
     condition.isDelete = false;
     condition.isActive = true;
 
@@ -31,18 +31,14 @@ AccountController.prototype.getOne = function (condition, select, callback) {
     })
 }
 
-AccountController.prototype.getMany = function (condition, orderBy, select, page, limit, callback) {
+dependencies.getMany = function (condition, orderBy, select, page, limit, callback) {
     condition.isDelete = false;
     condition.isActive = true;
 
-    this.accountRepository.findAllBy(condition, null, orderBy, select, page, limit, function (err, result) {
+    dependencies.accountRepository.findAllBy(condition, null, orderBy, select, page, limit, function (err, result) {
         if (err) {
             return callback(err);
         } else if (result) {
-            for(i in result){
-                delete result[i].isActive;
-                delete result[i].isDelete;
-            }
             return callback(null, result);
         } else {
             return callback({
@@ -52,7 +48,7 @@ AccountController.prototype.getMany = function (condition, orderBy, select, page
     })
 }
 
-AccountController.prototype.create = async function (accountProps, callback) {
+dependencies.create = async function (accountProps, callback) {
     //validate props
     var val = await validate(rule, accountProps);
     if (val.numErr > 0){
@@ -83,7 +79,7 @@ AccountController.prototype.create = async function (accountProps, callback) {
     })
 }
 
-AccountController.prototype.update = async function (accountProps, callback) {
+dependencies.update = async function (accountProps, callback) {
     //validate props
     var val = await validate(rule, accountProps);
     if (val.numErr > 0){
@@ -146,20 +142,19 @@ AccountController.prototype.changePassword = async function (req, res, next) {
         };
         return next();
     }
+    var userProps = Object.assign({}, req.user.dataValues, {password: bcrypt.hashSync(newPass)});
 
-    var userProps = Object.assign({}, req.user, {password: bcrypt.hashSync(newPass)});
-
-    var val = await validate(rule, accountProps);
+    var val = await validate(rule, userProps);
     if (val.numErr > 0){
         return callback({type: "Bad Request", error: val.error});
     }
 
-    dependencies.accountRepository.update(accountProps, null, function (err, result) {
+    dependencies.accountRepository.update(userProps, null, function (err, result) {
         if (err) {
             callback(err);
         } else if (result) {
-            res.account = accountProps;
-            req.user = accountProps;
+            res.account = userProps;
+            req.user.password = userProps.password;
             next();
         } else {
             callback({
@@ -172,7 +167,7 @@ AccountController.prototype.changePassword = async function (req, res, next) {
 AccountController.prototype.changeUserName = async function (req, res, next) {
     var newUserName = req.body.newUserName;
     
-    var accountProps = Object.assign({}, req.user, {userName: newUserName});
+    var accountProps = Object.assign({}, req.user.dataValues, {userName: newUserName});
     var self = this;
     // validate accountProps 
     var val = await validate(rule, accountProps);
@@ -190,7 +185,7 @@ AccountController.prototype.changeUserName = async function (req, res, next) {
                 type: 'Duplicated'
             });
         } else {
-            dependencies.accountRepository.update(accountObj, null, function (err, result) {
+            dependencies.accountRepository.update(accountProps, null, function (err, result) {
                 if (err) {
                     callback(err);
                 } else if (result) {
@@ -251,7 +246,7 @@ AccountController.prototype.delete = async function (req, res, next) {
 AccountController.prototype.getCustomer = function (req, res, next) {
     var accountId = req.params.accountId;
 
-    this.getOne({ 'accountId': accountId, role: roles.CUSTOMER }, [], function (err, account) {
+    dependencies.getOne({ 'accountId': accountId, role: roles.CUSTOMER }, [], function (err, account) {
         if (err) {
             next(err);
         } else {
@@ -269,7 +264,7 @@ AccountController.prototype.getCustomers = function (req, res, next) {
     var limit = req.options.limit;
 
     condition.role = roles.CUSTOMER;
-    this.getMany(condition, orderBy, select, page, limit, function (err, accounts) {
+    dependencies.getMany(condition, orderBy, select, page, limit, function (err, accounts) {
         if (err) {
             next(err);
         } else {
@@ -290,7 +285,7 @@ AccountController.prototype.createCustomer = function (req, res, next) {
         }
     );
 
-    this.create(accountProps, function(err, result){
+    dependencies.create(accountProps, function(err, result){
         if (err){
             next(err);
         } else {
@@ -304,7 +299,7 @@ AccountController.prototype.createCustomer = function (req, res, next) {
 AccountController.prototype.getAdmin = function (req, res, next) {
     var accountId = req.params.accountId;
 
-    this.getOne({ 'accountId': accountId, role: roles.ADMIN }, [], function (err, account) {
+    dependencies.getOne({ 'accountId': accountId, role: roles.ADMIN }, [], function (err, account) {
         if (err) {
             next(err);
         } else {
@@ -322,7 +317,7 @@ AccountController.prototype.getAdmins = function (req, res, next) {
     var limit = req.options.limit;
 
     condition.role = roles.ADMIN;
-    this.getMany(condition, orderBy, select, page, limit, function (err, accounts) {
+    dependencies.getMany(condition, orderBy, select, page, limit, function (err, accounts) {
         if (err) {
             next(err);
         } else {
@@ -343,7 +338,7 @@ AccountController.prototype.createAdmin = function (req, res, next) {
         }
     );
 
-    this.create(accountProps, function(err, result){
+    dependencies.create(accountProps, function(err, result){
         if (err){
             next(err);
         } else {

@@ -113,7 +113,7 @@ sequelize.query(
 })
  */
 
-/* // IMPORT DATA
+// IMPORT DATA
 console.log("start...");
 // load data
 let data = fs.readFileSync('./crawl-data.json', {
@@ -189,16 +189,17 @@ dbContext.sequelize.sync().then(function () {
             }).catch(err => console.log("error: ", err));
     })
 })
- */
+
 
 
 // CHECK SET/ADD/GET SEQUELIZE INSTANCES
 /*
+- we can pass either list of ids or list of object into setObject() and addObject() function
 - setObject() will delete row that not satisfy both ids and add new rows in many2many-table that satisfied both two object ids;
 - addObject() will add a row in many2many-table with value correspond with object ids;
 - object.dataValues also contains association Object
 */
-var db = config.db;
+/* var db = config.db;
 var sequelize = new Sequelize(db.database, db.username, db.password, db);
 var test_user = sequelize.define('test_user', {
     username: Sequelize.STRING
@@ -208,19 +209,27 @@ var test_task = sequelize.define('test_task', {
     taskname: Sequelize.STRING
 });
 
+var user_tasks = sequelize.define('user_tasks', {
+    workdays : {
+        type: Sequelize.INTEGER
+    }
+});
+
 test_user.tasks = test_user.belongsToMany(test_task, {through: "user_tasks", foreignKey: 'ownerId'});
 test_task.owners = test_task.belongsToMany(test_user, {through: "user_tasks", foreignKey: 'taskId'});
 
+var cnt = 101;
 sequelize.sync().then(function() {
     test_user.findOne({where: {id: 5}})
     .then(user => {
-        test_task.findAll({where: {id: [1, 3]}}).then(task => {
-            user.setTest_tasks(task).then(tu => {
-                console.log("UserTask: ", tu);
-            })
+        test_task.findAll({where: {id: [3,1,2]}}).then(tasks => {
+            tasks.forEach(function(task){
+                task.user_tasks = {workdays: cnt++};
+             });
+            user.setTest_tasks(tasks);
         })
     })
     .catch(err => {
         console.log("ERR: ", err);
     })
-})
+}) */

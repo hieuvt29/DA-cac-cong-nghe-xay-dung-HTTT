@@ -1,3 +1,4 @@
+var orderStates = require('../../common/order-states');
 module.exports = function(sequelize, DataTypes) {
     return sequelize.define('Order', {
         orderId: {
@@ -25,7 +26,7 @@ module.exports = function(sequelize, DataTypes) {
         state: {
             type: DataTypes.STRING(20),
             allowNull: false,
-            defaultValue: "Pending"
+            defaultValue: orderStates.PENDING
         }
     })
 }

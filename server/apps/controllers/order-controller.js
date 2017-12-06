@@ -1,4 +1,4 @@
-var rule = require('../../common/validate/user-validator');
+var rule = require('../../common/validate/order-validator');
 var validate = require('../../common/validate-function');
 
 var dependencies = {} // solve problem "this" keyword does not reference to this class
@@ -8,14 +8,20 @@ var OrderController = function (orderRepository) {
 }
 
 OrderController.prototype.getOne = function (req, res, next) {
+    var select = req.fields ? req.fields : [];
     var orderId = req.params.orderId;
 
     var condition = {
         'orderId': orderId
     }
-    condition.isDelete = false;
 
-    dependencies.orderRepository.findOneBy(condition, select, null, function (err, result) {
+    var association = [{
+        model: dependencies.orderRepository.dbContext.Product, 
+        through: {
+            attributes: ['orderQuantity', 'productId']
+        }
+    }];
+    dependencies.orderRepository.findOneBy(condition, association, select, function (err, result) {
         if (err) {
             return next(err);
         } else if (result) {
@@ -36,9 +42,13 @@ OrderController.prototype.getMany = function (req, res, next) {
     var page = req.options.skip;
     var limit = req.options.limit;
 
-    condition.isDelete = false;
-
-    dependencies.orderRepository.findAllBy(condition, null, orderBy, select, page, limit, function (err, result) {
+    var association = [{
+        model: dependencies.orderRepository.dbContext.Product, 
+        through: {
+            attributes: ['orderQuantity', 'productId']
+        }
+    }];
+    dependencies.orderRepository.findAllBy(condition, association, orderBy, select, page, limit, function (err, result) {
         if (err) {
             return next(err);
         } else if (result) {
@@ -52,12 +62,10 @@ OrderController.prototype.getMany = function (req, res, next) {
     })
 }
 
-
 OrderController.prototype.create = async function (req, res, next) {
     var orderProps = req.body;
-
     //validate props
-    var val = await validate(rule.checkOrder, orderProps);
+    var val = await validate(rule, orderProps);
     if (val.numErr > 0) {
         return next({
             type: "Bad Request",
@@ -65,25 +73,12 @@ OrderController.prototype.create = async function (req, res, next) {
         });
     }
 
-    dependencies.orderRepository.findOneBy({
-        'accountId': orderProps.accountId
-    }, [], null, function (err, user) {
+    dependencies.orderRepository.saveWithTransaction(orderProps, function (err, result) {
         if (err) {
-            return next(err);
-        }
-        if (!user) {
-            dependencies.orderRepository.save(orderProps, null, function (err, newOrder) {
-                if (err) {
-                    return next(err);
-                } else {
-                    res.order = newOrder;
-                    return next();
-                }
-            })
+            next(err);
         } else {
-            next({
-                type: "Duplicated"
-            });
+            res.order = result;
+            next();
         }
     })
 }
@@ -94,29 +89,30 @@ OrderController.prototype.update = async function (req, res, next) {
     orderProps.orderId = orderId;
 
     //validate props
-    var val = await validate(rule.checkOrder, orderProps);
+    var val = await validate(rule, orderProps);
     if (val.numErr > 0) {
         return next({
             type: "Bad Request",
             error: val.error
         });
     }
-
-    dependencies.orderRepository.findOneBy({
+    var condition = {
         orderId: orderProps.orderId
-    }, [], null, function (err, orderObj) {
+    }
+    var association = [{
+        model: dependencies.orderRepository.dbContext.Product
+    }];
+    dependencies.orderRepository.findOneBy(condition, association, [], function (err, orderObj) {
         if (err) {
             next(err);
         } else if (orderObj) {
-            orderObj = Object.assign({},
-                orderObj,
-                orderProps
-            );
-            dependencies.orderRepository.update(orderObj, null, function (err, result) {
+            orderObj.dataValues = Object.assign({}, orderObj.dataValues, orderProps);
+
+            dependencies.orderRepository.updateWithTransaction(orderObj, function (err, result) {
                 if (err) {
-                    next(err);
-                } else if (result) {
-                    res.order = orderObj;
+                    return next(err);
+                } else {
+                    res.order = orderObj.dataValues;
                     return next();
                 }
             })
@@ -127,29 +123,18 @@ OrderController.prototype.update = async function (req, res, next) {
         }
     })
 }
-
+/* 
 OrderController.prototype.delete = async function (req, res, next) {
     var orderId = req.params.orderId;
 
-    var val = await validate(rule.checkOrder, orderProps);
-    if (val.numErr > 0) {
-        return next({
-            type: "Bad Request",
-            error: val.error
-        });
-    }
-
     var condition = {
-        orderId: orderProps.orderId,
-        isDelete: false
+        orderId: orderProps.orderId
     }
 
     dependencies.orderRepository.findOneBy(condition, [], null, function (err, orderObj) {
         if (err) {
             return next(err);
         } else if (orderObj) {
-            orderProps.isDelete = true;
-            orderObj = Object.assign({}, orderObj, orderProps);
 
             dependencies.orderRepository.update(orderObj, null, function (err, result) {
                 if (err) {
@@ -170,6 +155,6 @@ OrderController.prototype.delete = async function (req, res, next) {
             });
         }
     })
-}
+} */
 
 module.exports = OrderController;

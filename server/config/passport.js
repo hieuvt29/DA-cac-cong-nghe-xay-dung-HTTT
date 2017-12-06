@@ -24,7 +24,7 @@ module.exports = function (passport, accountRepository) {
             var condition = {
                 userName: username
             }
-            accountRepository.findOneBy({accountId: id}, [], [], function(err, user){
+            accountRepository.findOneBy(condition, [], [], function(err, user){
                 if (err) {
                     return done(err);
                 }

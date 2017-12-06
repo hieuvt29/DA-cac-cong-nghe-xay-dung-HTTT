@@ -12,6 +12,7 @@ SupplierRepository.prototype.findOneBy = function(condition, select, association
         })
         .then(function(result) {
             if (result){
+                delete result.dataValues.isDelete;
                 callback(null, result);
             } else {
                 callback(null, null);
@@ -35,6 +36,9 @@ SupplierRepository.prototype.findAllBy = function (condition, association, order
         })
         .then(function (result) {
             if (result){
+                result.forEach(function (o) {
+                    delete o.dataValues.isDelete;
+                });
                 callback(null, result);
             } else {
                 callback(null, null);
@@ -53,6 +57,7 @@ SupplierRepository.prototype.save = function(supplierObj, association, callback)
     })
     .then(function(result){
         if (result){   
+            delete result.dataValues.isDelete;
             callback(null, result);
         } else {
             callback(null, null);

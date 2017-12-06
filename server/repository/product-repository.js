@@ -93,7 +93,8 @@ ProductRepository.prototype.findOneBy = function (condition, association, select
         .findOne({
             attributes: select.length ? select : null,
             where: condition ? condition : null,
-            include: association
+            include: association,
+            exclude: ['isActive', 'isDelete']
         })
         .then(function (result) {
             if (result) {
@@ -119,7 +120,8 @@ ProductRepository.prototype.findAllBy = function (condition, association, orderB
             order: orderBy ? orderBy : null,
             limit: limit,
             offset: page * limit,
-            include: association
+            include: association, 
+            exclude: ['isActive', 'isDelete']
         })
         .then(function (result) {
             if (result && result.length) {
@@ -172,7 +174,7 @@ ProductRepository.prototype.save = function (productObj, association, callback) 
 
 ProductRepository.prototype.saveWithTransaction = function (productProps, callback) {
     if (productProps.description) {
-        productProps.description = JSON.stringify(productObj.description);
+        productProps.description = JSON.stringify(productProps.description);
     }
     var self = this;
     var categoryIds = productProps.Categories.map(function (o) {
@@ -188,14 +190,15 @@ ProductRepository.prototype.saveWithTransaction = function (productProps, callba
                 productProps = product;
                 return self.dbContext.Category
                     .findAll({
+                        attributes: ["categoryId", "categoryName"],
                         where: {
                             categoryId: categoryIds
                         },
                         transaction: t
                     })
-                    .then(function (categorieObjs) {
-                        productProps.dataValues.Categories = categorieObjs;
-                        return product.setCategories(categorieObjs, {
+                    .then(function (categoryObjs) {
+                        productProps.dataValues.Categories = categoryObjs;
+                        return product.setCategories(categoryIds, {
                             transaction: t
                         });
                     })
@@ -263,13 +266,14 @@ ProductRepository.prototype.updateWithTransaction = function (productObj, callba
                 if (updated) {
                     return self.dbContext.Category
                         .findAll({
+                            attributes: ["categoryId", "categoryName"],
                             where: {
                                 categoryId: categoryIds
                             },
                             transaction: t
                         })
                         .then(function (categorieObjs) {
-                            return productObj.setCategories(categorieObjs, {
+                            return productObj.setCategories(categoryIds, {
                                 transaction: t
                             });
                         })
