@@ -3,7 +3,7 @@ var SupplierRepository = function(dbContext) {
     this.Supplier = dbContext.Supplier;
 }
 
-SupplierRepository.prototype.findOneBy = function(condition, select, association, callback) {
+SupplierRepository.prototype.findOneBy = function(condition, association, select, callback) {
     this.Supplier
         .findOne({
             attributes: select.length ? select : null,

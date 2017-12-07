@@ -3,7 +3,7 @@ var CategoryRepository = function(dbContext) {
     this.Category = dbContext.Category;
 }
 
-CategoryRepository.prototype.findOneBy = function(condition, select, association, callback) {
+CategoryRepository.prototype.findOneBy = function(condition, association, select, callback) {
     this.Category
         .findOne({
             attributes: select.length ? select : null,

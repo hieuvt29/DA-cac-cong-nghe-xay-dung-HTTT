@@ -15,7 +15,15 @@ SupplierController.prototype.getOne = function (req, res, next) {
     }
     condition.isDelete = false;
 
-    dependencies.supplierRepository.findOneBy(condition, select, null, function (err, result) {
+    var association = [];
+    if (condition.association) {
+        association = [{
+            model: dependencies.supplierRepository.dbContext.Product
+        }];
+        delete condition.association;
+    }
+
+    dependencies.supplierRepository.findOneBy(condition, association, [], function (err, result) {
         if (err) {
             return next(err);
         } else if (result) {
@@ -38,7 +46,15 @@ SupplierController.prototype.getMany = function (req, res, next) {
 
     condition.isDelete = false;
 
-    dependencies.supplierRepository.findAllBy(condition, null, orderBy, select, page, limit, function (err, result) {
+    var association = [];
+    if (condition.association) {
+        association = [{
+            model: dependencies.supplierRepository.dbContext.Product
+        }];
+        delete condition.association;
+    }
+
+    dependencies.supplierRepository.findAllBy(condition, association, orderBy, select, page, limit, function (err, result) {
         if (err) {
             return next(err);
         } else if (result) {
@@ -56,14 +72,14 @@ SupplierController.prototype.getMany = function (req, res, next) {
 SupplierController.prototype.create = async function (req, res, next) {
     var supplierProps = req.body;
 
-/*     //validate props
-    var val = await validate(rule.checkSupplier, supplierProps);
-    if (val.numErr > 0) {
-        return next({
-            type: "Bad Request",
-            error: val.error
-        });
-    } */
+    /*     //validate props
+        var val = await validate(rule.checkSupplier, supplierProps);
+        if (val.numErr > 0) {
+            return next({
+                type: "Bad Request",
+                error: val.error
+            });
+        } */
 
     dependencies.supplierRepository.findOneBy({
         'accountId': supplierProps.accountId

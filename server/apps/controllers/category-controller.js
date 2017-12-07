@@ -15,7 +15,15 @@ CategoryController.prototype.getOne = function (req, res, next) {
     }
     condition.isDelete = false;
 
-    dependencies.categoryRepository.findOneBy(condition, select, null, function (err, result) {
+    var association = [];
+    if (condition.association) {
+        association = [{
+            model: dependencies.categoryRepository.dbContext.Product
+        }];
+        delete condition.association;
+    }
+
+    dependencies.categoryRepository.findOneBy(condition, association, [], function (err, result) {
         if (err) {
             return next(err);
         } else if (result) {
@@ -38,7 +46,15 @@ CategoryController.prototype.getMany = function (req, res, next) {
 
     condition.isDelete = false;
 
-    dependencies.categoryRepository.findAllBy(condition, null, orderBy, select, page, limit, function (err, result) {
+    var association = [];
+    if (condition.association) {
+        association = [{
+            model: dependencies.categoryRepository.dbContext.Product
+        }];
+        delete condition.association;
+    }
+
+    dependencies.categoryRepository.findAllBy(condition, association, orderBy, select, page, limit, function (err, result) {
         if (err) {
             return next(err);
         } else if (result) {
