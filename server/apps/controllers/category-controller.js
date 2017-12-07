@@ -8,6 +8,8 @@ var CategoryController = function (categoryRepository) {
 }
 
 CategoryController.prototype.getOne = function (req, res, next) {
+    var condition = req.where;
+    var select = req.fields ? req.fields : [];
     var categoryId = req.params.categoryId;
 
     var condition = {

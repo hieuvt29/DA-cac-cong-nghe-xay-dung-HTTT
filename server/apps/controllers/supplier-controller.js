@@ -8,6 +8,9 @@ var SupplierController = function (supplierRepository) {
 }
 
 SupplierController.prototype.getOne = function (req, res, next) {
+    var condition = req.where;
+    var select = req.fields ? req.fields : [];
+
     var supplierId = req.params.supplierId;
 
     var condition = {
@@ -23,7 +26,7 @@ SupplierController.prototype.getOne = function (req, res, next) {
         delete condition.association;
     }
 
-    dependencies.supplierRepository.findOneBy(condition, association, [], function (err, result) {
+    dependencies.supplierRepository.findOneBy(condition, association, select, function (err, result) {
         if (err) {
             return next(err);
         } else if (result) {
