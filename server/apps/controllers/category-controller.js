@@ -12,9 +12,7 @@ CategoryController.prototype.getOne = function (req, res, next) {
     var select = req.fields ? req.fields : [];
     var categoryId = req.params.categoryId;
 
-    var condition = {
-        'categoryId': categoryId
-    }
+    condition.categoryId = categoryId;
     condition.isDelete = false;
 
     var association = [];

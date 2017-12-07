@@ -13,9 +13,7 @@ SupplierController.prototype.getOne = function (req, res, next) {
 
     var supplierId = req.params.supplierId;
 
-    var condition = {
-        'supplierId': supplierId
-    }
+    condition.supplierId = supplierId;
     condition.isDelete = false;
 
     var association = [];
