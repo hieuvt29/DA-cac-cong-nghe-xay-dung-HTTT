@@ -75,7 +75,7 @@ ProductController.prototype.getMany = function (req, res, next) {
 
     condition.isDelete = false;
     condition.isActive = true;
-
+    // HANDLE SEARCHING BY RANGE OF PRICE
     if (condition.minPrice | condition.maxPrice) {
         condition['price'] = Object.assign({}, condition['price'], {
             $gte: condition.minPrice,
@@ -84,9 +84,16 @@ ProductController.prototype.getMany = function (req, res, next) {
         delete condition.minPrice;
         delete condition.maxPrice;
     }
-
+    // // HANDLE SEARCHING BY CATEGORYID
+    // var categoryCondition = {};
+    // if (condition.categoryId) {
+    //     categoryCondition = {
+    //         categoryId: condition.categoryId
+    //     };
+    //     delete condition.categoryId;
+    // }
     var association = [{
-        model: dependencies.productRepository.dbContext.Category,
+        model: dependencies.productRepository.dbContext.Category
     },{
         model: dependencies.productRepository.dbContext.Supplier,
     }]

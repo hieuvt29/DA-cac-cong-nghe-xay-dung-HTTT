@@ -58,12 +58,24 @@ module.exports = {
             res.status(404).send({message: "Not Found"});
         }
     },
-    delete: function(req, res){
+    updateInfo: function(req, res){
         if (res.account){
             res.status(200).send({
                 status: 200,
-                message: 'deleted',
+                message: 'updated',
                 account: res.account
+            });
+        }  else if (res.error) {
+            res.status(400).send(res.error);
+        } else {
+            res.status(404).send({message: "Not Found"});
+        }
+    }, 
+    changeState: function(req, res){
+        if (res.message){
+            res.status(200).send({
+                status: 200,
+                message: res.message
             });
         } else {
             res.status(404).send({message: "Not Found"});

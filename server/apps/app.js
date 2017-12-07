@@ -91,11 +91,8 @@ app.use(function(err, req, res, next) {
             case 'Duplicated':
                 return res.status(400).send({ message: 'Duplicated' });
                 break;
-            case 'Deleted':
-                return res.status(200).send({ message: 'Deleted' });
-                break;
             default:
-                return res.status(500).send({ message: 'Something failed!' });
+                return res.status(300).send({ message: err });
             
         }
     } else {
