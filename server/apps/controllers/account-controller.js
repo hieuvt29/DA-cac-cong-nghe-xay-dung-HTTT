@@ -1,7 +1,7 @@
 'use strict';
 var bcrypt = require('bcrypt-nodejs');
 var dependencies = {}
-var roles = require('../../common/role'); 
+var roles = require('../../common/role');
 var rule = require('../../common/validate/user-validator');
 var validate = require('../../common/validate-function');
 
@@ -21,7 +21,7 @@ dependencies.getOne = function (condition, select, callback) {
         } else if (result) {
             delete result.isActive;
             delete result.isDelete;
-            
+
             return callback(null, result);
         } else {
             return callback({
@@ -51,8 +51,11 @@ dependencies.getMany = function (condition, orderBy, select, page, limit, callba
 dependencies.create = async function (accountProps, callback) {
     //validate props
     var val = await validate(rule, accountProps);
-    if (val.numErr > 0){
-        return callback({type: "Bad Request", error: val.error});
+    if (val.numErr > 0) {
+        return callback({
+            type: "Bad Request",
+            error: val.error
+        });
     }
 
     dependencies.accountRepository.findOneBy({
@@ -82,8 +85,11 @@ dependencies.create = async function (accountProps, callback) {
 dependencies.update = async function (accountProps, callback) {
     //validate props
     var val = await validate(rule, accountProps);
-    if (val.numErr > 0){
-        return callback({type: "Bad Request", error: val.error});
+    if (val.numErr > 0) {
+        return callback({
+            type: "Bad Request",
+            error: val.error
+        });
     }
 
     dependencies.accountRepository.findOneBy({
@@ -142,11 +148,16 @@ AccountController.prototype.changePassword = async function (req, res, next) {
         };
         return next();
     }
-    var userProps = Object.assign({}, req.user.dataValues, {password: bcrypt.hashSync(newPass)});
+    var userProps = Object.assign({}, req.user.dataValues, {
+        password: bcrypt.hashSync(newPass)
+    });
 
     var val = await validate(rule, userProps);
-    if (val.numErr > 0){
-        return callback({type: "Bad Request", error: val.error});
+    if (val.numErr > 0) {
+        return callback({
+            type: "Bad Request",
+            error: val.error
+        });
     }
 
     dependencies.accountRepository.update(userProps, null, function (err, result) {
@@ -166,13 +177,18 @@ AccountController.prototype.changePassword = async function (req, res, next) {
 
 AccountController.prototype.changeUserName = async function (req, res, next) {
     var newUserName = req.body.newUserName;
-    
-    var accountProps = Object.assign({}, req.user.dataValues, {userName: newUserName});
+
+    var accountProps = Object.assign({}, req.user.dataValues, {
+        userName: newUserName
+    });
     var self = this;
     // validate accountProps 
     var val = await validate(rule, accountProps);
-    if (val.numErr > 0){
-        return callback({type: "Bad Request", error: val.error});
+    if (val.numErr > 0) {
+        return callback({
+            type: "Bad Request",
+            error: val.error
+        });
     }
 
     dependencies.accountRepository.findOneBy({
@@ -198,44 +214,79 @@ AccountController.prototype.changeUserName = async function (req, res, next) {
     })
 }
 
-AccountController.prototype.delete = async function (req, res, next) {
-    var accountId = req.params.accountId;
-
-    var self = this;
+AccountController.prototype.updateInfo = async function (req, res, next) {
+    var newInfo = req.body;
+    if (newInfo.password || newInfo.userName || newInfo.role) {
+        return next({
+            message: "Change restricted fields"
+        });
+    }
+    var accountProps = Object.assign({}, req.user.dataValues, newInfo);
+    // validate accountProps 
     var val = await validate(rule, accountProps);
     if (val.numErr > 0) {
-        return callback({
+        return next({
             type: "Bad Request",
             error: val.error
         });
     }
 
+    dependencies.accountRepository.update(accountProps, null, function (err, result) {
+        if (err) {
+            callback(err);
+        } else if (result) {
+            res.account = accountProps;
+            req.user = accountProps;
+            next();
+        }
+    })
+}
+AccountController.prototype.changeState = async function (req, res, next) {
+    var accountId = req.params.accountId;
+    var isActive = req.body.isActive;
+    var isDelete = req.body.isDelete;
+
     var condition = {
-        accountId: accountProps.accountId,
-        isActive: true,
-        isDelete: false
+        accountId: accountId,
+        isDelete : false
     }
-    
+
     dependencies.accountRepository.findOneBy(condition, [], null, function (err, accountObj) {
         if (err) {
-            return callback(err);
+            return next(err);
         } else if (accountObj) {
-            accountProps.isDelete = true;
-            accountObj = Object.assign({}, accountObj, accountProps);
+            if (isDelete) {
+                accountObj.isDelete = true;
+            } else if (isActive == false) {
+                accountObj.isActive = false;
+            } else if (isActive == true) {
+                accountObj.isActive = true;
+            } else {
+                return next({type: "Bad Request"});
+            }
             
-            dependencies.accountRepository.update(accountObj, null, function (err, result) {
+            dependencies.accountRepository.update(accountObj.dataValues, null, function (err, result) {
                 if (err) {
-                    return callback(err);
+                    return next(err);
                 } else if (result) {
-                    return callback({type: "Deleted"});
+                    if (isDelete) {
+                        res.message = "Deleted";
+                        return next();
+                    } else if (isActive == false) {
+                        res.message = "Blocked";
+                        return next();
+                    } else if (isActive == true) {
+                        res.message = "Activated";
+                        return next();
+                    }
                 } else {
-                    return callback({
+                    return next({
                         type: 'Bad Request'
                     });
                 }
             })
         } else {
-            return callback({
+            return next({
                 type: 'Not Found'
             });
         }
@@ -246,7 +297,10 @@ AccountController.prototype.delete = async function (req, res, next) {
 AccountController.prototype.getCustomer = function (req, res, next) {
     var accountId = req.params.accountId;
 
-    dependencies.getOne({ 'accountId': accountId, role: roles.CUSTOMER }, [], function (err, account) {
+    dependencies.getOne({
+        'accountId': accountId,
+        role: roles.CUSTOMER
+    }, [], function (err, account) {
         if (err) {
             next(err);
         } else {
@@ -277,7 +331,10 @@ AccountController.prototype.getCustomers = function (req, res, next) {
 AccountController.prototype.createCustomer = function (req, res, next) {
     // return error when create admin
     if (req.body.role == roles.ADMIN) {
-        return next({type: "Bad Request", message: "Cannot create admin account"});
+        return next({
+            type: "Bad Request",
+            message: "Cannot create admin account"
+        });
     }
     var accountProps = Object.assign({},
         req.body, {
@@ -285,8 +342,8 @@ AccountController.prototype.createCustomer = function (req, res, next) {
         }
     );
 
-    dependencies.create(accountProps, function(err, result){
-        if (err){
+    dependencies.create(accountProps, function (err, result) {
+        if (err) {
             next(err);
         } else {
             res.account = result;
@@ -299,7 +356,10 @@ AccountController.prototype.createCustomer = function (req, res, next) {
 AccountController.prototype.getAdmin = function (req, res, next) {
     var accountId = req.params.accountId;
 
-    dependencies.getOne({ 'accountId': accountId, role: roles.ADMIN }, [], function (err, account) {
+    dependencies.getOne({
+        'accountId': accountId,
+        role: roles.ADMIN
+    }, [], function (err, account) {
         if (err) {
             next(err);
         } else {
@@ -330,7 +390,10 @@ AccountController.prototype.getAdmins = function (req, res, next) {
 AccountController.prototype.createAdmin = function (req, res, next) {
     // return error when create admin
     if (req.body.role == roles.CUSTOMER) {
-        return next({type: "Bad Request", message: "Cannot create account account"});
+        return next({
+            type: "Bad Request",
+            message: "Cannot create account account"
+        });
     }
     var accountProps = Object.assign({},
         req.body, {
@@ -338,8 +401,8 @@ AccountController.prototype.createAdmin = function (req, res, next) {
         }
     );
 
-    dependencies.create(accountProps, function(err, result){
-        if (err){
+    dependencies.create(accountProps, function (err, result) {
+        if (err) {
             next(err);
         } else {
             res.account = result;

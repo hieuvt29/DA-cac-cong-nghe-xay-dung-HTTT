@@ -73,10 +73,8 @@ module.exports = function (app, accountController, passport) {
         .post(isLoggedIn, accountController.changeUserName,
             accountMw.changeUserName);
 
-    // app.route('/user')
-    //     .post(userController.createUser)
-    //     .put(userController.updateUser);
-
+    app.put('/user', isLoggedIn, accountController.updateInfo, accountMw.updateInfo)
+    
     // ADMIN
     function isAdminLoggedIn(req, res, next){
         if (req.isAuthenticated()) {
@@ -115,6 +113,11 @@ module.exports = function (app, accountController, passport) {
         accountMw.create
     );
 
+    app.post('/change-state/:accountId',
+        isAdminLoggedIn,
+        accountController.changeState,
+        accountMw.changeState
+    )
    /*  
    app.put('/admins/:accountId',
         isAdminLoggedIn,
@@ -141,11 +144,6 @@ module.exports = function (app, accountController, passport) {
         accountMw.getMany
     );
 
-    app.delete('/customers/:accountId',
-        isAdminLoggedIn,
-        accountController.delete,
-        accountMw.delete
-    )
     /* app.post('/customers',
         isAdminLoggedIn,
         accountController.create,
