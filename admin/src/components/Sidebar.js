@@ -87,6 +87,14 @@ class Sidebar extends React.Component {
                   </span>
                 </Link>
             </li>
+            <li>
+                <Link to="/order-manager">
+                  <i className="fa fa-th" /> <span>Order Manager</span>
+                  <span className="pull-right-container">
+                    <small className="label pull-right bg-green">new</small>
+                  </span>
+                </Link>
+            </li>
           </ul>
         </section>
         {}

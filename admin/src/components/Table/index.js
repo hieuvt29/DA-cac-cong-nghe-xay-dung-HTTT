@@ -597,6 +597,10 @@ class LargeModal extends React.Component {
     this.set;
   };
 
+  isArray = (value) => {
+    return value && typeof value === 'object' && value.constructor === Array;
+  };
+
   render() {
     console.log("state: ", this.state);
     return (
@@ -609,8 +613,8 @@ class LargeModal extends React.Component {
             <div className="box-body" ref={abc => { this.abc = abc; console.log('---TuyenTN---', abc); }}>
               {this.props.show?this.props.modaldata.map((item, index) => {
                 let action = this.props.action;
-                let val = action==="edit"?item.text:"";
-                console.log(val);
+                let val = action==="edit"?  JSON.stringify(item.text) :"";
+                //console.log(val);
                 if(!item.title.includes('is')){
                   return (
                   <div key={"index-" + item.title} className="form-group">
