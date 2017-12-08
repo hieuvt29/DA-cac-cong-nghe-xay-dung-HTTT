@@ -73,6 +73,13 @@ OrderController.prototype.create = async function (req, res, next) {
         });
     }
 
+    if (!orderProps.total) {
+        var total = 0;
+        orderProps.Products.forEach(function(product) {
+            total += product.price * product.orderQuantity;
+        });
+        orderProps.total = total;
+    }
     dependencies.orderRepository.saveWithTransaction(orderProps, function (err, result) {
         if (err) {
             next(err);
