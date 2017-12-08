@@ -139,7 +139,7 @@ module.exports = function (app, accountController, passport) {
     );
 
     app.get('/customers',
-        isAdminLoggedIn,
+        // isAdminLoggedIn,
         accountController.getCustomers,
         accountMw.getMany
     );
