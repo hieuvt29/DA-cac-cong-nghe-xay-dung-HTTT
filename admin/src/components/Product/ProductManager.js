@@ -20,6 +20,50 @@ class ProductManager extends React.Component {
             this.setState({data: res.products});
         })
     }
+
+    remove = (id) => {
+        try {
+            fetch('http://localhost:3001/products/'+id, {
+                method: 'DELETE'
+              }).then(function(response) {
+                return response.json();
+              }).then(function(data) {
+                console.log('DELETE product:', data);
+                this.forceUpdate();
+              });
+        } catch (error) {
+            console.log('REMOVE product error', error);
+        }
+    }
+
+    submit = (data) => {
+        console.log('---Ham cua thang bo: ---', data);
+        let dataObject;
+        let id = '';
+        data.forEach(item => {
+            if (item.title === "productId") {
+                id = item.text;
+            } else {
+                dataObject = { ...dataObject, [item.title]: item.text }
+            }
+        });
+        try {
+            fetch('http://localhost:3001/products/'+id, {
+                method: 'put',
+                body: JSON.stringify(dataObject)
+              }).then(function(response) {
+                return response.json();
+              }).then(function(data) {
+                console.log('Created Gist:', data);
+                this.forceUpdate();
+              });
+            console.log('---Data Object---', dataObject);
+        } catch (error) {
+            console.log('---This is an error---', error);
+        }
+        
+    }
+
     render () {
         return (
             <div className="content-wrapper">
@@ -32,7 +76,7 @@ class ProductManager extends React.Component {
                     <li className="active">Product Manager</li>
                 </ol>
                 </section>
-                <DataTable data={this.state.data} tableName="Products"/>
+                <DataTable remove={this.remove} submit={this.submit} data={this.state.data} tableName="Products"/>
             </div>
         );
     }

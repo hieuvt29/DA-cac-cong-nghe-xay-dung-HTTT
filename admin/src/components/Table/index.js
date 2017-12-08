@@ -33,6 +33,20 @@ class DataTable extends React.Component {
       error: '',
       showError: '',
       response: {},
+      arrText: [],
+      productName: '',
+      categoryId: '2b18291f-8c06-43d8-8b27-56b59e88c68d',
+      supplierId: '89ce332c-f574-4ab9-9f5c-d51bd15ede4a',
+      price: '',
+      quantity: '',
+      image: '/img/testproduct',
+      description: '',
+      categoryName: '',
+      parentId: '',
+      supplierName: '',
+      address: '',
+      contact: '',
+      type: '',
     }
 
     this.edit = this.edit.bind(this);
@@ -50,7 +64,7 @@ class DataTable extends React.Component {
   renderTable(data) {
     console.log("table rendered");
     let tableTemplate = this.refs.dataTable;
-    if (data.length === 0){
+    if (data && data.length === 0){
       $(tableTemplate).DataTable({
         data: [],
         columns: [
@@ -59,7 +73,7 @@ class DataTable extends React.Component {
         ]
       });
     } else {
-      let dataRows = data.map(obj => {
+      let dataRows = (!data)? null : data.map(obj => {
         let keys = Object.keys(obj);
         return keys.reduce((arr, attr) => arr.concat(obj[attr]), []);
       });
@@ -86,8 +100,73 @@ class DataTable extends React.Component {
         this.setState({ [e.target.name]: e.target.value });
     };
     
+    submitCat = () => {
+      this.setState({ createPageShow: 'none' });
+      fetch("http://localhost:3001/categories/", {
+        method: "post",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
 
-    submit = () => {
+        //make sure to serialize your JSON body
+        body: JSON.stringify({
+          categoryName: this.state.categoryName,
+          description: this.state.description,
+          parentId: this.state.parentId,
+        })
+      })
+      .then( (response) => { 
+         this.setState({ response: response});
+      });
+    }
+    submitSup = () => {
+      this.setState({ createPageShow: 'none' });
+      fetch("http://localhost:3001/suppliers/", {
+        method: "post",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+
+        //make sure to serialize your JSON body
+        body: JSON.stringify({
+          supplierName: this.state.supplierName,
+          address: this.state.address,
+          type: this.state.type,
+          contact: this.state.contact,
+        })
+      })
+      .then( (response) => { 
+         this.setState({ response: response});
+      });
+    }
+    submitPro = () => {
+      this.setState({ createPageShow: 'none' });
+      fetch("http://localhost:3001/products/", {
+        method: "post",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+
+        //make sure to serialize your JSON body
+        body: JSON.stringify({
+          productName: this.state.productName,
+          Categories: [{categoryId: this.state.categoryId}],
+          supplierId: this.state.supplierId,
+          price: parseInt(this.state.price),
+          quantity: parseInt(this.state.quantity),
+          image: this.state.image,
+          description: {description: this.state.description},
+        })
+      })
+      .then( (response) => { 
+         this.setState({ response: response});
+      });
+    }
+
+    submitAcc = () => {
         this.setState({ showError: '' });
         let re = /^\w+$/;
         if(this.state.username === '') {
@@ -163,8 +242,31 @@ class DataTable extends React.Component {
 
     console.log("selected: ", rowInfo, columns );
     if (rowInfo.length !== 0) {
-      this.setState({ modalAction: "edit", modalShow: true, modalData: {data: rowInfo, columns: columns} });
+      let modalData = [];
+      for(let i = 0; i < rowInfo.length; i++) {
+        modalData.push({ title: columns[i], text: rowInfo[i] });
+      }
+      this.setState({ modalAction: "edit", modalShow: true, modalData }, () => console.log('---TuyenTN---modalData', this.state.modalData));
     }
+  }
+  changeModalItemText = (e, index) => {
+    const modalData = this.state.modalData.map((item, i) => {
+      if (i === index) return { ...item, text: e.target.value }
+      return item;
+    });
+    this.setState({ modalData });
+  }
+  submit = () => {
+    console.log('---TuyenTN---datatatdtagda', this.state.modalData);
+    this.props.submit(this.state.modalData);
+  }
+
+  remove = (e) => {
+    e.preventDefault();
+    let table = this.refs.dataTable;
+    let id = $(table).find('.selected').find('td:first-child').text();
+    console.log('The id of selected row in remove function', id);
+    this.props.remove(id);
   }
   render () {
     return (
@@ -181,15 +283,22 @@ class DataTable extends React.Component {
                   <a className="btn btn-primary" onClick={this.edit}>
                     Edit
                   </a>
-                  <Button className="delete_btn">Delete</Button>
-                  <LargeModal action={this.state.modalAction} show={this.state.modalShow} changeDadState={(e) => this.setState({ [e.target.name]: e.target.value })} modaldata={this.state.modalData} onHide={() => this.setState({modalShow: false})}/>
+                  <Button className="delete_btn" onClick={this.remove}>Delete</Button>
+                  <LargeModal
+                    submit={this.submit}
+                    action={this.state.modalAction}
+                    show={this.state.modalShow}
+                    change={this.changeModalItemText}
+                    modaldata={this.state.modalData}
+                    onHide={() => this.setState({modalShow: false})}
+                  />
                 </ButtonToolbar>
                 <hr />
                 <table id="example1" className="dataTable table table-bordered table-striped" ref="dataTable">
                   
                 </table>
               </div>
-              {this.state.tableName==="Customers"?(
+              { this.state.tableName==="Customers"?(
               <div className="create_form" style={{ display: this.state.createPageShow }}>
                 <form className="form-horizontal" >
                         <h4> Thông tin tài khoản </h4>
@@ -201,7 +310,7 @@ class DataTable extends React.Component {
                         </div>
 
                         <div className="control-group">
-                            <label className="control-label" htmlFor="inputPassword1">Mật khẩu <sup>*</sup></label>
+                            <label className="control-label" htmlFor="inputPassword1">Mã category <sup>*</sup></label>
                             <div className="controls">
                                 <input type="password" id="inputPassword1" name="password" onChange={this.change} value={this.state.password} placeholder="Password" />
                             </div>
@@ -267,22 +376,157 @@ class DataTable extends React.Component {
                     </form>
                     <div className="control-group">
                         <div className="controls">
-                            <button className="btn btn-large btn-success" onClick={this.submit}>Đăng kí</button>
+                            <button className="btn btn-large btn-success" onClick={this.submitAcc}>Đăng kí</button>
                         </div>
+                        <span className="controls">
+                          <button className="btn btn-large btn-close" onClick={() => { this.setState({ createPageShow: 'none' }) }}>Đóng</button>
+                        </span>
                     </div>
               </div>
-              ): (
+              ): (this.state.tableName==="Products")? (
                   <div className="create_form" style={{ display: this.state.createPageShow }}>
                     <form className="form-horizontal" >
                       <h4> Thông tin sản phẩm </h4>
+
+                      <div className="control-group">
+                        <label className="control-label" htmlFor="productName">Tên sản phẩm <sup>*</sup></label>
+                        <div className="controls">
+                          <input type="text" id="productName" name="productName" onChange={this.change} value={this.state.productName} placeholder="Ten sp" />
+                        </div>
+                      </div>
+
+                      <div className="control-group">
+                        <label className="control-label" htmlFor="categoryId">Loại sản phẩm <sup>*</sup></label>
+                        <div className="controls">
+                          <input type="text" id="categoryId" name="categoryId" onChange={this.change} value={this.state.categoryId} placeholder="" />
+                        </div>
+                      </div>
+
+                      <div className="control-group">
+                        <label className="control-label" htmlFor="supplierId">Mã nhà cung cấp <sup>*</sup></label>
+                        <div className="controls">
+                          <input type="text" id="supplierId" name="supplierId" onChange={this.change} value={this.state.supplierId} placeholder="" />
+                        </div>
+                      </div>
+
+                      <div className="control-group">
+                        <label className="control-label" htmlFor="price">Giá <sup>*</sup></label>
+                        <div className="controls">
+                          <input type="text" id="price" name="price" onChange={this.change} value={this.state.price} placeholder="" />
+                        </div>
+                      </div>
+
+                      <div className="control-group">
+                        <label className="control-label" htmlFor="quantity">Số lượng <sup>*</sup></label>
+                        <div className="controls">
+                          <input type="text" id="quantity" name="quantity" onChange={this.change} value={this.state.quantity} placeholder="" />
+                        </div>
+                      </div>
+
+                      <div className="control-group">
+                        <label className="control-label" htmlFor="image">Link ảnh <sup>*</sup></label>
+                        <div className="controls">
+                          <input type="text" id="image" name="image" onChange={this.change} value={this.state.image} placeholder="" />
+                        </div>
+                      </div>
+
+                      <div className="control-group">
+                        <label className="control-label" htmlFor="description">Mô tả <sup>*</sup></label>
+                        <div className="controls">
+                          <input type="text" id="description" name="description" onChange={this.change} value={this.state.description} placeholder="" />
+                        </div>
+                      </div>
+
                     </form>
                     <div className="control-group">
                       <div className="controls">
-                        <button className="btn btn-large btn-success" onClick={this.submit}>Thêm sản phẩm</button>
+                        <button className="btn btn-large btn-success" onClick={this.submitPro}>Thêm sản phẩm</button>
                       </div>
+                      <span className="controls">
+                        <button className="btn btn-large btn-close" onClick={() => {this.setState({createPageShow: 'none'})}}>Đóng</button>
+                      </span>
                     </div>
                   </div>
-              )}
+              ): (this.state.tableName==="Categories")? (
+                <div className="create_form" style={{ display: this.state.createPageShow }}>
+                    <form className="form-horizontal" >
+                      <h4> Thêm loại sản phẩm </h4>
+
+                      <div className="control-group">
+                        <label className="control-label" htmlFor="categoryName">Tên loại <sup>*</sup></label>
+                        <div className="controls">
+                          <input type="text" id="categoryName" name="categoryName" onChange={this.change} value={this.state.categoryName} placeholder="Ten loai sp" />
+                        </div>
+                      </div>
+
+                      <div className="control-group">
+                        <label className="control-label" htmlFor="description">Mô tả <sup>*</sup></label>
+                        <div className="controls">
+                          <input type="text" id="description" name="description" onChange={this.change} value={this.state.description} placeholder="" />
+                        </div>
+                      </div>
+                      <div>Nếu là loại sub-category:</div>
+                      <div className="control-group">
+                        <label className="control-label" htmlFor="parentId">Mã parent category <sup>*</sup></label>
+                        <div className="controls">
+                          <input type="text" id="parentId" name="parentId" onChange={this.change} value={this.state.parentId} placeholder="" />
+                        </div>
+                      </div>
+
+                    </form>
+                    <div className="control-group">
+                      <div className="controls">
+                        <button className="btn btn-large btn-success" onClick={this.submitCat}>Thêm loại sản phẩm</button>
+                      </div>
+                      <span className="controls">
+                        <button className="btn btn-large btn-close" onClick={() => {this.setState({createPageShow: 'none'})}}>Đóng</button>
+                      </span>
+                    </div>
+                  </div>
+              ) : (this.state.tableName === "Suppliers")? (
+                <div className="create_form" style={{ display: this.state.createPageShow }}>
+                    <form className="form-horizontal" >
+                      <h4> Thêm nhà cung cấp </h4>
+
+                      <div className="control-group">
+                        <label className="control-label" htmlFor="supplierName">Tên nhà cung cấp <sup>*</sup></label>
+                        <div className="controls">
+                          <input type="text" id="supplierName" name="supplierName" onChange={this.change} value={this.state.supplierName} placeholder="Ten ncc" />
+                        </div>
+                      </div>
+
+                      <div className="control-group">
+                        <label className="control-label" htmlFor="address">Địa chỉ <sup>*</sup></label>
+                        <div className="controls">
+                          <input type="text" id="address" name="address" onChange={this.change} value={this.state.address} placeholder="" />
+                        </div>
+                      </div>
+
+                      <div className="control-group">
+                        <label className="control-label" htmlFor="type">Loại <sup>*</sup></label>
+                        <div className="controls">
+                          <input type="text" id="type" name="type" onChange={this.change} value={this.state.type} placeholder="" />
+                        </div>
+                      </div>
+
+                      <div className="control-group">
+                        <label className="control-label" htmlFor="contact">Liên hệ <sup>*</sup></label>
+                        <div className="controls">
+                          <input type="text" id="contact" name="contact" onChange={this.change} value={this.state.contact} placeholder="" />
+                        </div>
+                      </div>
+
+                    </form>
+                    <div className="control-group">
+                      <div className="controls">
+                        <button className="btn btn-large btn-success" onClick={this.submitSup}>Thêm nhà cung cấp</button>
+                      </div>
+                      <span className="controls">
+                        <button className="btn btn-large btn-close" onClick={() => {this.setState({createPageShow: 'none'})}}>Đóng</button>
+                      </span>
+                    </div>
+                  </div>
+              ) : null }
             </div>
           </div>
         </div>
@@ -306,38 +550,55 @@ class LargeModal extends React.Component {
       address: props.address, 
       error: props.error,
       showError: props.showError,
+      response: props.userName,
+      password: props.password,
+      repassword: props.repassword,
+      firstName: props.firstName,
+      lastName: props.lastName,
+      gender: 'khac',
+      dob: props.dob,
+      email: props.email,
+      telephone: props.telephone,
+      address: props.address, 
+      error: props.error,
+      showError: props.showError,
       response: {},
       modaldata: '',
+      arrText: [],
     }
   }
-  // componentWillReceiveProps(nextProps){
-  //   this.setState({
-  //     username: nextProps.userName,
-  //     password: nextProps.password,
-  //     repassword: nextProps.repassword,
-  //     firstName: nextProps.firstName,
-  //     lastName: nextProps.lastName,
-  //     gender: 'khac',
-  //     dob: nextProps.dob,
-  //     email: nextProps.email,
-  //     telephone: nextProps.telephone,
-  //     address: nextProps.address,
-  //     error: nextProps.error,
-  //     showError: nextProps.showError,
-  //     response: {},
-  //     show: true,
-  //     modaldata: nextProps.modaldata,
-  //   });
-  //   console.log("nextProps: ", nextProps);
-  //   console.log("state: ", this.state);
-    
-  // }
+  
+  componentWillReceiveProps(nextProps){
+    // this.setState({
+    //   username: nextProps.userName,
+    //   password: nextProps.password,
+    //   repassword: nextProps.repassword,
+    //   firstName: nextProps.firstName,
+    //   lastName: nextProps.lastName,
+    //   gender: 'khac',
+    //   dob: nextProps.dob,
+    //   email: nextProps.email,
+    //   telephone: nextProps.telephone,
+    //   address: nextProps.address,
+    //   error: nextProps.error,
+    //   showError: nextProps.showError,
+    //   response: {},
+    //   show: true,
+    //   modaldata: nextProps.modaldata,
+    // });
+    // console.log("nextProps: ", nextProps);
+    // console.log("state: ", this.state);
+  }
 
   /**
    * @param {Event} e
    */
   change(e) {
     this.set;
+  };
+
+  isArray = (value) => {
+    return value && typeof value === 'object' && value.constructor === Array;
   };
 
   render() {
@@ -350,22 +611,22 @@ class LargeModal extends React.Component {
         <Modal.Body>
           <form role="form">
             <div className="box-body" ref={abc => { this.abc = abc; console.log('---TuyenTN---', abc); }}>
-              {this.props.show?this.props.modaldata.columns.map((column, index) => {
+              {this.props.show?this.props.modaldata.map((item, index) => {
                 let action = this.props.action;
-                let val = action==="edit"?this.props.modaldata.data[index]:"";
-                console.log(val);
-                if(!column.includes('is')){
+                let val = action==="edit"?  JSON.stringify(item.text) :"";
+                //console.log(val);
+                if(!item.title.includes('is')){
                   return (
-                  <div key={"index-" + column} className="form-group">
-                    <label htmlFor={column}>{column}</label>
-                    <input type="text" className="form-control" id={column} name={column} placeholder={"Enter " + column} defaultValue={val}/>
+                  <div key={"index-" + item.title} className="form-group">
+                    <label htmlFor={item.title}>{item.title}</label>
+                    <input type="text" className="form-control" onChange={e => this.props.change(e, index)} id={item.title} name={item.title} placeholder={"Enter " + item.title} value={val}/>
                   </div>
                   )
                 } else {
                   return (
-                  <div className="checkbox" key={"index-" + column}>
+                  <div className="checkbox" key={"index-" + item.title}>
                     <label>
-                      <input type="checkbox" id={column} name={column} defaultChecked={val}/>{column}
+                      <input type="checkbox" id={item.title} name={item.title} defaultChecked={val}/>{item.title}
                     </label>
                   </div>
                   )
@@ -373,7 +634,7 @@ class LargeModal extends React.Component {
             </div>
 
             <div className="box-footer">
-              <button type="submit" className="btn btn-primary">Submit</button>
+              <button type="button" onClick={this.props.submit} className="btn btn-primary">Submit</button>
             </div>
           </form>
         </Modal.Body>

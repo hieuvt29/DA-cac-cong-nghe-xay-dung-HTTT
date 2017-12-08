@@ -30,19 +30,19 @@ module.exports = function(app, productController){
     );
 
     app.post('/products', 
-        isLoggedIn,
+        // isLoggedIn,
         productController.create,
         productMw.create
     );
     
     app.put('/products/:productId',
-        isLoggedIn,
+        // isLoggedIn,
         productController.update, 
         productMw.update
     );
 
     app.delete('/products/:productId',
-        isLoggedIn,
+        // isLoggedIn,
         productController.delete,
         productMw.delete
     )
