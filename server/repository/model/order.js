@@ -23,6 +23,10 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.DATE,
             allowNull: true
         },
+        total: {
+            type: DataTypes.DOUBLE,
+            allowNull: false
+        },
         state: {
             type: DataTypes.STRING(20),
             allowNull: false,

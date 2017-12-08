@@ -1,4 +1,4 @@
-var rule = require('../../common/validate/user-validator');
+var rule = require('../../common/validate/category-validator');
 var validate = require('../../common/validate-function');
 
 var dependencies = {} // solve problem "this" keyword does not reference to this class
@@ -73,7 +73,7 @@ CategoryController.prototype.create = async function (req, res, next) {
     var categoryProps = req.body;
 
     //validate props
-    var val = await validate(rule.checkCategory, categoryProps);
+    var val = await validate(rule, categoryProps);
     if (val.numErr > 0) {
         return next({
             type: "Bad Request",
@@ -82,12 +82,12 @@ CategoryController.prototype.create = async function (req, res, next) {
     }
 
     dependencies.categoryRepository.findOneBy({
-        'accountId': categoryProps.accountId
-    }, [], null, function (err, user) {
+        'categoryId': categoryProps.categoryId
+    }, [], [], function (err, category) {
         if (err) {
             return next(err);
         }
-        if (!user) {
+        if (!category) {
             dependencies.categoryRepository.save(categoryProps, null, function (err, newCategory) {
                 if (err) {
                     return next(err);
@@ -110,7 +110,7 @@ CategoryController.prototype.update = async function (req, res, next) {
     categoryProps.categoryId = categoryId;
 
     //validate props
-    var val = await validate(rule.checkCategory, categoryProps);
+    var val = await validate(rule, categoryProps);
     if (val.numErr > 0) {
         return next({
             type: "Bad Request",
@@ -120,12 +120,12 @@ CategoryController.prototype.update = async function (req, res, next) {
 
     dependencies.categoryRepository.findOneBy({
         categoryId: categoryProps.categoryId
-    }, [], null, function (err, categoryObj) {
+    }, [], [], function (err, categoryObj) {
         if (err) {
             next(err);
         } else if (categoryObj) {
             categoryObj = Object.assign({},
-                categoryObj,
+                categoryObj.dataValues,
                 categoryProps
             );
             dependencies.categoryRepository.update(categoryObj, null, function (err, result) {
@@ -147,27 +147,18 @@ CategoryController.prototype.update = async function (req, res, next) {
 CategoryController.prototype.delete = async function (req, res, next) {
     var categoryId = req.params.categoryId;
 
-    var val = await validate(rule.checkCategory, categoryProps);
-    if (val.numErr > 0) {
-        return next({
-            type: "Bad Request",
-            error: val.error
-        });
-    }
-
     var condition = {
-        categoryId: categoryProps.categoryId,
+        categoryId: categoryId,
         isDelete: false
     }
 
-    dependencies.categoryRepository.findOneBy(condition, [], null, function (err, categoryObj) {
+    dependencies.categoryRepository.findOneBy(condition, [], [], function (err, categoryObj) {
         if (err) {
             return next(err);
         } else if (categoryObj) {
-            categoryProps.isDelete = true;
-            categoryObj = Object.assign({}, categoryObj, categoryProps);
+            categoryObj.isDelete = true;
 
-            dependencies.categoryRepository.update(categoryObj, null, function (err, result) {
+            dependencies.categoryRepository.update(categoryObj.dataValues, null, function (err, result) {
                 if (err) {
                     return next(err);
                 } else if (result) {

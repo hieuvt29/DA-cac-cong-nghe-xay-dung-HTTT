@@ -1,4 +1,4 @@
-var rule = require('../../common/validate/user-validator');
+var rule = require('../../common/validate/supplier-validator');
 var validate = require('../../common/validate-function');
 
 var dependencies = {} // solve problem "this" keyword does not reference to this class
@@ -73,18 +73,18 @@ SupplierController.prototype.getMany = function (req, res, next) {
 SupplierController.prototype.create = async function (req, res, next) {
     var supplierProps = req.body;
 
-    /*     //validate props
-        var val = await validate(rule.checkSupplier, supplierProps);
-        if (val.numErr > 0) {
-            return next({
-                type: "Bad Request",
-                error: val.error
-            });
-        } */
+    //validate props
+    var val = await validate(rule, supplierProps);
+    if (val.numErr > 0) {
+        return next({
+            type: "Bad Request",
+            error: val.error
+        });
+    }
 
     dependencies.supplierRepository.findOneBy({
-        'accountId': supplierProps.accountId
-    }, [], null, function (err, user) {
+        'supplierId': supplierProps.supplierId
+    }, [], [], function (err, user) {
         if (err) {
             return next(err);
         }
@@ -111,7 +111,7 @@ SupplierController.prototype.update = async function (req, res, next) {
     supplierProps.supplierId = supplierId;
 
     //validate props
-    var val = await validate(rule.checkSupplier, supplierProps);
+    var val = await validate(rule, supplierProps);
     if (val.numErr > 0) {
         return next({
             type: "Bad Request",
@@ -121,12 +121,12 @@ SupplierController.prototype.update = async function (req, res, next) {
 
     dependencies.supplierRepository.findOneBy({
         supplierId: supplierProps.supplierId
-    }, [], null, function (err, supplierObj) {
+    }, [], [], function (err, supplierObj) {
         if (err) {
             next(err);
         } else if (supplierObj) {
             supplierObj = Object.assign({},
-                supplierObj,
+                supplierObj.dataValues,
                 supplierProps
             );
             dependencies.supplierRepository.update(supplierObj, null, function (err, result) {
@@ -148,27 +148,18 @@ SupplierController.prototype.update = async function (req, res, next) {
 SupplierController.prototype.delete = async function (req, res, next) {
     var supplierId = req.params.supplierId;
 
-    var val = await validate(rule.checkSupplier, supplierProps);
-    if (val.numErr > 0) {
-        return next({
-            type: "Bad Request",
-            error: val.error
-        });
-    }
-
     var condition = {
-        supplierId: supplierProps.supplierId,
+        supplierId: supplierId,
         isDelete: false
     }
 
-    dependencies.supplierRepository.findOneBy(condition, [], null, function (err, supplierObj) {
+    dependencies.supplierRepository.findOneBy(condition, [], [], function (err, supplierObj) {
         if (err) {
             return next(err);
         } else if (supplierObj) {
-            supplierProps.isDelete = true;
-            supplierObj = Object.assign({}, supplierObj, supplierProps);
+            supplierObj.isDelete = true;
 
-            dependencies.supplierRepository.update(supplierObj, null, function (err, result) {
+            dependencies.supplierRepository.update(supplierObj.dataValues, null, function (err, result) {
                 if (err) {
                     return next(err);
                 } else if (result) {

@@ -131,8 +131,17 @@ dbContext.sequelize.sync().then(function () {
         console.log("------ categories created ------ ");
         console.log("creating admin...: ");
         
-        let accountsProps = {
+        let admin = {
             userName: "hieuvt",
+            password: '123321',
+            role: 0,
+            firstName: "vu",
+            lastName: "hieu",
+            gender: "male",
+            email: "hieuvt@gmail.com"
+        };
+        let customer = {
+            userName: "hieuvt01",
             password: '123321',
             role: 0,
             firstName: "vu",
@@ -141,8 +150,9 @@ dbContext.sequelize.sync().then(function () {
             email: "hieuvt@gmail.com"
         }
         // create account along with admin
-        dbContext.Account.create(accountsProps)
-            .then((account) => {
+        dbContext.Account.bulkCreate([admin, customer])
+            .then((accounts) => {
+                let account = accounts[0];...
                 console.log("account created: ", account);
                 console.log("creating suppliers...");
                 let supplierNames = Object.keys(data);

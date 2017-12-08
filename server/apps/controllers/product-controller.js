@@ -84,14 +84,6 @@ ProductController.prototype.getMany = function (req, res, next) {
         delete condition.minPrice;
         delete condition.maxPrice;
     }
-    // // HANDLE SEARCHING BY CATEGORYID
-    // var categoryCondition = {};
-    // if (condition.categoryId) {
-    //     categoryCondition = {
-    //         categoryId: condition.categoryId
-    //     };
-    //     delete condition.categoryId;
-    // }
     var association = [{
         model: dependencies.productRepository.dbContext.Category
     },{
