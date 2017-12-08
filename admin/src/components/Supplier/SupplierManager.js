@@ -2,42 +2,37 @@ import React from 'react';
 import DataTable from '../Table/index';
 import $ from 'jquery';
 
-class AccountManager extends React.Component {
+class SupplierManager extends React.Component {
     constructor(props){
         super(props);
 
         this.state = {
             data: [],
-            username: '',
-            password: '',
-            repassword: '',
-            firstName: '',
-            lastName: '',
-            gender: 'khac',
-            dob: '',
-            email: '',
-            telephone: '',
-            address: '',
-            error: '',
-            showError: '',
+            loading: true
         }
     }
-    shouldComponentUpdate(nextState) {
-        return this.state.data !== nextState.data;
-    }
     componentDidMount(){
-        console.info("AccountManager DidMount");
-        $.get('/customers', res => {
-            console.log("get customers: ", res);
-            this.setState({data: res.accounts});
-        });
+        console.info("SupplierManager DidMount");
+        $.ajax({
+            url: '/suppliers',
+            method: 'GET'
+        }).then(res => {
+            this.setState({data: res.suppliers});
+        })
     }
 
     remove = (id) => {
         try {
-            console.log("Try to delete", id);
+            fetch('http://localhost:3001/suppliers/'+id, {
+                method: 'DELETE'
+              }).then(function(response) {
+                return response.json();
+              }).then(function(data) {
+                console.log('DELETE supplier:', data);
+                this.forceUpdate();
+              });
         } catch (error) {
-            console.log('---Error remove account---', error);
+            console.log('REMOVE supplier error', error);
         }
     }
 
@@ -46,14 +41,14 @@ class AccountManager extends React.Component {
         let dataObject;
         let id = '';
         data.forEach(item => {
-            if (item.title === "accountId") {
+            if (item.title === "supplierId") {
                 id = item.text;
             } else {
                 dataObject = { ...dataObject, [item.title]: item.text }
             }
         });
         try {
-            fetch('http://localhost:3001/customers/'+id, {
+            fetch('http://localhost:3001/suppliers/'+id, {
                 method: 'put',
                 body: JSON.stringify(dataObject)
               }).then(function(response) {
@@ -68,23 +63,23 @@ class AccountManager extends React.Component {
         }
         
     }
+
     render () {
-        console.log("AM rendered");
         return (
             <div className="content-wrapper">
                 <section className="content-header">
                 <h1>
-                    Account Manager
+                    Supplier Manager
                 </h1>
                 <ol className="breadcrumb">
                     <li><a href="#"><i className="fa fa-dashboard"></i> Home</a></li>
-                    <li className="active">Account Manager</li>
+                    <li className="active">Supplier Manager</li>
                 </ol>
                 </section>
-                <DataTable submit={this.submit} remove={this.remove} data={this.state.data} tableName="Customers"/>
+                <DataTable remove={this.remove} submit={this.submit} data={this.state.data} tableName="Suppliers"/>
             </div>
-        )
+        );
     }
 }
 
-export default AccountManager;
+export default SupplierManager;

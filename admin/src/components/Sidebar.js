@@ -71,6 +71,22 @@ class Sidebar extends React.Component {
                   </span>
                 </Link>
             </li>
+            <li>
+                <Link to="/category-manager">
+                  <i className="fa fa-th" /> <span>Category Manager</span>
+                  <span className="pull-right-container">
+                    <small className="label pull-right bg-green">new</small>
+                  </span>
+                </Link>
+            </li>
+            <li>
+                <Link to="/supplier-manager">
+                  <i className="fa fa-th" /> <span>Supplier Manager</span>
+                  <span className="pull-right-container">
+                    <small className="label pull-right bg-green">new</small>
+                  </span>
+                </Link>
+            </li>
           </ul>
         </section>
         {}
