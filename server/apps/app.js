@@ -54,6 +54,9 @@ var categoryController = new CategoryController(categoryRepository);
 
 var OrderController = require('./controllers/order-controller');
 var orderController = new OrderController(orderRepository);
+
+var StatisticController = require('./controllers/statistic-controller');
+var statisticController = new StatisticController(orderRepository);
 //config the passport
 require('../config/passport')(passport, accountRepository);
 
@@ -73,6 +76,7 @@ require('./routes/account-route')(app, accountController, passport);
 require('./routes/supplier-route')(app, supplierController);
 require('./routes/category-route')(app, categoryController);
 require('./routes/order-route')(app, orderController);
+require('./routes/statistic-route')(app, statisticController);
 
 app.use(function(err, req, res, next) {
     console.error(new Date() + " - " + JSON.stringify(err, null, '\t'));
