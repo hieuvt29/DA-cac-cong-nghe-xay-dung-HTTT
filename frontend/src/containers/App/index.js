@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 
 import Header from '../Header';
 import Sidebar from '../Sidebar';
@@ -37,10 +37,10 @@ class App extends Component {
             <Route path="/contact" component={Contact} />
             <Route path="/signup" component={Signup} />
             <Route path="/product_summary" component={Cart} />
-            <Route path="/product/" component={ProductDetail} />
             <Route path="/product/:id" component={ProductDetail} />
             <Route path="/category/:id" component={Category} />
-            <Route path="" component={NotFound} />
+            {/* <Route path="" component={NotFound} /> */}
+            <Redirect to="/" />
         </Switch>
         <Footer/>
       </div>

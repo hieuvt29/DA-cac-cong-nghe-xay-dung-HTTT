@@ -132,11 +132,14 @@ class Header extends Component {
 				                    </label>
                           </div>
                         </form>
-                        <button className="input-group-btn">
-                          <Link to="/signup" onClick={ () => {$("#login").fadeOut(0);} }> Đăng kí </Link>
-                        </button>
-                        <button type="submit" onClick={this.signin} className="btn btn-success"> Đăng nhập </button>
-                        <button className="btn closeLogin" onClick={() => this.setState({ openLogin: false })} data-dismiss="modal" aria-hidden="true"> Đóng </button>
+                        <div className="btn-group">
+                          <Link to="/signup" onClick={ () => {$("#login").fadeOut(0);} }>
+                          <button className="btn input-group-btn">
+                             Đăng kí 
+                          </button></Link>
+                          <button type="submit" onClick={this.signin} className="btn btn-success"> Đăng nhập </button>
+                          <button className="btn closeLogin" onClick={() => this.setState({ openLogin: false })} data-dismiss="modal" aria-hidden="true"> Đóng </button>
+                        </div>
                       </div>
                     </div>}
                   </li>

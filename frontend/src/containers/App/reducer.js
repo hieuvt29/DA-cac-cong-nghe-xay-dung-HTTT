@@ -85,8 +85,8 @@ function appReducer(state = initialState, action) {
     }
     
     case 'RES_PRODUCTBYCAT': {
-        console.log('---RES_PRODUCTBYCAT---', action.response.categories);
-        return { ...state, resProByCategory: action.response.categories};
+        console.log('---RES_PRODUCTBYCAT---', action.response.category.Products);
+        return { ...state, resProByCategory: action.response.category.Products};
     }
     case 'UPDATECART': {
         return { ...state, cartTotal: action.cartTotal, cartQuantity: action.cartQuantity };

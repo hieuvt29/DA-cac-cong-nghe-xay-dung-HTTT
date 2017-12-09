@@ -4,9 +4,9 @@ class NotFound extends Component {
   render() {
     return (
       <div className="App">
-        <p className="App-intro">
-          Not Found with path: {this.props.location.pathname}
-        </p>
+        <h3 className="App-intro">
+          {this.props.location? "Not found: " + this.props.location.pathname: "Not found"}
+        </h3>
       </div>
     );
   }

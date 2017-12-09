@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { updateCart } from './actions';
 import { getCookie, setCookie } from '../../globalFunc';
+import {signin} from '../Header/actions';
 
 class Cart extends Component {
   constructor(props) {
@@ -11,7 +12,13 @@ class Cart extends Component {
       cart: [],
       cartTotal: 0,
       cartQuantity: 0,
+      username: "",
+      password: ""
     };
+  }
+  signin() {
+    this.props.signin(this.state.username, this.state.password);
+
   }
 
   componentDidMount() {
@@ -111,18 +118,18 @@ class Cart extends Component {
                     <div className="control-group">
                       <label className="control-label" htmlFor="inputUsername">Username</label>
                       <div className="controls">
-                        <input type="text" id="inputUsername" placeholder="Username" />
+                        <input type="text" id="inputUsername" placeholder="Username" value={this.state.username} onChange={this.change}/>
                       </div>
                     </div>
                     <div className="control-group">
                       <label className="control-label" htmlFor="inputPassword1">Password</label>
                       <div className="controls">
-                        <input type="password" id="inputPassword1" placeholder="Password" />
+                        <input type="password" id="inputPassword1" placeholder="Password" value={this.state.password} onChange={this.change}/>
                       </div>
                     </div>
                     <div className="control-group">
                       <div className="controls">
-                        <button type="submit" className="btn">Sign in</button> OR <a href="register.html" className="btn">Register Now!</a>
+                        <button type="submit" className="btn" onClick={this.signin}>Sign in</button> OR <a href="register.html" className="btn">Register Now!</a>
                       </div>
                     </div>
                     <div className="control-group">
@@ -214,7 +221,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = ({
-  updateCart,
+  updateCart, signin
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Cart);

@@ -13,12 +13,15 @@ class Sidebar extends Component {
             <div className="App">
                 {console.log('---TuyenTN---', this.props.resCategories)}
                 <div id="sidebar" className="span3">
-                    <div className="well well-small"><Link to="/product_summary" id="myCart"><img src="themes/images/ico-cart.png" alt="cart" />{this.props.cartQuantity} Sản phẩm
-                        <span className="badge badge-warning pull-right">{ this.props.cartTotal.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") }đ</span></Link>
+                    <div className="well well-small">
+                        <Link to="/product_summary" id="myCart"><img src="themes/images/ico-cart.png" alt="cart" />{this.props.cartQuantity} Sản phẩm
+                        <span className="badge badge-warning pull-right">{ this.props.cartTotal.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") }đ</span>
+                        </Link>
                     </div>
                     <ul id="sideManu" className="nav nav-tabs nav-stacked">
                         {this.props.resCategories? this.props.resCategories.map((cat, index) => (
-                        <li className="subMenu open" key={index}><Link to={`/category/${cat.categoryId}`}> {cat.categoryName} [230]</Link>
+                        <li className="subMenu open" key={index}>
+                        <Link to={`/category/${cat.categoryId}`}> {cat.categoryName}</Link>
                             <ul>
                                 {/* <li><a className="active" href="products.html"><i className="icon-chevron-right"></i>Cameras (100) </a></li>
                                 <li><a href="products.html"><i className="icon-chevron-right"></i>Computers, Tablets & laptop (30)</a></li>

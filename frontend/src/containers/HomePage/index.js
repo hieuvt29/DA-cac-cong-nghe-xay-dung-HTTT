@@ -72,10 +72,10 @@ class HomePage extends Component {
                                 {console.log('---This props FeaturedProduct---', this.props.featuredProducts)}
                                 { (this.props.featuredProducts) ? this.props.featuredProducts.map((group, indexGroup) => {
                                     return (
-                                    <div className={`item ${ (indexGroup === 0) ? 'active' : ''}`} key={`_${indexGroup}`}>
+                                    <div key={indexGroup} className={`item ${ (indexGroup === 0) ? 'active' : ''}`} key={`_${indexGroup}`}>
                                         <ul className="thumbnails">
                                             {group.map((item, index) => (
-                                                <li className="span3" key={index}>
+                                                <li className="span3" key={item.productId}>
                                                     <div className="thumbnail">
                                                         <i className="tag"></i>
                                                         <Link to={`/product/${item.productId}`}><img src={(item.image === "/img/default.png")? defaultImage : item.image} alt="" />
