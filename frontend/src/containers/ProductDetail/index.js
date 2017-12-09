@@ -28,16 +28,19 @@ class ProductDetail extends Component {
       if (this.props.prodDetail) {
         const {prodDetail} = this.props;
         let arr = [];
+        let info = {};
         //const prodDetailString = JSON.parse(prodDetail);
         
         if (prodDetail.description){
-          const info = JSON.parse(JSON.stringify(prodDetail.description.info));
+          info = JSON.parse(JSON.stringify(prodDetail.description.info));
 
           Object.keys(prodDetail.description.info).forEach(function(key) {
             arr.push({name: key, value: info[JSON.stringify(key)]});
           });
         
           console.log('---All DES INFO---', JSON.stringify(prodDetail.description.info));
+          // let mainAttrs = Object.keys(prodDetail.info);
+          
         }
         return (
         <div className="span9">
@@ -47,6 +50,7 @@ class ProductDetail extends Component {
           <li className="active">product Details</li>
           </ul>	
           <div className="row">	  
+            
                   <div id="gallery" className="span3">
                     <a href="#" title={prodDetail.productName}>
                         <img src={prodDetail.image} style={{ width: "100%" }} alt={prodDetail.productName}/>
@@ -124,293 +128,37 @@ class ProductDetail extends Component {
                   <div className="span9">
                   <ul id="productDetail" className="nav nav-tabs">
                     <li className="active"><a href="home" data-toggle="tab">Chi tiết sản phẩm</a></li>
-                    <li><a href="profile" data-toggle="tab">Sản phẩm liên quan</a></li>
                   </ul>
                   
                   <div id="myTabContent" className="tab-content">
                     <div className="tab-pane fade active in" id="home">
                     <h4>Thông tin sản phẩm</h4>
-                    {arr ? arr.map((des, index) => {
+                        
+                    <table className="table table-bordered">
+                      <tbody>
+                    {Object.keys(info).map(mainAttr => {
                       return (
-                        <table className="table table-bordered">
-                          <tbody>
-                            {/* <tr className="techSpecRow"><th colSpan="2">Chi tiết sản phẩm</th></tr> */}
-                            
-                              <tr className="techSpecRow" key={index}><td className="techSpecTD1">{des.name} </td><td className="techSpecTD2">{des.value}</td></tr>
-                          
-                          </tbody>
-                        </table>
-                      )
-                    }) : null}
+                        <div>
+                        <h4>{mainAttr != "imgKit"? mainAttr: ""}</h4>
+                        {mainAttr != "imgKit"? Object.keys(info[mainAttr]).map(subAttr => {
+                          return (
+                            <tr className="techSpecRow" key={subAttr}>
+                              <td className="techSpecTD1">{subAttr} </td>
+                              <td className="techSpecTD2">{info[mainAttr][subAttr]}</td>
+                            </tr>
+                          )
+                        }): null}
+                        </div>
+                      );
+                    })}
+                      </tbody>
+                    </table>
 
                     </div>
-              <div className="tab-pane fade" id="profile">
-              <div id="myTab" className="pull-right">
-                <a href="listView" data-toggle="tab"><span className="btn btn-large"><i className="icon-list"></i></span></a>
-                <a href="blockView" data-toggle="tab"><span className="btn btn-large btn-primary"><i className="icon-th-large"></i></span></a>
-              </div>
-              <br className="clr"/>
-              <hr className="soft"/>
-              <div className="tab-content">
-                  <div className="tab-pane" id="listView">
-                      <div className="row">	  
-                          <div className="span2">
-                              <img src="themes/images/products/4.jpg" alt=""/>
-                          </div>
-                          <div className="span4">
-                              <h3>New | Available</h3>				
-                              <hr className="soft"/>
-                              <h5>Product Name </h5>
-                              <p>
-                              Nowadays the lingerie industry is one of the most successful business spheres.We always stay in touch with the latest fashion tendencies - 
-                              that is why our goods are so popular..
-                              </p>
-                              <a className="btn btn-small pull-right" href="product_details.html">View Details</a>
-                              <br className="clr"/>
-                          </div>
-                          <div className="span3 alignR">
-                          <form className="form-horizontal qtyFrm">
-                          <h3> $222.00</h3>
-                          <label className="checkbox">
-                              <input type="checkbox"/>  Adds product to compair
-                          </label><br/>
-                          <div className="btn-group">
-                            <a href="product_details.html" className="btn btn-large btn-primary"> Add to <i className=" icon-shopping-cart"></i></a>
-                            <a href="product_details.html" className="btn btn-large"><i className="icon-zoom-in"></i></a>
-                            </div>
-                              </form>
-                          </div>
-                  </div>
-                  <hr className="soft"/>
-                  <div className="row">	  
-                          <div className="span2">
-                              <img src="themes/images/products/5.jpg" alt=""/>
-                          </div>
-                          <div className="span4">
-                              <h3>New | Available</h3>				
-                              <hr className="soft"/>
-                              <h5>Product Name </h5>
-                              <p>
-                              Nowadays the lingerie industry is one of the most successful business spheres.We always stay in touch with the latest fashion tendencies - 
-                              that is why our goods are so popular..
-                              </p>
-                              <a className="btn btn-small pull-right" href="product_details.html">View Details</a>
-                              <br className="clr"/>
-                          </div>
-                          <div className="span3 alignR">
-                          <form className="form-horizontal qtyFrm">
-                              <h3> $222.00</h3>
-                              <label className="checkbox">
-                              <input type="checkbox"/>  Adds product to compair
-                              </label><br/>
-                              <div className="btn-group">
-                              <a href="product_details.html" className="btn btn-large btn-primary"> Add to <i className=" icon-shopping-cart"></i></a>
-                              <a href="product_details.html" className="btn btn-large"><i className="icon-zoom-in"></i></a>
-                              </div>
-                          </form>
-                          </div>
-                  </div>
-                  <hr className="soft"/>
-                  <div className="row">	  
-                          <div className="span2">
-                          <img src="themes/images/products/6.jpg" alt=""/>
-                          </div>
-                          <div className="span4">
-                              <h3>New | Available</h3>				
-                              <hr className="soft"/>
-                              <h5>Product Name </h5>
-                              <p>
-                              Nowadays the lingerie industry is one of the most successful business spheres.We always stay in touch with the latest fashion tendencies - 
-                              that is why our goods are so popular..
-                              </p>
-                              <a className="btn btn-small pull-right" href="product_details.html">View Details</a>
-                              <br className="clr"/>
-                          </div>
-                          <div className="span3 alignR">
-                          <form className="form-horizontal qtyFrm">
-                          <h3> $222.00</h3>
-                          <label className="checkbox">
-                              <input type="checkbox"/>  Adds product to compair
-                          </label><br/>
-                      <div className="btn-group">
-                        <a href="product_details.html" className="btn btn-large btn-primary"> Add to <i className=" icon-shopping-cart"></i></a>
-                        <a href="product_details.html" className="btn btn-large"><i className="icon-zoom-in"></i></a>
-                        </div>
-                              </form>
-                          </div>
-                  </div>
-                  <hr className="soft"/>
-                  <div className="row">	  
-                          <div className="span2">
-                          <img src="themes/images/products/7.jpg" alt=""/>
-                          </div>
-                          <div className="span4">
-                              <h3>New | Available</h3>				
-                              <hr className="soft"/>
-                              <h5>Product Name </h5>
-                              <p>
-                              Nowadays the lingerie industry is one of the most successful business spheres.We always stay in touch with the latest fashion tendencies - 
-                              that is why our goods are so popular..
-                              </p>
-                              <a className="btn btn-small pull-right" href="product_details.html">View Details</a>
-                              <br className="clr"/>
-                          </div>
-                          <div className="span3 alignR">
-                              <form className="form-horizontal qtyFrm">
-                              <h3> $222.00</h3>
-                              <label className="checkbox">
-                              <input type="checkbox"/>  Adds product to compair
-                              </label><br/>
-                              <div className="btn-group">
-                              <a href="product_details.html" className="btn btn-large btn-primary"> Add to <i className=" icon-shopping-cart"></i></a>
-                              <a href="product_details.html" className="btn btn-large"><i className="icon-zoom-in"></i></a>
-                              </div>
-                              </form>
-                          </div>
-                  </div>
-                  
-                  <hr className="soft"/>
-                  <div className="row">	  
-                          <div className="span2">
-                          <img src="themes/images/products/8.jpg" alt=""/>
-                          </div>
-                          <div className="span4">
-                              <h3>New | Available</h3>				
-                              <hr className="soft"/>
-                              <h5>Product Name </h5>
-                              <p>
-                              Nowadays the lingerie industry is one of the most successful business spheres.We always stay in touch with the latest fashion tendencies - 
-                              that is why our goods are so popular..
-                              </p>
-                              <a className="btn btn-small pull-right" href="product_details.html">View Details</a>
-                              <br className="clr"/>
-                          </div>
-                          <div className="span3 alignR">
-                              <form className="form-horizontal qtyFrm">
-                              <h3> $222.00</h3>
-                              <label className="checkbox">
-                              <input type="checkbox"/>  Adds product to compair
-                              </label><br/>
-                              <div className="btn-group">
-                              <a href="product_details.html" className="btn btn-large btn-primary"> Add to <i className=" icon-shopping-cart"></i></a>
-                              <a href="product_details.html" className="btn btn-large"><i className="icon-zoom-in"></i></a>
-                              </div>
-                              </form>
-                          </div>
-                  </div>
-                  <hr className="soft"/>
-                      <div className="row">	  
-                          <div className="span2">
-                          <img src="themes/images/products/9.jpg" alt=""/>
-                          </div>
-                          <div className="span4">
-                              <h3>New | Available</h3>				
-                              <hr className="soft"/>
-                              <h5>Product Name </h5>
-                              <p>
-                              Nowadays the lingerie industry is one of the most successful business spheres.We always stay in touch with the latest fashion tendencies - 
-                              that is why our goods are so popular..
-                              </p>
-                              <a className="btn btn-small pull-right" href="product_details.html">View Details</a>
-                              <br className="clr"/>
-                          </div>
-                          <div className="span3 alignR">
-                              <form className="form-horizontal qtyFrm">
-                              <h3> $222.00</h3>
-                              <label className="checkbox">
-                              <input type="checkbox"/>  Adds product to compair
-                              </label><br/>
-                              <div className="btn-group">
-                              <a href="product_details.html" className="btn btn-large btn-primary"> Add to <i className=" icon-shopping-cart"></i></a>
-                              <a href="product_details.html" className="btn btn-large"><i className="icon-zoom-in"></i></a>
-                              </div>
-                              </form>
-                          </div>
-                  </div>
-                  <hr className="soft"/>
-              </div>
-                  <div className="tab-pane active" id="blockView">
-                      <ul className="thumbnails">
-                          <li className="span3">
-                            <div className="thumbnail">
-                              <a href="product_details.html"><img src="themes/images/products/10.jpg" alt=""/></a>
-                              <div className="caption">
-                                <h5>Manicure &amp; Pedicure</h5>
-                                <p> 
-                                  Lorem Ipsum is simply dummy text. 
-                                </p>
-                                <h4 style={{ textAlign: "center" }}><a className="btn" href="product_details.html"> <i className="icon-zoom-in"></i></a> <a className="btn" href="">Add to <i className="icon-shopping-cart"></i></a> <a className="btn btn-primary" href="">&euro;222.00</a></h4>
-                              </div>
-                            </div>
-                          </li>
-                          <li className="span3">
-                            <div className="thumbnail">
-                              <a href="product_details.html"><img src="themes/images/products/11.jpg" alt=""/></a>
-                              <div className="caption">
-                                <h5>Manicure &amp; Pedicure</h5>
-                                <p> 
-                                  Lorem Ipsum is simply dummy text. 
-                                </p>
-                                <h4 style={{ textAlign: "center" }}><a className="btn" href="product_details.html"> <i className="icon-zoom-in"></i></a> <a className="btn" href="">Add to <i className="icon-shopping-cart"></i></a> <a className="btn btn-primary" href="">&euro;222.00</a></h4>
-                              </div>
-                            </div>
-                          </li>
-                          <li className="span3">
-                            <div className="thumbnail">
-                              <a href="product_details.html"><img src="themes/images/products/12.jpg" alt=""/></a>
-                              <div className="caption">
-                                <h5>Manicure &amp; Pedicure</h5>
-                                <p> 
-                                  Lorem Ipsum is simply dummy text. 
-                                </p>
-                                  <h4 style={{ textAlign: "center" }}><a className="btn" href="product_details.html"> <i className="icon-zoom-in"></i></a> <a className="btn" href="">Add to <i className="icon-shopping-cart"></i></a> <a className="btn btn-primary" href="">&euro;222.00</a></h4>
-                              </div>
-                            </div>
-                          </li>
-                          <li className="span3">
-                            <div className="thumbnail">
-                              <a href="product_details.html"><img src="themes/images/products/13.jpg" alt=""/></a>
-                              <div className="caption">
-                                <h5>Manicure &amp; Pedicure</h5>
-                                <p> 
-                                  Lorem Ipsum is simply dummy text. 
-                                </p>
-                                  <h4 style={{ textAlign: "center" }}><a className="btn" href="product_details.html"> <i className="icon-zoom-in"></i></a> <a className="btn" href="">Add to <i className="icon-shopping-cart"></i></a> <a className="btn btn-primary" href="">&euro;222.00</a></h4>
-                              </div>
-                            </div>
-                          </li>
-                          <li className="span3">
-                            <div className="thumbnail">
-                              <a href="product_details.html"><img src="themes/images/products/1.jpg" alt=""/></a>
-                              <div className="caption">
-                                <h5>Manicure &amp; Pedicure</h5>
-                                <p> 
-                                  Lorem Ipsum is simply dummy text. 
-                                </p>
-                                  <h4 style={{ textAlign: "center" }}><a className="btn" href="product_details.html"> <i className="icon-zoom-in"></i></a> <a className="btn" href="">Add to <i className="icon-shopping-cart"></i></a> <a className="btn btn-primary" href="">&euro;222.00</a></h4>
-                              </div>
-                            </div>
-                          </li>
-                          <li className="span3">
-                            <div className="thumbnail">
-                              <a href="product_details.html"><img src="themes/images/products/2.jpg" alt=""/></a>
-                              <div className="caption">
-                                <h5>Manicure &amp; Pedicure</h5>
-                                <p> 
-                                  Lorem Ipsum is simply dummy text. 
-                                </p>
-                                  <h4 style={{ textAlign: "center" }}><a className="btn" href="product_details.html"> <i className="icon-zoom-in"></i></a> <a className="btn" href="">Add to <i className="icon-shopping-cart"></i></a> <a className="btn btn-primary" href="">&euro;222.00</a></h4>
-                              </div>
-                            </div>
-                          </li>
-                        </ul>
-                  <hr className="soft"/>
-                  </div>
-              </div>
-                      <br className="clr"/>
+
+                  <br className="clr"/>
                             </div>
               </div>
-                </div>
       
           </div>
         </div>
