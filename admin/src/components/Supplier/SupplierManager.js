@@ -22,6 +22,7 @@ class SupplierManager extends React.Component {
     }
 
     remove = (id) => {
+        let that = this;
         try {
             fetch('http://localhost:3001/suppliers/'+id, {
                 method: 'DELETE'
@@ -29,7 +30,7 @@ class SupplierManager extends React.Component {
                 return response.json();
               }).then(function(data) {
                 console.log('DELETE supplier:', data);
-                this.forceUpdate();
+                // that.forceUpdate();
               });
         } catch (error) {
             console.log('REMOVE supplier error', error);
@@ -37,6 +38,7 @@ class SupplierManager extends React.Component {
     }
 
     submit = (data) => {
+        let that = this;
         console.log('---Ham cua thang bo: ---', data);
         let dataObject;
         let id = '';
@@ -55,7 +57,7 @@ class SupplierManager extends React.Component {
                 return response.json();
               }).then(function(data) {
                 console.log('Created Gist:', data);
-                this.forceUpdate();
+                // that.forceUpdate();
               });
             console.log('---Data Object---', dataObject);
         } catch (error) {

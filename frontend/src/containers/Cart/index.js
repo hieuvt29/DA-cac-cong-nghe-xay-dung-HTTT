@@ -116,18 +116,19 @@ class Cart extends Component {
                     <div className="control-group">
                       <label className="control-label" htmlFor="inputUsername">Tên đăng nhập</label>
                       <div className="controls">
-                        <input type="text" id="inputUsername" value={this.state.username} onChange={this.change} placeholder="Username" />
+                        <input type="text" id="inputUsername" value={this.state.username} name="username" onChange={this.change} placeholder="Username" />
                       </div>
                     </div>
                     <div className="control-group">
                       <label className="control-label" htmlFor="inputPassword1">Mật khẩu</label>
                       <div className="controls">
-                        <input type="password" id="inputPassword1" value={this.state.password} onChange={this.change} placeholder="Password" />
+                        <input type="password" id="inputPassword1" value={this.state.password} name="password" onChange={this.change} placeholder="Password" />
                       </div>
                     </div>
                     <div className="control-group">
                       <div className="controls">
-                        <button type="submit" onClick={this.signin} className="btn"> Đăng nhập </button> OR <a href="register.html" className="btn">Đăng kí!</a>
+                        <button type="button" onClick={this.signin} className="btn"> Đăng nhập </button>
+                         OR <Link to="/signup" className="btn">Đăng kí!</Link>
                       </div>
                     </div>
                     <div className="control-group">
@@ -207,7 +208,7 @@ class Cart extends Component {
                 </table>
                 
         <Link className="btn btn-large" to="/home"><i className="icon-arrow-left"></i> Tiếp tục mua </Link>
-        <a href="login.html" className="btn btn-large pull-right">Next <i className="icon-arrow-right"></i></a>
+        <Link to="/order" className="btn btn-large pull-right">Next <i className="icon-arrow-right"></i></Link>
         
     </div>
     );
