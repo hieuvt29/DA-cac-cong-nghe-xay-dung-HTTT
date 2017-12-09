@@ -63,6 +63,10 @@ function appReducer(state = initialState, action) {
         console.log('---TuyenTN---', action.response);
         return { ...state, account: action.response};
     }
+    case 'SIGNUP_FAILED': {
+        console.log('---TuyenTN---', action.error);
+        return { ...state, signup_failed: action.error};
+    }
     case 'RES_SEARCH': {
         // console.log('---TuyenTN---', action.response);
         return { ...state, resSearch: action.response.products};

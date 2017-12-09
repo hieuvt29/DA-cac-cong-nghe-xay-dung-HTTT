@@ -48,77 +48,77 @@ class ProductDetail extends Component {
           </ul>	
           <div className="row">	  
                   <div id="gallery" className="span3">
-                  <a href="#" title={prodDetail.productName}>
-                      <img src={prodDetail.image} style={{ width: "100%" }} alt={prodDetail.productName}/>
-                  </a>
-                  <div id="differentview" className="moreOptopm carousel slide">
-                      {console.log('---PRODETAIL---', prodDetail)}
-                      <div className="carousel-inner">
-                        <div className="item active">
-                          {(prodDetail.description) ? prodDetail.description.imgLinks.map((image, index) => {
-                            if (index < 3) {
-                              return (
-                                <a href="#" key={index}> 
-                                  <img style={{ width: "100%" }} src={image} alt="" />
-                                </a>
-                              )}
-                          }): ""}
-                        </div>
-                        <div className="item">
-                          <a href="themes/images/products/large/f3.jpg" > <img style={{ width: "29%" }} src="themes/images/products/large/f3.jpg" alt=""/></a>
-                          <a href="themes/images/products/large/f1.jpg"> <img style={{ width: "29%" }} src="themes/images/products/large/f1.jpg" alt=""/></a>
-                          <a href="themes/images/products/large/f2.jpg"> <img style={{ width: "29%" }} src="themes/images/products/large/f2.jpg" alt=""/></a>
+                    <a href="#" title={prodDetail.productName}>
+                        <img src={prodDetail.image} style={{ width: "100%" }} alt={prodDetail.productName}/>
+                    </a>
+                    <div id="differentview" className="moreOptopm carousel slide">
+                        {console.log('---PRODETAIL---', prodDetail)}
+                        <div className="carousel-inner">
+                          <div className="item active">
+                            {(prodDetail.description) ? prodDetail.description.imgLinks.map((image, index) => {
+                              if (index < 3) {
+                                return (
+                                  <a href="#" key={index}> 
+                                    <img style={{ width: "100%" }} src={image} alt="" />
+                                  </a>
+                                )}
+                            }): ""}
+                          </div>
+                          <div className="item">
+                            <a href="themes/images/products/large/f3.jpg" > <img style={{ width: "29%" }} src="themes/images/products/large/f3.jpg" alt=""/></a>
+                            <a href="themes/images/products/large/f1.jpg"> <img style={{ width: "29%" }} src="themes/images/products/large/f1.jpg" alt=""/></a>
+                            <a href="themes/images/products/large/f2.jpg"> <img style={{ width: "29%" }} src="themes/images/products/large/f2.jpg" alt=""/></a>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    
-                    <div className="btn-toolbar">
-                    <div className="btn-group">
-                      <span className="btn"><i className="icon-envelope"></i></span>
-                      <span className="btn" ><i className="icon-print"></i></span>
-                      <span className="btn" ><i className="icon-zoom-in"></i></span>
-                      <span className="btn" ><i className="icon-star"></i></span>
-                      <span className="btn" ><i className=" icon-thumbs-up"></i></span>
-                      <span className="btn" ><i className="icon-thumbs-down"></i></span>
-                    </div>
-                  </div>
-                  </div>
-                  <div className="span6">
-                      <h3>{prodDetail.productName !== undefined && prodDetail.productName}  </h3>
-                      <hr className="soft"/>
-                      <form className="form-horizontal qtyFrm">
-                        <div className="control-group">
-                          <label className="control-label"><span>{prodDetail.price ? prodDetail.price.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") : '0'}Đ</span></label>
-                          <div className="controls">
-  
-                            <button type="submit" className="btn btn-large btn-primary pull-right"> Thêm vào giỏ <i className=" icon-shopping-cart"></i></button>
-                          </div>
-                        </div>
-                      </form>
                       
-                      <hr className="soft"/>
-                      <h4>Còn {prodDetail.quantity} sản phẩm</h4>
-                      <form className="form-horizontal qtyFrm pull-right">
-                        <div className="control-group">
-                          <label className="control-label"><span>Màu sắc</span></label>
-                          <div className="controls">
-                            <select className="span2">
-                                <option>Đen</option>
-                                <option>Đỏ</option>
-                                <option>Xanh</option>
-                                <option>Xám</option>
-                              </select>
+                      <div className="btn-toolbar">
+                      <div className="btn-group">
+                        <span className="btn"><i className="icon-envelope"></i></span>
+                        <span className="btn" ><i className="icon-print"></i></span>
+                        <span className="btn" ><i className="icon-zoom-in"></i></span>
+                        <span className="btn" ><i className="icon-star"></i></span>
+                        <span className="btn" ><i className=" icon-thumbs-up"></i></span>
+                        <span className="btn" ><i className="icon-thumbs-down"></i></span>
+                      </div>
+                    </div>
+                    </div>
+                    <div className="span6">
+                        <h3>{prodDetail.productName !== undefined && prodDetail.productName}  </h3>
+                        <hr className="soft"/>
+                        <form className="form-horizontal qtyFrm">
+                          <div className="control-group">
+                            <label className="control-label"><span>{prodDetail.price ? prodDetail.price.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") : '0'}Đ</span></label>
+                            <div className="controls">
+    
+                              <button type="submit" className="btn btn-large btn-primary pull-right"> Thêm vào giỏ <i className=" icon-shopping-cart"></i></button>
+                            </div>
                           </div>
-                        </div>
-                      </form>
-                      <hr className="soft clr"/>
-                      <p>
-                      {/* { prodDetail.description ? JSON.stringify(prodDetail.description.info) : "null"} */}
-                      
-                      </p>
-                      <br className="clr"/>
-                  <a href="" name="detail"></a>
-                  <hr className="soft"/>
+                        </form>
+                        
+                        <hr className="soft"/>
+                        <h4>Còn {prodDetail.quantity} sản phẩm</h4>
+                        {/* <form className="form-horizontal qtyFrm pull-right">
+                          <div className="control-group">
+                            <label className="control-label"><span>Màu sắc</span></label>
+                            <div className="controls">
+                              <select className="span2">
+                                  <option>Đen</option>
+                                  <option>Đỏ</option>
+                                  <option>Xanh</option>
+                                  <option>Xám</option>
+                                </select>
+                            </div>
+                          </div>
+                        </form> */}
+                        <hr className="soft clr"/>
+                        <p>
+                        {/* { prodDetail.description ? JSON.stringify(prodDetail.description.info) : "null"} */}
+                        
+                        </p>
+                        <br className="clr"/>
+                    <a href="" name="detail"></a>
+                    <hr className="soft"/>
                   </div>
                   
                   <div className="span9">
@@ -126,6 +126,7 @@ class ProductDetail extends Component {
                     <li className="active"><a href="home" data-toggle="tab">Chi tiết sản phẩm</a></li>
                     <li><a href="profile" data-toggle="tab">Sản phẩm liên quan</a></li>
                   </ul>
+                  
                   <div id="myTabContent" className="tab-content">
                     <div className="tab-pane fade active in" id="home">
                     <h4>Thông tin sản phẩm</h4>
@@ -142,31 +143,6 @@ class ProductDetail extends Component {
                       )
                     }) : null}
 
-                      <h5>Features</h5>
-                      <p>
-                      14 Megapixels. 18.0 x Optical Zoom. 3.0-inch LCD Screen. Full HD photos and 1280 x 720p HD movie capture. ISO sensitivity ISO6400 at reduced resolution. Tracking Auto Focus. Motion Panorama Mode. Face Detection technology with Blink detection and Smile and shoot mode. 4 x AA batteries not included. WxDxH 110.2 ×81.4x73.4mm. Weight 0.341kg (excluding battery and memory card). Weight 0.437kg (including battery and memory card).<br/>
-                      OND363338
-                      </p>
-      
-                      <h4>Editorial Reviews</h4>
-                      <h5>Manufacturer's Description </h5>
-                      <p>
-                      With a generous 18x Fujinon optical zoom lens, the S2950 really packs a punch, especially when matched with its 14 megapixel sensor, large 3.0" LCD screen and 720p HD (30fps) movie capture.
-                      </p>
-      
-                      <h5>Electric powered Fujinon 18x zoom lens</h5>
-                      <p>
-                      The S2950 sports an impressive 28mm – 504mm* high precision Fujinon optical zoom lens. Simple to operate with an electric powered zoom lever, the huge zoom range means that you can capture all the detail, even when you're at a considerable distance away. You can even operate the zoom during video shooting. Unlike a bulky D-SLR, bridge cameras allow you great versatility of zoom, without the hassle of carrying a bag of lenses.
-                      </p>
-                      <h5>Impressive panoramas</h5>
-                      <p>
-                      With its easy to use Panoramic shooting mode you can get creative on the S2950, however basic your skills, and rest assured that you will not risk shooting uneven landscapes or shaky horizons. The camera enables you to take three successive shots with a helpful tool which automatically releases the shutter once the images are fully aligned to seamlessly stitch the shots together in-camera. It's so easy and the results are impressive.
-                      </p>
-      
-                      <h5>Sharp, clear shots</h5>
-                      <p>
-                      Even at the longest zoom settings or in the most challenging of lighting conditions, the S2950 is able to produce crisp, clean results. With its mechanically stabilised 1/2 3", 14 megapixel CCD sensor, and high ISO sensitivity settings, Fujifilm's Dual Image Stabilisation technology combines to reduce the blurring effects of both hand-shake and subject movement to provide superb pictures.
-                      </p>
                     </div>
               <div className="tab-pane fade" id="profile">
               <div id="myTab" className="pull-right">

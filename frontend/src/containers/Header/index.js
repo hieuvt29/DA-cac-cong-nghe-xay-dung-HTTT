@@ -131,7 +131,7 @@ class Header extends Component {
                         <div className="btn-group">
                           <Link to="/signup" onClick={ () => {$("#login").fadeOut(0);} }>
                           <button className="btn input-group-btn">
-                             Đăng kí 
+                             Đăng ký
                           </button></Link>
                           <button type="submit" onClick={this.signin} className="btn btn-success"> Đăng nhập </button>
                           <button className="btn closeLogin" onClick={() => this.setState({ openLogin: false })} data-dismiss="modal" aria-hidden="true"> Đóng </button>

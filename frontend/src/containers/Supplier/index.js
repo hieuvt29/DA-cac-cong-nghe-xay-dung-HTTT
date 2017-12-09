@@ -6,7 +6,7 @@ import { addToCart } from './../Cart/actions';
 // import SliderTemp from '../../components/SliderTemp';
 import { Link } from 'react-router-dom';
 import defaultImage from '../../img/laptop-default.jpg';
-import Result from '../Result/index';
+import Result from '../Result';
 
 class Supplier extends Component {
     constructor (props) {
@@ -16,10 +16,10 @@ class Supplier extends Component {
         };
     }
     componentDidMount () {
-        console.log("Component did mount");
+        console.log("SUPPLIER did mount");
     }
     componentWillMount() {
-        console.log("component will mount");
+        console.log("SUPPLIER  will mount");
         const supplier_id = this.props.match.params.id;
         this.props.getProBySupplier(supplier_id);
     }
@@ -46,6 +46,7 @@ class Supplier extends Component {
     } 
     render() {
         //Ket qua search
+        console.log("SUPPLIER RENDERED");
         return (
             <Result attr="resProBySupplier" />
         )

@@ -24,8 +24,8 @@ function* postForm(action) {
             response = res;
         });
         yield put({ type: "RES_SIGNUP", response });
-    } catch (e) {
-        yield put({ type: "SIGNUP_FAILED", e });
+    } catch (error) {
+        yield put({ type: "SIGNUP_FAILED", error });
     }
 }
 

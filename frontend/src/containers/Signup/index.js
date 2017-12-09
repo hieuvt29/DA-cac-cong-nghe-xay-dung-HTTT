@@ -77,9 +77,9 @@ class Signup extends React.Component {
             <div className="span9">
                 <ul className="breadcrumb">
                     <li><Link to="/home">Trang chủ</Link> <span className="divider">/</span></li>
-                    <li className="active">Đăng kí tài khoản </li>
+                    <li className="active">Đăng ký tài khoản </li>
                 </ul>
-                <h3> Đăng kí tài khoản </h3>
+                <h3> Đăng ký tài khoản </h3>
                 <div className="well">
 
                     <form className="form-horizontal" >
@@ -149,7 +149,7 @@ class Signup extends React.Component {
                             </div>
                         </div>
 
-                        <div className={ "alert alert-block alert-error fade in"+this.state.showError }>
+                        <div className={ "alert alert-block alert-error fade in "+this.state.showError }>
                             <button type="button" className="close" onClick={this.closeError} data-dismiss="alert">×</button>
                             <strong>{this.state.error}</strong>
                         </div>
@@ -158,7 +158,7 @@ class Signup extends React.Component {
                     </form>
                     <div className="control-group">
                         <div className="controls">
-                            <button className="btn btn-large btn-success" onClick={this.submit}>Đăng kí</button>
+                            <button className="btn btn-large btn-success" onClick={this.submit}>Đăng ký</button>
                         </div>
                     </div>
                 </div>
@@ -169,7 +169,7 @@ class Signup extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-    
+    signup_failed: state.appReducer.signup_failed
 });
 
 const mapDispatchToProps = ({
