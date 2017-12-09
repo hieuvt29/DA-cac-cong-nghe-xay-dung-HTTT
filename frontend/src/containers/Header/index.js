@@ -6,6 +6,7 @@ import { signin, initCart, initAccount, signout, search, reqCategories } from '.
 import '../..//App.css';
 import $ from 'jquery';
 import { setCookie, getCookie } from '../../globalFunc';
+import PropTypes from "prop-types";
 
 class Header extends Component {
   constructor(props) {
@@ -18,7 +19,9 @@ class Header extends Component {
       cssOpenLogin: "modal hide fade in",
     };
   }
-
+  static contextTypes = {
+    router: PropTypes.object
+  }
   componentDidMount() {
     // $("#loginBtn").click(() => {
     //   $("#login").toggle();
@@ -49,8 +52,8 @@ class Header extends Component {
   }
 
   search = () => {
-    
-    this.props.search(this.state.searchKey);
+    // this.props.search(this.state.searchKey);
+    this.context.router.history.push("/?searchKey=" + this.state.searchKey);
   }
 
   change = (e) => {
@@ -91,16 +94,8 @@ class Header extends Component {
                 <Link className="brand" to="/"><img src="themes/images/logo.png" alt="Bootsshop" /></Link>
                 <form className="form-inline navbar-search" disabled="disabled">
                   <input id="srchFld" className="srchTxt" type="text" name="searchKey" onChange={this.change} value={this.state.searchKey} />
-                  <select className="srchTxt">
-                    <option>Tất cả</option>
-                    <option>Laptop </option>
-                    <option>Điện thoại di động </option>
-                    <option>PC và linh kiện </option>
-                    <option>Máy tính bảng </option>
-                    <option>Phụ kiện </option>
-                  </select>
                 </form>
-                <button id="submitButton" className="btn btn-primary" onClick={ this.search }>Go</button>
+                <button to="/" id="submitButton" className="btn btn-primary" onClick={ this.search }>Go</button>
                 <ul id="topMenu" className="nav pull-right">
                   <li className=""><a href="special_offer.html">Khuyến mại </a></li>
                   <li className=""><a href="normal.html">Tin tức</a></li>

@@ -10,13 +10,13 @@ class Result extends Component {
     constructor (props) {
         super(props);
         this.state = {
-            
+            attr: ""
         };
     }
 
     componentWillReceiveProps(nextProps) {
         console.log("Result recieve props: ", nextProps);
-        this.props = nextProps;
+        this.setState({...this.props, nextProps});
     } 
     addCart = (product) => {
         const lightProduct = {
@@ -30,11 +30,12 @@ class Result extends Component {
     }
     render() {
         //Ket qua search
+        console.info("Result rendered");
         return (
             <div className="span9">
                 <h4>Kết quả tìm kiếm</h4>
                 <ul className="thumbnails">
-                    { (this.props.resProByCategory) ? this.props.resProByCategory.map((item, index) => {
+                    { (this.props[this.state.attr]) ? this.props[this.state.attr].map((item, index) => {
                         return (
                         <li className="span3" key={index}>
                             <div className="thumbnail">
@@ -64,7 +65,8 @@ class Result extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    // resProByCategory: state.appReducer.resProByCategory,
+    resProByCategory: state.appReducer.resProByCategory,
+    resSearch: state.appReducer.resSearch,
 });
 
 const mapDispatchToProps = ({

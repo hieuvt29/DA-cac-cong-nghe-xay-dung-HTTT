@@ -26,7 +26,7 @@ function* postForm(action) {
 }
 
 function* search(action) {
-    const url = `${address}/search?keywords=${action.searchKey}/`;
+    const url = `${address}/search?keywords=${action.searchKey}`;
     let response;
     yield fetch(url)
     .then(res => { return res.json();})

@@ -6,12 +6,15 @@ import { addToCart } from './../Cart/actions';
 // import SliderTemp from '../../components/SliderTemp';
 import { Link } from 'react-router-dom';
 import defaultImage from '../../img/laptop-default.jpg';
+import Result from '../Result/index';
+import {search} from '../Header/actions';
 
 class HomePage extends Component {
     constructor (props) {
         super(props);
         this.state = {
             separatedProduct: this.props.featuredProducts,
+            isSearching: false
         };
     }
     componentDidMount () {
@@ -29,10 +32,14 @@ class HomePage extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if(JSON.stringify(this.props.resSearch) !== JSON.stringify(nextProps.resSearch)) // Check if it's a new user, you can also use some unique, like the ID
-        {
-            console.log('--UPDATEEEEEE--' );
-            this.forceUpdate();
+        let searchStr = nextProps.location.search;
+        const params = new URLSearchParams(searchStr); 
+        const keywords = params.get('searchKey');
+        if (keywords && keywords != "") {
+            this.props.search(keywords);
+            this.setState({isSearching: true});
+        } else {
+            this.setState({isSearching: false});
         }
     } 
 
@@ -61,7 +68,7 @@ class HomePage extends Component {
         //         temp.push(item);
         //     }
         // });
-        if (this.props.resSearch.length === 0) {
+        if (!this.state.isSearching) {
         return (
             <div className="span9">
                 <div className="well well-small">
@@ -122,34 +129,11 @@ class HomePage extends Component {
 
             </div>
         );}
+        else {
         //Ket qua search
         return (
-            <div className="span9">
-                <h4>Kết quả tìm kiếm</h4>
-                <ul className="thumbnails">
-                    { (this.props.resSearch) ? this.props.resSearch.map((item, index) => {
-                        return (
-                        <li className="span3" key={index}>
-                            <div className="thumbnail">
-                            <Link to={`/product/${item.productId}`}><img src={(item.image === "/img/default.png")? defaultImage : item.image} alt="" />
-                                </Link>
-                                <div className="caption">
-                                    <h5>{item.productName}</h5>
-                                    <p>
-                                        <span>{item.quantity}</span>
-                                    </p>
-                                    <h4><Link className="btn" to={`/product/${item.productId}`}> <i className="icon-zoom-in"></i></Link>
-                                        <a className="btn" onClick={() => this.addCart(item)}>Mua <i className="icon-shopping-cart"></i></a>
-                                        <span className="pull-right">{item.price.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")}Đ</span>                                        
-                                        </h4>
-                                </div>
-                            </div>
-                        </li>
-                        )
-                    }) : "Không tìm thấy"}
-                </ul>
-            </div>
-        );
+            <Result attr="resSearch" />
+        )}
     }
 }
 
@@ -159,13 +143,14 @@ const mapStateToProps = (state) => ({
     latestProducts: state.appReducer.latestProducts,
     featuredProducts: state.appReducer.featuredProducts,
     listProducts: state.appReducer.listProducts,
-    resSearch: state.appReducer.resSearch,
+    // resSearch: state.appReducer.resSearch,
 });
 
 const mapDispatchToProps = ({
     increase,
     req_products,
     addToCart,
+    search
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomePage);

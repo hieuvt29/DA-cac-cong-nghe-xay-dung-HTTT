@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { updateCart } from './actions';
 import { signin } from '../Header/actions';
 import { getCookie, setCookie } from '../../globalFunc';
-import {signin} from '../Header/actions';
 
 class Cart extends Component {
   constructor(props) {

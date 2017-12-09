@@ -1,1 +1,1 @@
-export const address = `http://127.0.0.1:3001`;
+export const address = window.location.origin;
