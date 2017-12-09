@@ -22,6 +22,7 @@ class OrderManager extends React.Component {
     }
 
     remove = (id) => {
+        let that = this;
         try {
             fetch('http://localhost:3001/orders/'+id, {
                 method: 'DELETE'
@@ -29,7 +30,7 @@ class OrderManager extends React.Component {
                 return response.json();
               }).then(function(data) {
                 console.log('DELETE supplier:', data);
-                this.forceUpdate();
+                // that.forceUpdate();
               });
         } catch (error) {
             console.log('REMOVE supplier error', error);
@@ -40,6 +41,7 @@ class OrderManager extends React.Component {
         console.log('---Ham cua thang bo: ---', data);
         let dataObject;
         let id = '';
+        let that = this;        
         data.forEach(item => {
             if (item.title === "orderId") {
                 id = item.text;
@@ -55,7 +57,7 @@ class OrderManager extends React.Component {
                 return response.json();
               }).then(function(data) {
                 console.log('Update order:', data);
-                this.forceUpdate();
+                // that.forceUpdate();
               });
             console.log('---Data Object---', dataObject);
         } catch (error) {

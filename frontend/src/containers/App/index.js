@@ -11,6 +11,7 @@ import NotFound from '../NotFound';
 import ProductDetail from '../ProductDetail';
 import Cart from '../Cart';
 import Category from '../Category';
+import Order from '../Order';
 // import Demo from '../Demo';
 
 import '../..//App.css';
@@ -36,6 +37,7 @@ class App extends Component {
             <Route path="/home" component={HomePage} />
             <Route path="/contact" component={Contact} />
             <Route path="/signup" component={Signup} />
+            <Route path="/order" component={Order} />
             <Route path="/product_summary" component={Cart} />
             <Route path="/product/:id" component={ProductDetail} />
             <Route path="/category/:id" component={Category} />

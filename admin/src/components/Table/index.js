@@ -6,10 +6,12 @@ import 'datatables.net-bs/css/dataTables.bootstrap.css';
 // import 'datatables.net-buttons';
 import 'datatables.net-select';
 import 'datatables.net-responsive';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 // import 'datatables.net-editor';
 // import 'datatables.altEditor.free/js/altEditor/dataTables.altEditor.free.js';
 // import {LargeModal} from './Modal';
 import {Modal, Button, ButtonToolbar} from 'react-bootstrap';
+import 'react-notifications/lib/notifications.css';
 
 class DataTable extends React.Component {
   constructor(props) {
@@ -52,6 +54,27 @@ class DataTable extends React.Component {
     this.edit = this.edit.bind(this);
   }
   
+  createNotification = (type, message) => {
+    return () => {
+      switch (type) {
+        case 'info':
+          NotificationManager.info('Info message');
+          break;
+        case 'success':
+          NotificationManager.success('Success message', 'Title here');
+          break;
+        case 'warning':
+          NotificationManager.warning('Warning message', 'Close after 3000ms', 3000);
+          break;
+        case 'error':
+          NotificationManager.error('Error message', 'Click me!', 5000, () => {
+            alert('callback');
+          });
+          break;
+      }
+    };
+  };
+
   componentWillReceiveProps(nextProps) {
     console.log("Props recieved: ", nextProps.data);
     let changed = this.state.data !== nextProps.data;
@@ -137,8 +160,14 @@ class DataTable extends React.Component {
           contact: this.state.contact,
         })
       })
-      .then( (response) => { 
+      .then( (response) => {
+        console.log('---RESPONSE---', (response));        
+        if(response.error){
+          this.createNotification('error', response.error);
+        } else {
+         this.createNotification('success', response.message);
          this.setState({ response: response});
+        }
       });
     }
     submitPro = () => {
@@ -310,7 +339,7 @@ class DataTable extends React.Component {
                         </div>
 
                         <div className="control-group">
-                            <label className="control-label" htmlFor="inputPassword1">Mã category <sup>*</sup></label>
+                            <label className="control-label" htmlFor="inputPassword1">Mật khẩu <sup>*</sup></label>
                             <div className="controls">
                                 <input type="password" id="inputPassword1" name="password" onChange={this.change} value={this.state.password} placeholder="Password" />
                             </div>

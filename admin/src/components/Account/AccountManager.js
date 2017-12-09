@@ -45,6 +45,7 @@ class AccountManager extends React.Component {
         console.log('---Ham cua thang bo: ---', data);
         let dataObject;
         let id = '';
+        let that = this;
         data.forEach(item => {
             if (item.title === "accountId") {
                 id = item.text;
@@ -60,7 +61,7 @@ class AccountManager extends React.Component {
                 return response.json();
               }).then(function(data) {
                 console.log('Created Gist:', data);
-                this.forceUpdate();
+                // that.forceUpdate();
               });
             console.log('---Data Object---', dataObject);
         } catch (error) {

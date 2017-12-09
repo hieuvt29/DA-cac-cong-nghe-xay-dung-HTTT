@@ -6,6 +6,7 @@ import signupsaga from './containers/Signup/saga';
 import signinsaga from './containers/Header/saga';
 import productdetailsaga from './containers/ProductDetail/saga';
 import probycatsaga from './containers/Category/saga';
+import ordersaga from './containers/Order/saga';
 
 export default function* rootSaga() {
     yield [
@@ -15,5 +16,6 @@ export default function* rootSaga() {
         fork(signinsaga),
         fork(productdetailsaga),
         fork(probycatsaga),
+        fork(ordersaga),
     ];
 }

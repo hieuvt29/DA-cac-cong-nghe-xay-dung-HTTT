@@ -23,6 +23,7 @@ const initialState = {
     resCategories: [],
     resDetailProduct: {},
     resProByCategory: [],
+    resCreateOrder: '',
 };
 
 function appReducer(state = initialState, action) {
@@ -78,6 +79,10 @@ function appReducer(state = initialState, action) {
             setCookie('account', JSON.stringify(action.response.data.user));
             return { ...state, account: action.response.data.user};
         }
+    }
+    case 'RES_CREATE_ORDER': {
+        console.log('---RES_CREATE_ORDER---', action.response);
+        return { ...state, resCreateOrder: action.response};
     }
     case 'RES_PRODUCTDETAIL': {
         console.log('---RES_PRODUCTDETAIL---', action.response.product);
