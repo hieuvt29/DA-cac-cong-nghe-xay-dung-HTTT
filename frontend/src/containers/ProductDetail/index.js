@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { get_product } from './actions';
 import NotFound from '../NotFound/index';
+import { addToCart } from './../Cart/actions';
 
 class ProductDetail extends Component {
     constructor (props) {
@@ -9,6 +10,16 @@ class ProductDetail extends Component {
       // this.state = {
       //   prodDetail: {},
       // }
+    }
+    addCart = (product) => {
+      const lightProduct = {
+          productId: product.productId,
+          productName: product.productName,
+          image: product.image,
+          price: product.price,
+          quantity: 1,
+      }
+      this.props.addToCart(lightProduct);
     }
     componentDidMount () {
         // console.log('---TuyenTN---didmount');
@@ -34,12 +45,12 @@ class ProductDetail extends Component {
         if (prodDetail.description){
           info = JSON.parse(JSON.stringify(prodDetail.description.info));
 
-          Object.keys(prodDetail.description.info).forEach(function(key) {
-            arr.push({name: key, value: info[JSON.stringify(key)]});
-          });
+          // Object.keys(prodDetail.description.info).forEach(function(key) {
+          //   arr.push({name: key, value: info[JSON.stringify(key)]});
+          // });
         
-          console.log('---All DES INFO---', JSON.stringify(prodDetail.description.info));
-          // let mainAttrs = Object.keys(prodDetail.info);
+          // console.log('---All DES INFO---', JSON.stringify(prodDetail.description.info));
+          // // let mainAttrs = Object.keys(prodDetail.info);
           
         }
         return (
@@ -94,8 +105,7 @@ class ProductDetail extends Component {
                           <div className="control-group">
                             <label className="control-label"><span>{prodDetail.price ? prodDetail.price.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") : '0'}Đ</span></label>
                             <div className="controls">
-    
-                              <button type="submit" className="btn btn-large btn-primary pull-right"> Thêm vào giỏ <i className=" icon-shopping-cart"></i></button>
+                              <a className="btn btn-large btn-primary pull-right" onClick={() => this.addCart(prodDetail)}>Thêm vào giỏ <i className="icon-shopping-cart"></i></a>
                             </div>
                           </div>
                         </form>
@@ -177,7 +187,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = ({
-  get_product,
+  get_product, addToCart
 });
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductDetail);
