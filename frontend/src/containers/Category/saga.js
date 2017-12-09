@@ -4,7 +4,7 @@ import axios from 'axios';
 import { address } from '../../config.js';
 
 function* getProduct(action) {
-    const url = 'http://localhost:3001/categories/?categoryId='+action.category_id;
+    const url = 'http://localhost:3001/categories/'+action.category_id;
     let response;    
     yield fetch(url)
     .then(res => { return res.json();})
