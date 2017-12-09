@@ -37,3 +37,9 @@ export const reqCategories = () => {
         type: 'REQ_CATEGORIES',
     }
 };
+
+export const reqSuppliers = () => {
+    return {
+        type: 'REQ_SUPPLIERS',
+    }
+};

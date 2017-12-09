@@ -66,6 +66,7 @@ class Result extends Component {
 
 const mapStateToProps = (state) => ({
     resProByCategory: state.appReducer.resProByCategory,
+    resProBySupplier: state.appReducer.resProByCategory,
     resSearch: state.appReducer.resSearch,
 });
 

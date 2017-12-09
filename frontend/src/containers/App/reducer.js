@@ -71,6 +71,10 @@ function appReducer(state = initialState, action) {
         // console.log('---TuyenTN---', action.response);
         return { ...state, resCategories: action.response.categories};
     }
+    case 'RES_SUPPLIERS': {
+        // console.log('---TuyenTN---', action.response);
+        return { ...state, resSuppliers: action.response.suppliers};
+    }
     case 'RES_SIGNIN': {
         // console.log('---Signin res:---', action.response);
         if (action.response.data.errorCode === 1) {
@@ -92,6 +96,10 @@ function appReducer(state = initialState, action) {
     case 'RES_PRODUCTBYCAT': {
         console.log('---RES_PRODUCTBYCAT---', action.response.category.Products);
         return { ...state, resProByCategory: action.response.category.Products};
+    }
+    case 'RES_PRODUCTBYSUP': {
+        console.log('---RES_PRODUCTBYSUP---', action.response.supplier.Products);
+        return { ...state, resProByCategory: action.response.supplier.Products};
     }
     case 'UPDATECART': {
         return { ...state, cartTotal: action.cartTotal, cartQuantity: action.cartQuantity };

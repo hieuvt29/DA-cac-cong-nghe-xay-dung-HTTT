@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { signin, initCart, initAccount, signout, search, reqCategories } from './actions';
+import { signin, initCart, initAccount, signout, search, reqCategories, reqSuppliers } from './actions';
 // import logo from '../../logo.svg';
 import '../..//App.css';
 import $ from 'jquery';
@@ -33,6 +33,7 @@ class Header extends Component {
     this.props.initCart();
     this.props.initAccount();
     this.props.reqCategories();
+    this.props.reqSuppliers();
   }
 
   signin = () => {
@@ -162,10 +163,11 @@ const mapStateToProps = (state) => ({
   cartQuantity: state.appReducer.cartQuantity,
   errorLogin: state.appReducer.errorLogin,
   resCategories: state.appReducer.resCategories,
+  resSuppliers: state.appReducer.resSuppliers
 });
 
 const mapDispatchToProps = ({
-  signin, initCart, initAccount, signout, search, reqCategories,
+  signin, initCart, initAccount, signout, search, reqCategories, reqSuppliers
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

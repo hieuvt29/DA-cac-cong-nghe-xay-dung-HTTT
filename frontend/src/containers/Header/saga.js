@@ -36,7 +36,7 @@ function* search(action) {
 }
 
 function* getCategories(action) {
-    const url = `${address}/categories/`;    
+    const url = `${address}/categories`;    
     let response;    
     yield fetch(url)
     .then(res => { return res.json();})
@@ -45,10 +45,21 @@ function* getCategories(action) {
     yield put({ type: "RES_CATEGORIES", response });
 }
 
+function* getSuppliers(action) {
+    const url = `${address}/suppliers`;    
+    let response;    
+    yield fetch(url)
+    .then(res => { return res.json();})
+    .then(responseJson => { response = responseJson });
+    console.log('---TuyenTN---', response);
+    yield put({ type: "RES_SUPPLIERS", response });
+}
+
 function* signinsaga() {
   yield takeLatest("SIGNIN", postForm);
   yield takeLatest("SEARCH", search);
   yield takeLatest("REQ_CATEGORIES", getCategories);
+  yield takeLatest("REQ_SUPPLIERS", getSuppliers);
 }
 
 export default signinsaga;

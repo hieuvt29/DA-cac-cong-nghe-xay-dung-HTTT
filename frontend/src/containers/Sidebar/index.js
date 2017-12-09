@@ -11,16 +11,18 @@ class Sidebar extends Component {
     render() {
         return (
             <div className="App">
-                {console.log('---TuyenTN---', this.props.resCategories)}
                 <div id="sidebar" className="span3">
                     <div className="well well-small">
                         <Link to="/product_summary" id="myCart"><img src="themes/images/ico-cart.png" alt="cart" />{this.props.cartQuantity} Sản phẩm
                         <span className="badge badge-warning pull-right">{ this.props.cartTotal.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") }đ</span>
                         </Link>
                     </div>
+                    
                     <ul id="sideManu" className="nav nav-tabs nav-stacked">
-                        {this.props.resCategories? this.props.resCategories.map((cat, index) => (
-                        <li className="subMenu open" key={index}>
+                        <h5>Danh mục</h5>
+                        <legend/>
+                        {this.props.resCategories? this.props.resCategories.map((cat) => (
+                        <li className="subMenu open" key={cat.categoryId}>
                         <Link to={`/category/${cat.categoryId}`}> {cat.categoryName}</Link>
                             <ul>
                                 {/* <li><a className="active" href="products.html"><i className="icon-chevron-right"></i>Cameras (100) </a></li>
@@ -30,7 +32,13 @@ class Sidebar extends Component {
                             </ul>
                         </li>
                         )): null}
-                        
+                        <h5>Nhà Cung Cấp</h5>
+                        <legend/>
+                        {this.props.resSuppliers? this.props.resSuppliers.map((supplier) => (
+                        <li className="subMenu open" key={supplier.supplierId}>
+                        <Link to={`/supplier/${supplier.supplierId}`}> {supplier.supplierName.toUpperCase()}</Link>
+                        </li>
+                        )): null}
                     </ul>
                     <br />
                     {/* <div className="thumbnail">
@@ -63,7 +71,8 @@ const mapStateToProps = (state) => ({
     account: state.appReducer.account,
     cartTotal: state.appReducer.cartTotal,
     cartQuantity: state.appReducer.cartQuantity,
-    resCategories: state.appReducer.resCategories,    
+    resCategories: state.appReducer.resCategories,
+    resSuppliers: state.appReducer.resSuppliers
   });
 
 const mapDispatchToProps = ({
