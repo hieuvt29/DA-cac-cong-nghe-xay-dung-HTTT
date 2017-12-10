@@ -20,8 +20,8 @@ function* postForm(action) {
             // console.log('RESPONSE saga = ', response);
         });
         yield put({ type: "RES_SIGNIN", response });
-    } catch (e) {
-        yield put({ type: "SIGNIN_FAILED", e });
+    } catch (error) {
+        yield put({ type: "SIGNIN_FAILED", error });
     }
 }
 

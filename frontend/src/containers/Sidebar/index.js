@@ -13,13 +13,13 @@ class Sidebar extends Component {
             <div className="App">
                 <div id="sidebar" className="span3">
                     <div className="well well-small">
-                        <Link to="/product_summary" id="myCart"><img src="themes/images/ico-cart.png" alt="cart" />{this.props.cartQuantity} Sản phẩm
+                        <Link to="/product_summary" id="myCart"><img src={window.location.origin + "/themes/images/ico-cart.png"} alt="cart" />{this.props.cartQuantity} Sản phẩm
                         <span className="badge badge-warning pull-right">{ this.props.cartTotal.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") }đ</span>
                         </Link>
                     </div>
                     
                     <ul id="sideManu" className="nav nav-tabs nav-stacked">
-                        <h5>Danh mục</h5>
+                        <h5>Danh Mục</h5>
                         <legend/>
                         {this.props.resCategories? this.props.resCategories.map((cat) => (
                         <li className="subMenu open" key={cat.categoryId}>
@@ -32,6 +32,7 @@ class Sidebar extends Component {
                             </ul>
                         </li>
                         )): null}
+                        <br/>
                         <h5>Nhà Cung Cấp</h5>
                         <legend/>
                         {this.props.resSuppliers? this.props.resSuppliers.map((supplier) => (

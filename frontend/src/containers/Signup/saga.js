@@ -9,7 +9,8 @@ function* postForm(action) {
         const url = `${address}/register/`;
         // console.log(url,':',action.username,':',action.password);
         let response;
-        let form = action.state;
+        let form = {};
+        Object.keys(action.state).forEach(attr => action.state[attr] !== ''?form[attr] = action.state[attr]:null);
         yield axios.post(url, {
             userName: form.username,
             password: form.password,

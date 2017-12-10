@@ -38,18 +38,7 @@ class Header extends Component {
 
   signin = () => {
     this.props.signin(this.state.username, this.state.password);
-    (this.props.errorLogin) ? this.setState({ openLogin: false }) : null;
-    // const url = 'http://localhost:3001/login';
-    // const req_body = {
-    //   userName: this.state.username,
-    //   password: this.state.password,
-    // }
-    // fetch(url, {
-    //   method: 'POST',
-    //   body: req_body,
-    // })
-    // .then(response => { console.log('---RES = ---', response);})
-    // .then(responseJson => console.log('---TuyenTN---bafvvhas', responseJson))
+    (this.props.account) ? this.setState({ openLogin: false }) : null;
   }
 
   search = () => {
@@ -92,15 +81,15 @@ class Header extends Component {
                 <span className="icon-bar"></span>
               </a>
               <div className="navbar-inner">
-                <Link className="brand" to="/"><img src="themes/images/logo.png" alt="Bootsshop" /></Link>
-                <form className="form-inline navbar-search" disabled="disabled">
-                  <input id="srchFld" className="srchTxt" type="text" name="searchKey" onChange={this.change} value={this.state.searchKey} />
+                <Link className="brand" to="/"><img src={window.location.origin + "/themes/images/logo.png"} alt="Bootsshop" /></Link>
+                <form className="form-inline navbar-search" disabled="disabled" >
+                  <input className="srchTxt" type="text" name="searchKey" onChange={this.change} value={this.state.searchKey}  />
                 </form>
-                <button to="/" id="submitButton" className="btn btn-primary" onClick={ this.search }>Go</button>
+                <button to="/" id="submitButton" className="btn btn-primary" onClick={ this.search }>Tìm kiếm</button>
                 <ul id="topMenu" className="nav pull-right">
-                  <li className=""><a href="special_offer.html">Khuyến mại </a></li>
-                  <li className=""><a href="normal.html">Tin tức</a></li>
-                  <li className=""><a href="contact.html">Hỗ trợ</a></li>
+                  {/* <li className=""><a href="special_offer.html">Khuyến mại </a></li> */}
+                  {/* <li className=""><a href="normal.html">Tin tức</a></li> */}
+                  {/* <li className=""><a href="contact.html">Hỗ trợ</a></li> */}
                   {(!this.props.account.userName)? (
                     <li className="">
                     <a id="loginBtn" role="button" data-toggle="modal" style={{ paddingRight:0 }}
@@ -114,7 +103,7 @@ class Header extends Component {
                         <h3> Đăng nhập </h3>
                       </div>
                       <div className="modal-body">
-                        <span> { this.props.errorLogin } </span>
+                        <strong><span> { this.props.errorLogin } </span></strong>
                         <form className="form-horizontal loginFrm">
                           <div className="control-group">
                             <input type="text" id="inputUsername" name="username" onChange={this.change} placeholder="Tên đăng nhập" value={this.state.username} />
@@ -130,10 +119,9 @@ class Header extends Component {
                         </form>
                         <div className="btn-group">
                           <Link to="/signup" onClick={ () => {$("#login").fadeOut(0);} }>
-                          <button className="btn input-group-btn">
-                             Đăng ký
-                          </button></Link>
-                          <button type="submit" onClick={this.signin} className="btn btn-success"> Đăng nhập </button>
+                          <button className="closeLogin btn input-group-btn" onClick={() => this.setState({ openLogin: false })} data-dismiss="modal">Đăng ký</button>
+                          </Link>
+                          <button onClick={this.signin} className="btn btn-success"> Đăng nhập </button>
                           <button className="btn closeLogin" onClick={() => this.setState({ openLogin: false })} data-dismiss="modal" aria-hidden="true"> Đóng </button>
                         </div>
                       </div>

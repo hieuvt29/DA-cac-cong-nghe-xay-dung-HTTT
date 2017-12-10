@@ -84,7 +84,7 @@ app.use(function(err, req, res, next) {
     if(err.type) {
         switch(err.type) {
             case 'Bad Request':
-                return res.status(400).send(err);
+                return res.status(400).send({message: "Bad Request"});
                 break;
             case 'Request Failed':
                 return res.status(502).send({ message: 'Request Failed' });

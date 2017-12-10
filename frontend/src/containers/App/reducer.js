@@ -61,11 +61,25 @@ function appReducer(state = initialState, action) {
     }
     case 'RES_SIGNUP': {
         console.log('---TuyenTN---', action.response);
-        return { ...state, account: action.response};
+        setCookie('account', JSON.stringify(action.response.data.account));
+        return { ...state, account: action.response.data.account, signup_failed: null};
     }
     case 'SIGNUP_FAILED': {
         console.log('---TuyenTN---', action.error);
-        return { ...state, signup_failed: action.error};
+        let err = action.error.response.data;
+        let message = null;
+        switch (err.message) {
+            case "Duplicated":
+                message = "Tên người dùng đã được sử dụng";
+                break;
+            case "Bad Request": 
+                message = "Vui lòng kiểm tra lại thông tin đăng ký";
+                break;
+            default: 
+                message = "Hệ thống không thể tạo tài khoản";
+                break;
+        }
+        return { ...state, signup_failed: message};
     }
     case 'RES_SEARCH': {
         // console.log('---TuyenTN---', action.response);
@@ -88,6 +102,12 @@ function appReducer(state = initialState, action) {
             return { ...state, account: action.response.data.user};
         }
     }
+    
+    case 'SIGNIN_FAILED': {
+        // console.log('---Signin res:---', action.response);
+        return { ...state, errorLogin: 'Sai tên đăng nhập hoặc mật khẩu'};
+    }
+
     case 'RES_CREATE_ORDER': {
         console.log('---RES_CREATE_ORDER---', action.response);
         return { ...state, resCreateOrder: action.response};
