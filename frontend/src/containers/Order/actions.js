@@ -5,3 +5,10 @@ export const createOrder = (order) => {
         order,
     }
 };
+
+export const removeOrder = () => {
+    // console.log('---TuyenTN---SignIn', );
+    return {
+        type: 'REMOVE_ORDER'
+    }
+};

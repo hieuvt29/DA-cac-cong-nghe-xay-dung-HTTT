@@ -2,6 +2,7 @@ import { put, takeLatest } from 'redux-saga/effects';
 // import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
 import axios from 'axios';
 import { address } from '../../config.js';
+import { removeOrder } from './actions';
 
 function* postForm(action) {
     // console.log('Log from Signup saga ', action.username);
@@ -21,9 +22,13 @@ function* postForm(action) {
     }
 }
 
+function* remove(action) {
+    yield put({ type: "RES_REMOVE_ORDER"});
+}
 
 function* ordersaga() {
   yield takeLatest("CREATE_ORDER", postForm);
+  yield takeLatest("REMOVE_ORDER", remove);
 }
 
 export default ordersaga;

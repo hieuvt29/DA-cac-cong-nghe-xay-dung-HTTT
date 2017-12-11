@@ -112,6 +112,9 @@ function appReducer(state = initialState, action) {
         console.log('---RES_CREATE_ORDER---', action.response);
         return { ...state, resCreateOrder: action.response};
     }
+    case 'RES_REMOVE_ORDER': {
+        return { ...state, resCreateOrder: ""};
+    }
     case 'RES_PRODUCTDETAIL': {
         console.log('---RES_PRODUCTDETAIL---', action.response.product);
         return { ...state, resDetailProduct: action.response.product};
@@ -131,9 +134,7 @@ function appReducer(state = initialState, action) {
     case 'ADDTOCART': {
         const cartString = getCookie('cart');
         let newCart = [];
-        if (cartString === '') {
-            newCart = [];
-        } else {
+        if (cartString && cartString != "null") {
             newCart = JSON.parse(cartString);
         }
         let i;
@@ -146,8 +147,20 @@ function appReducer(state = initialState, action) {
         if (i === newCart.length) {
             newCart.push(action.product);
         }
-        let cartTotal = parseFloat(getCookie('cartTotal'))+action.product.price;
-        let cartQuantity = parseInt(getCookie('cartQuantity'), 10)+1;
+        // let cartTotal = parseFloat(getCookie('cartTotal')) != NaN?(parseFloat(getCookie('cartTotal'))+action.product.price): action.product.price;
+        // let cartQuantity = parseInt(getCookie('cartQuantity'), 10) != NaN?parseInt(getCookie('cartQuantity'), 10)+1: 1;
+        let cartTotal = 0;
+        let cartQuantity = 0;
+        if (parseFloat(getCookie('cartTotal'))) {
+            cartTotal = parseFloat(getCookie('cartTotal')) + action.product.price;
+        } else {
+            cartTotal = action.product.price;
+        }
+        if (parseInt(getCookie('cartQuantity'), 10)) {
+            cartQuantity = parseInt(getCookie('cartQuantity'), 10) + 1;
+        } else {
+            cartQuantity = 1;
+        }
         setCookie('cart', JSON.stringify(newCart));
         setCookie('cartQuantity', JSON.stringify(cartQuantity));
         setCookie('cartTotal', JSON.stringify(cartTotal));

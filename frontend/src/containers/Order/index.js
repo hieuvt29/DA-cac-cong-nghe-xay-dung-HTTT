@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { createOrder } from './actions';
+import { createOrder, removeOrder } from './actions';
 import { getCookie, setCookie } from '../../globalFunc';
+import {updateCart} from '../Cart/actions';
 
 class Order extends Component {
     constructor(props) {
@@ -40,7 +41,9 @@ class Order extends Component {
         this.setState({ address: account.address});
         // console.log('---TuyenTN---', (this.state.cart));
     }
-
+    componentWillUnmount(){
+        this.remove();
+    }
     change = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     }
@@ -61,7 +64,11 @@ class Order extends Component {
         this.props.createOrder(order);
     }
     remove = () => {
-
+        setCookie("cart", "");
+        setCookie("cartTotal", "");
+        setCookie("cartQuantity", "");
+        this.props.removeOrder();
+        this.props.updateCart(0, 0); 
     }
     componentWillMount() {
         this.setState({ fullName:  this.props.account.firstName + this.props.account.lastName});
@@ -78,9 +85,13 @@ class Order extends Component {
                     <li className="active">ĐƠN HÀNG</li>
                 </ul>
                 <h3>   XÁC NHẬN ĐƠN HÀNG
-        <Link className="btn btn-large pull-right" to="/home"><i className="icon-arrow-left"></i> Mua Thêm </Link></h3>
-                {(this.props.resCreateOrder !== '' && this.cartArr.length > 0) ? (<h5>Đã đặt đơn hàng tới {this.props.resCreateOrder.data.order.address}
-                    <br/> Trạng thái {this.props.resCreateOrder.data.order.state}</h5>) : null}
+                <Link className="btn btn-large pull-right" to="/home"><i className="icon-arrow-left"></i> Mua Thêm </Link></h3>
+                {(this.props.resCreateOrder) ? (
+                    <h5>Đã đặt đơn hàng tới {this.props.resCreateOrder.data.order.address}
+                    <br/>
+                    Trạng thái {this.props.resCreateOrder.data.order.state}</h5>) :
+                (
+                <div>
                 <hr className="soft" />
 
                 <table className="table table-bordered">
@@ -152,6 +163,9 @@ class Order extends Component {
                     <Link className="btn btn-large" to="/product_summary"><i className="icon-arrow-left"></i> Sửa giỏ hàng </Link>
                     <button type="button" onClick={this.createOrder} className="btn btn-large pull-right"> Đồng ý <i className="icon-arrow-right"></i></button>
                 </div>
+                </div>
+                )}
+                
             </div>
         );
     }
@@ -164,6 +178,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = ({
     createOrder,
+    removeOrder,
+    updateCart
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Order);

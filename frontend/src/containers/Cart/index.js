@@ -20,8 +20,8 @@ class Cart extends Component {
     this.props.signin(this.state.username, this.state.password);
 
   }
-
-  componentDidMount() {
+  
+  componentWillMount() {
     // $("#loginBtn").click(() => {
     //   $("#login").toggle();
     // });
@@ -33,8 +33,8 @@ class Cart extends Component {
     const cartString = getCookie('cart');
     cartArr = (cartString === '') ? [] : JSON.parse(cartString);
     // console.log('CART Array =', cartArr);
-    let cartTotal = parseFloat(getCookie('cartTotal'));
-    let cartQuantity = parseInt(getCookie('cartQuantity'), 10);
+    let cartTotal = parseFloat(getCookie('cartTotal'))?parseFloat(getCookie('cartTotal')):0;
+    let cartQuantity = parseInt(getCookie('cartQuantity'), 10)?parseInt(getCookie('cartQuantity'), 10):0;
     this.setState({ cart: cartArr });
     this.setState({ cartTotal: cartTotal });
     this.setState({ cartQuantity: cartQuantity });
@@ -101,7 +101,10 @@ class Cart extends Component {
     this.props.signin(this.state.username, this.state.password);
   }
   render() {
-    return (
+    if (!this.state.cart || (this.state.cart && !this.state.cart.length)){
+      return (<div className="container"><h4>Giỏ hàng chưa được tạo, vui lòng quay lại mua hàng!</h4></div>)
+    } else {
+      return (
         <div className="span9">
         <ul className="breadcrumb">
             <li><a href="index.html">Trang chủ</a> <span className="divider">/</span></li>
@@ -214,8 +217,10 @@ class Cart extends Component {
         <Link className="btn btn-large" to="/home"><i className="icon-arrow-left"></i> Tiếp tục mua </Link>
         <Link to="/order" className="btn btn-large pull-right">Next <i className="icon-arrow-right"></i></Link>
         
-    </div>
+      </div>
     );
+    }
+    
   }
 }
 
