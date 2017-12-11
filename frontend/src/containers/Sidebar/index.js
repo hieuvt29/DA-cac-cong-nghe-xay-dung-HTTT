@@ -14,7 +14,7 @@ class Sidebar extends Component {
                 <div id="sidebar" className="span3">
                     <div className="well well-small">
                         <Link to="/product_summary" id="myCart"><img src={window.location.origin + "/themes/images/ico-cart.png"} alt="cart" />{this.props.cartQuantity} Sản phẩm
-                        <span className="badge badge-warning pull-right">{ this.props.cartTotal.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") }đ</span>
+                        <span className="badge badge-warning pull-right">{ this.props.cartTotal.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")}&#8363;</span>
                         </Link>
                     </div>
                     

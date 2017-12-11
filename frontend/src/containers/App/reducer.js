@@ -41,8 +41,8 @@ function appReducer(state = initialState, action) {
         return { ...state, account: account};
     }
     case 'INIT_CART': {
-        let cartTotal = parseFloat(getCookie('cartTotal'));
-        let cartQuantity = parseInt(getCookie('cartQuantity'), 10);        
+        let cartTotal = parseFloat(getCookie('cartTotal'))?parseFloat(getCookie('cartTotal')):0;
+        let cartQuantity = parseInt(getCookie('cartQuantity'), 10)?parseInt(getCookie('cartQuantity'), 10):0;        
         return { ...state, cartTotal: cartTotal, cartQuantity: cartQuantity};
     }
     case 'RES_PRODUCTS': {

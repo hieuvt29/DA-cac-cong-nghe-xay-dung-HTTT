@@ -91,7 +91,7 @@ class HomePage extends Component {
                                                             <h5>{item.productName}</h5>
                                                             <h4><Link className="btn" to={`/product/${item.productId}`}>Chi tiết</Link>
                                                                 <a className="btn" onClick={ () => this.addCart(item) }>Mua<i className="icon-shopping-cart"></i></a>                                    
-                                                                <span className="pull-right">{item.price.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")}Đ</span>                                                                                                    
+                                                                <span className="pull-right">{item.price.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")} &#8363;</span>                                                                                                    
                                                             </h4>
                                                         </div>
                                                     </div>
@@ -119,7 +119,7 @@ class HomePage extends Component {
                                     <h5>{item.productName}</h5>
                                     <h4><Link className="btn" to={`/product/${item.productId}`}>Chi tiết</Link>
                                     <a className="btn" onClick={ () => this.addCart(item) }>Mua<i className="icon-shopping-cart"></i></a>
-                                    <span className="pull-right">{item.price.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")}Đ</span>
+                                    <span className="pull-right">{item.price.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")} &#8363;</span>
                                     </h4>
                                 </div>
                             </div>

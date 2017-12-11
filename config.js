@@ -6,5 +6,8 @@ module.exports = {
         database: 'project3',
         host: 'localhost',
         dialect: "mysql"
+    },
+    host: {
+        aws: "ec2-35-163-95-220.us-west-2.compute.amazonaws.com"
     }
 }

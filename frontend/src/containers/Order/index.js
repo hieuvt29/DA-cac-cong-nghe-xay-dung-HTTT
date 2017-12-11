@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { createOrder, removeOrder } from './actions';
 import { getCookie, setCookie } from '../../globalFunc';
 import {updateCart} from '../Cart/actions';
+import { access } from 'fs';
 
 class Order extends Component {
     constructor(props) {
@@ -32,13 +33,22 @@ class Order extends Component {
         this.setState({ cartQuantity: cartQuantity });
 
         const accountString = getCookie('account');
-        let account = (accountString === '')? '' : JSON.parse(accountString);
-        // console.log('---Account parse = ---', account);
-        const fullName = account.firstName + ' ' +account.lastName;
-
-        this.setState({ fullName: fullName});
-        this.setState({ telephone: account.telephone});
-        this.setState({ address: account.address});
+        if (accountString && accountString !== '') {
+            let account = JSON.parse(accountString);
+            console.log("AAcount: ", account);
+            // console.log('---Account parse = ---', account);
+            const fullName = account.firstName + ' ' +account.lastName;
+            
+            this.setState({ fullName: fullName?fullName:this.state.fullName});
+            this.setState({ telephone: account.telephone?account.telephone: this.state.telephone});
+            this.setState({ address: account.address?account.address: this.state.address});
+        } else if (this.props.account) {
+            let fullName = this.props.account.firstName + this.props.account.lastName;
+            this.setState({ fullName: fullName?fullName:this.state.fullName});
+            this.setState({ telephone: this.props.account.telephone?this.props.account.telephone: this.state.telephone});
+            this.setState({ address: this.props.account.address?this.props.account.address:this.state.address});
+        }
+        
         // console.log('---TuyenTN---', (this.state.cart));
     }
     componentWillUnmount(){
@@ -71,9 +81,9 @@ class Order extends Component {
         this.props.updateCart(0, 0); 
     }
     componentWillMount() {
-        this.setState({ fullName:  this.props.account.firstName + this.props.account.lastName});
-        this.setState({ telephone: this.props.account.telephone});
-        this.setState({ address: this.props.account.address});
+        // this.setState({ fullName:  this.props.account.firstName + this.props.account.lastName});
+        // this.setState({ telephone: this.props.account.telephone});
+        // this.setState({ address: this.props.account.address});
     }
     render() {
         
@@ -87,9 +97,9 @@ class Order extends Component {
                 <h3>   XÁC NHẬN ĐƠN HÀNG
                 <Link className="btn btn-large pull-right" to="/home"><i className="icon-arrow-left"></i> Mua Thêm </Link></h3>
                 {(this.props.resCreateOrder) ? (
-                    <h5>Đã đặt đơn hàng tới {this.props.resCreateOrder.data.order.address}
+                    <h4>Đã đặt đơn hàng tới: {this.props.resCreateOrder.data.order.address}
                     <br/>
-                    Trạng thái {this.props.resCreateOrder.data.order.state}</h5>) :
+                    Trạng thái: {this.props.resCreateOrder.data.order.state}</h4>) :
                 (
                 <div>
                 <hr className="soft" />
@@ -100,28 +110,24 @@ class Order extends Component {
                         <tr>
                             <td>
                                 <form className="form-horizontal">
-                                    {(this.props.account.userName) ? (
-                                        <div className="control-group">
-                                            <label className="control-label" htmlFor="inputUsername">Khách hàng:</label>
-                                            <div className="controls">
-                                                <input type="text" id="inputUsername" value={this.state.fullName} name="fullName" onChange={this.change} placeholder="Tên người nhận" />
-                                            </div>
+                                    <div className="control-group">
+                                        <label className="control-label" htmlFor="inputUsername">Khách hàng:</label>
+                                        <div className="controls">
+                                            <input type="text" id="inputUsername" value={this.state.fullName} name="fullName" onChange={this.change} placeholder="Tên người nhận" />
                                         </div>
-                                    ) : null}
+                                    </div>
                                     <div className="control-group">
                                         <label className="control-label" htmlFor="inputAddress">Địa chỉ</label>
                                         <div className="controls">
                                             <input type="text" id="inputAddress" value={this.state.address} name="address" onChange={this.change} placeholder="Số nhà, phường, thành phố,..." />
                                         </div>
                                     </div>
-                                    {(this.props.account.userName) ? (
-                                        <div className="control-group">
-                                            <label className="control-label" htmlFor="telephone">Số điện thoại:</label>
-                                            <div className="controls">
-                                                <input type="text" id="telephone" value={this.state.telephone} name="telephone" onChange={this.change} placeholder="" />
-                                            </div>
+                                    <div className="control-group">
+                                        <label className="control-label" htmlFor="telephone">Số điện thoại:</label>
+                                        <div className="controls">
+                                            <input type="text" id="telephone" value={this.state.telephone} name="telephone" onChange={this.change} placeholder="" />
                                         </div>
-                                    ) : null}
+                                    </div>
                                 </form>
                             </td>
                         </tr>
