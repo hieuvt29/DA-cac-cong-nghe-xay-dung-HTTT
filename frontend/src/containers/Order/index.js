@@ -86,8 +86,6 @@ class Order extends Component {
         // this.setState({ address: this.props.account.address});
     }
     render() {
-        
-        
         return (
             <div className="span9">
                 <ul className="breadcrumb">

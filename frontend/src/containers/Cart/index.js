@@ -102,7 +102,7 @@ class Cart extends Component {
   }
   render() {
     if (!this.state.cart || (this.state.cart && !this.state.cart.length)){
-      return (<div className="container"><h4>Giỏ hàng chưa được tạo, vui lòng quay lại mua hàng!</h4></div>)
+      return (<div className="span9"><h4>Giỏ hàng chưa được tạo, vui lòng quay lại mua hàng!</h4></div>)
     } else {
       return (
         <div className="span9">

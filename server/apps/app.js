@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var cors = require('cors');
 var config = require('../../config');
 var compress = require('compression');
+var path = require('path');
 /* ===== Express setup ===== */
 
 var app  = express();
@@ -70,6 +71,8 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use('/', express.static(path.join(__dirname, '../../frontend/build')))
+app.use('/admin', express.static(path.join(__dirname, '../../admin/build')))
 // Routers
 require('./routes/product-route')(app, productController, passport);
 require('./routes/account-route')(app, accountController, passport);
