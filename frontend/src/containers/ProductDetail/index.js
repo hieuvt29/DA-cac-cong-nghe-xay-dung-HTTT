@@ -3,13 +3,15 @@ import { connect } from 'react-redux';
 import { get_product } from './actions';
 import NotFound from '../NotFound/index';
 import { addToCart } from './../Cart/actions';
+import Lightbox from 'react-image-lightbox';
 
 class ProductDetail extends Component {
     constructor (props) {
       super(props);
-      // this.state = {
-      //   prodDetail: {},
-      // }
+      this.state = {
+        photoIndex: 0,
+        isOpen: false
+      };
     }
     addCart = (product) => {
       const lightProduct = {
@@ -40,11 +42,16 @@ class ProductDetail extends Component {
         const {prodDetail} = this.props;
         let arr = [];
         let info = {};
+        const {
+          photoIndex,
+          isOpen,
+        } = this.state;
+        let images = [];
         //const prodDetailString = JSON.parse(prodDetail);
         
         if (prodDetail.description){
+          images = prodDetail.description.imgLinks;
           info = JSON.parse(JSON.stringify(prodDetail.description.info));
-
           // Object.keys(prodDetail.description.info).forEach(function(key) {
           //   arr.push({name: key, value: info[JSON.stringify(key)]});
           // });
@@ -54,15 +61,31 @@ class ProductDetail extends Component {
           
         }
         return (
+          
         <div className="span9">
           <ul className="breadcrumb">
           <li><a href="index.html">Home</a> <span className="divider">/</span></li>
           <li><a href="products.html">Products</a> <span className="divider">/</span></li>
           <li className="active">product Details</li>
           </ul>	
-          <div className="row">	  
+          <div className="row">
+          {isOpen &&
+              <Lightbox
+                  mainSrc={images[photoIndex]}
+                  nextSrc={images[(photoIndex + 1) % images.length]}
+                  prevSrc={images[(photoIndex + images.length - 1) % images.length]}
+
+                  onCloseRequest={() => this.setState({ isOpen: false })}
+                  onMovePrevRequest={() => this.setState({
+                      photoIndex: (photoIndex + images.length - 1) % images.length,
+                  })}
+                  onMoveNextRequest={() => this.setState({
+                      photoIndex: (photoIndex + 1) % images.length,
+                  })}
+              />
+          }
             <div id="gallery" className="span3">
-              <a href={prodDetail.image} title={prodDetail.productName}>
+              <a onClick={(e) => {e.preventDefault(); this.setState({ isOpen: true })}} href={prodDetail.image} title={prodDetail.productName}>
                   <img src={prodDetail.image} style={{ width: "100%" }} alt={prodDetail.productName}/>
               </a>
               <div id="differentview" className="moreOptopm carousel slide">
@@ -71,7 +94,7 @@ class ProductDetail extends Component {
                   {(prodDetail.description) ? prodDetail.description.imgLinks.map((image, index) => {
                       if (index < 3) {
                         return (
-                          <a href={image} key={index}> 
+                          <a onClick={(e) => {e.preventDefault(); this.setState({ isOpen: true })}} href={image} key={index}> 
                             <img style={{ width: "29%" }} src={image} alt={image} />
                           </a>
                         )
@@ -82,7 +105,7 @@ class ProductDetail extends Component {
                   {(prodDetail.description) ? prodDetail.description.imgLinks.map((image, index) => {
                       if (index >= 3) {
                         return (
-                          <a href={image} key={index}> 
+                          <a onClick={(e) => {e.preventDefault(); this.setState({ isOpen: true })}} href={image} key={index}> 
                             <img style={{ width: "29%" }} src={image} alt={image} />
                           </a>
                         )

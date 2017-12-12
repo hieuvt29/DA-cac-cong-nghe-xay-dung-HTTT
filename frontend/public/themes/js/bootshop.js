@@ -7,9 +7,7 @@ $(document).ready(function(){
 	 $('#featured').carousel({
 	  interval: 4000
 	})
-	$(function() {
-		$('#gallery a').lightBox();
-	});
+
 	
 	$('.subMenu > a').click(function(e)
 	{
