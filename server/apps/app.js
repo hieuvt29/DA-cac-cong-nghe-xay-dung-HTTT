@@ -81,6 +81,14 @@ require('./routes/category-route')(app, categoryController);
 require('./routes/order-route')(app, orderController);
 require('./routes/statistic-route')(app, statisticController);
 
+app.get("/admin/*", (req, res) => {
+    res.sendFile(path.join(__dirname, '../../admin/build/index.html'));
+});
+
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../../frontend/build/index.html"));
+})
+
 app.use(function(err, req, res, next) {
     console.error(new Date() + " - " + JSON.stringify(err, null, '\t'));
     
