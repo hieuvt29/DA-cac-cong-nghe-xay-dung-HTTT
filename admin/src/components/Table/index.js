@@ -37,8 +37,8 @@ class DataTable extends React.Component {
       response: {},
       arrText: [],
       productName: '',
-      categoryId: '2b18291f-8c06-43d8-8b27-56b59e88c68d',
-      supplierId: '89ce332c-f574-4ab9-9f5c-d51bd15ede4a',
+      categories: props.categories,
+      suppliers: props.suppliers,
       price: '',
       quantity: '',
       image: '/img/testproduct',
@@ -49,6 +49,8 @@ class DataTable extends React.Component {
       address: '',
       contact: '',
       type: '',
+      categoryId:'',
+      supplierId:'',
     }
 
     this.edit = this.edit.bind(this);
@@ -79,10 +81,21 @@ class DataTable extends React.Component {
     console.log("Props recieved: ", nextProps.data);
     let changed = this.state.data !== nextProps.data;
     changed ? this.renderTable(nextProps.data) : null;
+    if (this.state.categories !== nextProps.categories) {
+      this.setState({categories : nextProps.categories});      
+      this.setState({suppliers: nextProps.suppliers});
+      console.log('---CATEGORIES = ---', this.state.categories);
+    }
   }
 
   componentWillUnMount() {
     $(this.refs.dataTable).DataTable().destroy(true);
+  }
+  componentWillMount() {
+    if (this.state.tableName === "Products") {
+      this.setState({categories : this.props.categories});
+      this.setState({suppliers: this.props.suppliers});
+    }
   }
   renderTable(data) {
     console.log("table rendered");
@@ -172,6 +185,16 @@ class DataTable extends React.Component {
   }
   submitPro = () => {
     this.setState({ createPageShow: 'none' });
+    const bodyObject = {
+      productName: this.state.productName,
+      Categories: [{ categoryId: this.state.categoryId }],
+      supplierId: this.state.supplierId,
+      price: parseInt(this.state.price),
+      quantity: parseInt(this.state.quantity),
+      image: this.state.image,
+      description: { description: this.state.description },
+    };
+    console.log('---BODY POST---', bodyObject);
     fetch("http://localhost:3001/products/", {
       method: "post",
       headers: {
@@ -180,15 +203,7 @@ class DataTable extends React.Component {
       },
 
       //make sure to serialize your JSON body
-      body: JSON.stringify({
-        productName: this.state.productName,
-        Categories: [{ categoryId: this.state.categoryId }],
-        supplierId: this.state.supplierId,
-        price: parseInt(this.state.price),
-        quantity: parseInt(this.state.quantity),
-        image: this.state.image,
-        description: { description: this.state.description },
-      })
+      body: JSON.stringify(bodyObject)
     })
       .then((response) => {
         this.setState({ response: response });
@@ -424,14 +439,24 @@ class DataTable extends React.Component {
                     <div className="control-group">
                       <label className="control-label" htmlFor="categoryId">Loại sản phẩm <sup>*</sup></label>
                       <div className="controls">
-                        <input type="text" id="categoryId" name="categoryId" onChange={this.change} value={this.state.categoryId} placeholder="" />
+                        <select value={this.state.categoryId} className="select_pro" name="categoryId" onChange={this.change}>
+                            <option>Chọn một</option>
+                          {this.props.categories.map((category, index) => (
+                            <option value={category.categoryId} selected={index === 1? "selected" : ''}>{category.categoryName}</option>
+                          ))}
+                        </select>
                       </div>
                     </div>
 
                     <div className="control-group">
-                      <label className="control-label" htmlFor="supplierId">Mã nhà cung cấp <sup>*</sup></label>
+                      <label className="control-label" htmlFor="supplierId">Nhà cung cấp <sup>*</sup></label>
                       <div className="controls">
-                        <input type="text" id="supplierId" name="supplierId" onChange={this.change} value={this.state.supplierId} placeholder="" />
+                        <select value={this.state.supplierId} className="select_pro" name="supplierId" onChange={this.change}>
+                        <option>Chọn một</option>
+                          {this.props.suppliers.map((supplier, index) => (
+                            <option value={supplier.supplierId} selected={index === 1? "selected" : ''}>{supplier.supplierName}</option>
+                          ))}
+                        </select>
                       </div>
                     </div>
 
@@ -459,7 +484,7 @@ class DataTable extends React.Component {
                     <div className="control-group">
                       <label className="control-label" htmlFor="description">Mô tả <sup>*</sup></label>
                       <div className="controls">
-                        <input type="text" id="description" name="description" onChange={this.change} value={this.state.description} placeholder="" />
+                        <textarea value={this.state.description} id="description" name="description" onChange={this.change} />
                       </div>
                     </div>
 

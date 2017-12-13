@@ -122,3 +122,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;      
 }
+
+.select_pro:focus option:first-of-type {
+  display: none;
+}
