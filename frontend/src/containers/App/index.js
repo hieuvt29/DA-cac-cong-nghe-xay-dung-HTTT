@@ -14,6 +14,8 @@ import Category from '../Category';
 import Supplier from '../Supplier';
 import Order from '../Order';
 import CustomerOrder from '../CustomerOrder';
+import Profile from '../Profile';
+
 // import Demo from '../Demo';
 
 import '../..//App.css';
@@ -48,6 +50,7 @@ class App extends Component {
             <Route path="/category/:id" component={Category} />
             <Route path="/supplier/:id" component={Supplier} />
             <Route path="/customer/orders" component={CustomerOrder} />
+            <Route path="/customer/profile" component={Profile} />
 
             {/* <Route path="" component={NotFound} /> */}
             <Redirect to="/" />
