@@ -4,6 +4,7 @@ var dbContext = require('./server/repository/data-context')(config.db);
 var uuidv4 = require('uuid/v4');
 var Sequelize = require('sequelize');
 var fs = require('fs');
+var bcrypt = require('bcrypt-nodejs');
 
 /* Check Sequelize Association
 var ProductRepository = require('./server/repository/product-repository');
@@ -126,6 +127,8 @@ dbContext.sequelize.sync().then(function () {
         categoryName: "Sản phẩm mới"
     }, {
         categoryName: "Sản phẩm giảm giá"
+    }, {
+        categoryName: "Sản phẩm nổi bật"
     }])
     .then((categories) => {
         console.log("------ categories created ------ ");
@@ -133,7 +136,7 @@ dbContext.sequelize.sync().then(function () {
         
         let admin = {
             userName: "hieuvt",
-            password: '123321',
+            password: bcrypt.hashSync('123321'),
             role: 0,
             firstName: "vu",
             lastName: "hieu",
@@ -142,7 +145,7 @@ dbContext.sequelize.sync().then(function () {
         };
         let customer = {
             userName: "hieuvt01",
-            password: '123321',
+            password: bcrypt.hashSync('123321'),
             role: 1,
             firstName: "vu",
             lastName: "hieu",
@@ -189,10 +192,13 @@ dbContext.sequelize.sync().then(function () {
                         dbContext.Product.bulkCreate(allItems)
                             .then(products => {
                                 console.log("products created: ", products);
-                                categories[0].setProducts(products).then(function(result){
-                                    console.log("RESULT: ", result);
-                                    console.log("DONE");
-                                }).catch(err => console.log("err: ", err));
+                                products.forEach(product => {
+                                    categories[Math.round(Math.random() * 2)].setProducts([product]).then(function(result){
+                                        console.log("RESULT: ", result);
+                                        console.log("DONE");
+                                    }).catch(err => console.log("err: ", err));
+                                })
+                                
                             }).catch(err => console.log("err: ", err));
                     }).catch((err) => console.log("error: ", err));
                     
