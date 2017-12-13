@@ -13,6 +13,7 @@ import Cart from '../Cart';
 import Category from '../Category';
 import Supplier from '../Supplier';
 import Order from '../Order';
+import CustomerOrder from '../CustomerOrder';
 // import Demo from '../Demo';
 
 import '../..//App.css';
@@ -46,6 +47,7 @@ class App extends Component {
             <Route path="/product/:id" component={ProductDetail} />
             <Route path="/category/:id" component={Category} />
             <Route path="/supplier/:id" component={Supplier} />
+            <Route path="/customer/orders" component={CustomerOrder} />
 
             {/* <Route path="" component={NotFound} /> */}
             <Redirect to="/" />

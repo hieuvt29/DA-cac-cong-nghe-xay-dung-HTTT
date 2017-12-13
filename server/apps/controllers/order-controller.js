@@ -1,5 +1,6 @@
 var rule = require('../../common/validate/order-validator');
 var validate = require('../../common/validate-function');
+var orderState = require('../../common/order-states');
 
 var dependencies = {} // solve problem "this" keyword does not reference to this class
 
@@ -90,21 +91,12 @@ OrderController.prototype.create = async function (req, res, next) {
     })
 }
 
-OrderController.prototype.update = async function (req, res, next) {
+OrderController.prototype.updateState = async function (req, res, next) {
     var orderId = req.params.orderId;
-    var orderProps = req.body;
-    orderProps.orderId = orderId;
+    var newState = req.body.newState;
 
-    //validate props
-    var val = await validate(rule, orderProps);
-    if (val.numErr > 0) {
-        return next({
-            type: "Bad Request",
-            error: val.error
-        });
-    }
     var condition = {
-        orderId: orderProps.orderId
+        orderId: orderId
     }
     var association = [{
         model: dependencies.orderRepository.dbContext.Product
@@ -113,9 +105,15 @@ OrderController.prototype.update = async function (req, res, next) {
         if (err) {
             next(err);
         } else if (orderObj) {
-            orderObj.dataValues = Object.assign({}, orderObj.dataValues, orderProps);
+            if (orderObj.state == orderState.CANCELLED) {
+                return next({message: "Cannot change state of cancelled order"});
+            }
+            if (orderObj.state == orderState.DELIVERED) {
+                return next({message: "Cannot change state of delivered order"});
+            }
+            orderObj.state = newState;
 
-            dependencies.orderRepository.updateWithTransaction(orderObj, function (err, result) {
+            dependencies.orderRepository.update(orderObj.dataValues, [], function (err, result) {
                 if (err) {
                     return next(err);
                 } else {

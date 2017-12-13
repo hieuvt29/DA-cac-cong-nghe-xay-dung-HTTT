@@ -119,6 +119,18 @@ function appReducer(state = initialState, action) {
     case 'RES_REMOVE_ORDER': {
         return { ...state, resCreateOrder: ""};
     }
+    case 'RES_CUSTOMER_ORDERS' : {
+        console.log("RES_CUSTOMER_ORDERS: ", action.response);
+        return {...state, customerOrders: action.response.orders};
+    }
+    case 'RES_CANCEL_ORDER' : {
+        console.log("RES_CANCEL_ORDER: ", action.response);
+        return {...state, cancelledOrder: action.response.order};
+    }
+    case 'CANCEL_ORDER_FAILED' : {
+        console.log("CANCEL_ORDER_FAILED: ", action.response);
+        return {...state, cancelOrderFailed: action.error};
+    }
     case 'RES_PRODUCTDETAIL': {
         console.log('---RES_PRODUCTDETAIL---', action.response.product);
         return { ...state, resDetailProduct: action.response.product};

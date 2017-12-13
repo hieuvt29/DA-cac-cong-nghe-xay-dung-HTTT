@@ -17,7 +17,7 @@ module.exports = function(app, orderController){
     );
     
     app.put('/orders/:orderId',
-        orderController.update, 
+        orderController.updateState, 
         orderMw.update
     );
 

@@ -10,6 +10,7 @@ class Order extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            accountId: '',
             cart: [],
             cartTotal: 0,
             cartQuantity: 0,
@@ -38,15 +39,22 @@ class Order extends Component {
             console.log("AAcount: ", account);
             // console.log('---Account parse = ---', account);
             const fullName = account.firstName + ' ' +account.lastName;
-            
-            this.setState({ fullName: fullName?fullName:this.state.fullName});
-            this.setState({ telephone: account.telephone?account.telephone: this.state.telephone});
-            this.setState({ address: account.address?account.address: this.state.address});
+            let nextState = {
+                fullName: fullName?fullName:this.state.fullName,
+                telephone: account.telephone?account.telephone: this.state.telephone,
+                address: account.address?account.address: this.state.address,
+                accountId: account.accountId
+            }
+            this.setState(nextState);
         } else if (this.props.account) {
             let fullName = this.props.account.firstName + this.props.account.lastName;
-            this.setState({ fullName: fullName?fullName:this.state.fullName});
-            this.setState({ telephone: this.props.account.telephone?this.props.account.telephone: this.state.telephone});
-            this.setState({ address: this.props.account.address?this.props.account.address:this.state.address});
+            let nextState = {
+                fullName: fullName?fullName:this.state.fullName,
+                telephone: this.props.account.telephone?this.props.account.telephone: this.state.telephone,
+                address: this.props.account.address?this.props.account.address:this.state.address,
+                accountId: this.props.account.accountId
+            }
+            this.setState({nextState});
         }
         
         // console.log('---TuyenTN---', (this.state.cart));
@@ -83,6 +91,9 @@ class Order extends Component {
             Products: arrProducts,
             total: this.state.cartTotal,
         };
+        if (this.state.accountId){
+            order.accountId = this.state.accountId;
+        }
         this.props.createOrder(order);
         
     }
