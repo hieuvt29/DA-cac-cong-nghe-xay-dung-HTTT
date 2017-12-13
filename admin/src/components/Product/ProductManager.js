@@ -8,7 +8,9 @@ class ProductManager extends React.Component {
 
         this.state = {
             data: [],
-            loading: true
+            loading: true,
+            categories: [],
+            suppliers: [],
         }
     }
     componentDidMount(){
@@ -18,7 +20,21 @@ class ProductManager extends React.Component {
             method: 'GET'
         }).then(res => {
             this.setState({data: res.products});
-        })
+        });
+        $.ajax({
+            url: '/categories',
+            method: 'GET'
+        }).then(res => {
+            this.setState({categories: res.categories});
+            // console.log('---DAD categories---', this.state.categories);
+        });
+        $.ajax({
+            url: '/suppliers',
+            method: 'GET'
+        }).then(res => {
+            this.setState({suppliers: res.suppliers});
+        });
+
     }
 
     remove = (id) => {
@@ -78,7 +94,7 @@ class ProductManager extends React.Component {
                     <li className="active">Product Manager</li>
                 </ol>
                 </section>
-                <DataTable remove={this.remove} submit={this.submit} data={this.state.data} tableName="Products"/>
+                <DataTable remove={this.remove} submit={this.submit} suppliers={this.state.suppliers} categories={this.state.categories} data={this.state.data} tableName="Products"/>
             </div>
         );
     }
