@@ -182,6 +182,14 @@ function appReducer(state = initialState, action) {
         setCookie('cartTotal', JSON.stringify(cartTotal));
         return { ...state, cartTotal: cartTotal, cartQuantity: cartQuantity };
     }
+    case 'RES_UPDATE_INFO': {
+        console.log('---RES_UPDATE_INFO---', action.response.data.account);
+        setCookie('account', JSON.stringify(action.response.data.account));
+        return {...state, updatedAccount: action.response.data.account};
+    }
+    case 'UPDATE_INFO_FAILED': {
+        return {...state, updateInfoFailed: action.error};
+    }
     default:
       return state;
   }

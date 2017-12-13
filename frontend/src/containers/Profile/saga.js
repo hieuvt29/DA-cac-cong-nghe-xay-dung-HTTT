@@ -3,18 +3,25 @@ import { put, takeLatest } from 'redux-saga/effects';
 import axios from 'axios';
 import { address } from '../../config.js';
 
-function* getProductBySupplierId(action) {
-    const url = `${address}/suppliers/`+action.supplier_id+'?association=true';
-    let response;
-    yield fetch(url)
-    .then(res => { return res.json();})
-    .then(responseJson => { response = responseJson });
-    console.log('---Saga fetch pro by cat---', response);
-    yield put({ type: "RES_PRODUCTBYSUP", response });
+function* updateInfo(action) {
+    
+    try {
+      const url = `${address}/user`;
+      let response;
+      // console.log("before call signin", response);
+      yield axios.put(url, action.customer)
+      .then(res => {
+          response = res;
+          // console.log('RESPONSE saga = ', response);
+      });
+      yield put({ type: "RES_UPDATE_INFO", response });
+    } catch (error) {
+        yield put({ type: "UPDATE_INFO_FAILDED", error });
+    }
 }
 
 function* probycatsaga() {
-  yield takeLatest("PRODUCTS_REQUEST_BY_SUPPLIER", getProductBySupplierId);
+  yield takeLatest("UPDATE_INFO", updateInfo);
 }
 
 

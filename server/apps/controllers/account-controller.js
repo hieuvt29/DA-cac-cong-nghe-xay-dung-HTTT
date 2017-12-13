@@ -217,9 +217,9 @@ AccountController.prototype.changeUserName = async function (req, res, next) {
 AccountController.prototype.updateInfo = async function (req, res, next) {
     var newInfo = req.body;
     if (newInfo.password || newInfo.userName || newInfo.role) {
-        return next({
-            message: "Change restricted fields"
-        });
+        delete newInfo.password;
+        delete newInfo.userName;
+        delete newInfo.role;
     }
     var accountProps = Object.assign({}, req.user.dataValues, newInfo);
     // validate accountProps 

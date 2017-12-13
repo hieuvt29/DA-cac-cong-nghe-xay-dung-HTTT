@@ -53,7 +53,7 @@ class App extends Component {
             <Route path="/customer/profile" component={Profile} />
 
             {/* <Route path="" component={NotFound} /> */}
-            <Redirect to="/" />
+            {/* <Redirect to="/" /> */}
         </Switch>
         </div>
         </div>

@@ -56,7 +56,7 @@ class CustomerOrder extends Component {
                     <li className="active">DANH SÁCH ĐƠN HÀNG</li>
                 </ul>
                 <h3>   DANH SÁCH ĐƠN HÀNG </h3>
-                {this.props.customerOrders?(
+                {(this.props.customerOrders && this.props.customerOrders.length>0)?(
                     <div>
                         <table className="table table-bordered">
                             <thead>
