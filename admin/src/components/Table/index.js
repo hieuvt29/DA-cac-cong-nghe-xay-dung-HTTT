@@ -81,21 +81,12 @@ class DataTable extends React.Component {
     console.log("Props recieved: ", nextProps.data);
     let changed = this.state.data !== nextProps.data;
     changed ? this.renderTable(nextProps.data) : null;
-    if (this.state.categories !== nextProps.categories) {
-      this.setState({categories : nextProps.categories});      
-      this.setState({suppliers: nextProps.suppliers});
-      console.log('---CATEGORIES = ---', this.state.categories);
-    }
   }
 
   componentWillUnMount() {
     $(this.refs.dataTable).DataTable().destroy(true);
   }
   componentWillMount() {
-    if (this.state.tableName === "Products") {
-      this.setState({categories : this.props.categories});
-      this.setState({suppliers: this.props.suppliers});
-    }
   }
   renderTable(data) {
     console.log("table rendered");
@@ -311,6 +302,7 @@ class DataTable extends React.Component {
     let id = $(table).find('.selected').find('td:first-child').text();
     console.log('The id of selected row in remove function', id);
     this.props.remove(id);
+    $(table).find('.selected').hide();
   }
   render() {
     return (
