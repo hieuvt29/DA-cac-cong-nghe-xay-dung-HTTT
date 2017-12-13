@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import DatePicker from 'react-datepicker';
 
 class Profile extends Component {
     constructor (props) {
