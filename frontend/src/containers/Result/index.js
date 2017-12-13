@@ -34,8 +34,9 @@ class Result extends Component {
         return (
             <div className="span9">
                 <h4>Kết quả tìm kiếm</h4>
-                <ul className="thumbnails">
-                    { (this.props[this.state.attr]) ? this.props[this.state.attr].map((item, index) => {
+                {(this.props[this.state.attr]) ?
+                (<ul className="thumbnails">
+                    { this.props[this.state.attr].map((item, index) => {
                         return (
                         <li className="span3" key={index}>
                             <div className="thumbnail">
@@ -57,8 +58,10 @@ class Result extends Component {
                             </div>
                         </li>
                         )
-                    }) : "Không tìm thấy"}
-                </ul>
+                    })}
+                </ul>):(
+                    <div className="not-found">Không tìm thấy</div>
+                )}
             </div>
         );
     }

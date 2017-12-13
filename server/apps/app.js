@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var cors = require('cors');
 var config = require('../../config');
 var compress = require('compression');
+var path = require('path');
 /* ===== Express setup ===== */
 
 var app  = express();
@@ -70,6 +71,8 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use('/', express.static(path.join(__dirname, '../../frontend/build')))
+app.use('/admin', express.static(path.join(__dirname, '../../admin/build')))
 // Routers
 require('./routes/product-route')(app, productController, passport);
 require('./routes/account-route')(app, accountController, passport);
@@ -77,6 +80,14 @@ require('./routes/supplier-route')(app, supplierController);
 require('./routes/category-route')(app, categoryController);
 require('./routes/order-route')(app, orderController);
 require('./routes/statistic-route')(app, statisticController);
+
+app.get("/admin/*", (req, res) => {
+    res.sendFile(path.join(__dirname, '../../admin/build/index.html'));
+});
+
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../../frontend/build/index.html"));
+})
 
 app.use(function(err, req, res, next) {
     console.error(new Date() + " - " + JSON.stringify(err, null, '\t'));

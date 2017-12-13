@@ -112,6 +112,10 @@ function appReducer(state = initialState, action) {
         console.log('---RES_CREATE_ORDER---', action.response);
         return { ...state, resCreateOrder: action.response};
     }
+    case 'ORDER_FAILDED': {
+        console.log('---ORDER_FAILDED---', action.error);
+        return { ...state, order_failed: action.error};
+    }
     case 'RES_REMOVE_ORDER': {
         return { ...state, resCreateOrder: ""};
     }

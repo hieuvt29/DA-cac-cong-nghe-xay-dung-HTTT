@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { updateCart } from './actions';
 import { signin } from '../Header/actions';
 import { getCookie, setCookie } from '../../globalFunc';
+import defaultImage from '../../img/laptop-default.jpg'
 
 class Cart extends Component {
   constructor(props) {
@@ -102,7 +103,7 @@ class Cart extends Component {
   }
   render() {
     if (!this.state.cart || (this.state.cart && !this.state.cart.length)){
-      return (<div className="container"><h4>Giỏ hàng chưa được tạo, vui lòng quay lại mua hàng!</h4></div>)
+      return (<div className="span9"><h4>Giỏ hàng chưa được tạo, vui lòng quay lại mua hàng!</h4></div>)
     } else {
       return (
         <div className="span9">
@@ -165,8 +166,8 @@ class Cart extends Component {
                   <tbody>
                     { this.state.cart.map((item, index) =>  (
                     <tr key={item.productId}>
-                      <td> <img width="60" src={item.image} alt=""/></td>
-                      <td>{ item.productName }<br/>Color : black, Material : metal</td>
+                      <td> <Link to={`/product/${item.productId}`}><img width="60" src={(item.image === "/img/default.png")? defaultImage : item.image} alt="" /></Link></td>
+                      <td><Link to={`/product/${item.productId}`}>{item.productName}</Link></td>
                       <td>
                         <div className="input-append">
                             <input className="span1" style={{ maxWidth: "34px" }} placeholder={item.quantity} id="appendedInputButtons" size="16" type="text" />
@@ -196,7 +197,7 @@ class Cart extends Component {
                 </table>
             
             
-                <table className="table table-bordered">
+                {/* <table className="table table-bordered">
                     <tbody>
                         <tr>
                             <td>
@@ -212,10 +213,10 @@ class Cart extends Component {
                             </td>
                         </tr>
                     </tbody>
-                </table>
+                </table> */}
                 
         <Link className="btn btn-large" to="/home"><i className="icon-arrow-left"></i> Tiếp tục mua </Link>
-        <Link to="/order" className="btn btn-large pull-right">Next <i className="icon-arrow-right"></i></Link>
+        <Link to="/order" className="btn btn-large pull-right">Checkout<i className="icon-arrow-right"></i></Link>
         
       </div>
     );

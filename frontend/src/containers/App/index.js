@@ -32,6 +32,9 @@ class App extends Component {
     return (
       <div className="App">
         <Header/>
+        <div id="mainBody">
+        <div className="container">
+        <div className="row">
         <Sidebar/>
         <Switch>
             <Route exact path="/" component={HomePage} />
@@ -47,6 +50,9 @@ class App extends Component {
             {/* <Route path="" component={NotFound} /> */}
             <Redirect to="/" />
         </Switch>
+        </div>
+        </div>
+        </div>
         <Footer/>
       </div>
     );
