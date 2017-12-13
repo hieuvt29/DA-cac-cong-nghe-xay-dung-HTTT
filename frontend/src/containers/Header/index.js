@@ -22,6 +22,9 @@ class Header extends Component {
   static contextTypes = {
     router: PropTypes.object
   }
+  componentWillReceiveProps(nextPorps){
+    
+  }
   componentDidMount() {
     // $("#loginBtn").click(() => {
     //   $("#login").toggle();
@@ -38,7 +41,6 @@ class Header extends Component {
 
   signin = () => {
     this.props.signin(this.state.username, this.state.password);
-    (this.props.account) ? this.setState({ openLogin: false }) : null;
   }
 
   search = () => {
@@ -86,50 +88,50 @@ class Header extends Component {
                   <input className="srchTxt" type="text" name="searchKey" onChange={this.change} value={this.state.searchKey}  />
                 </form>
                 <button to="/" id="submitButton" className="btn btn-primary" onClick={ this.search }>Tìm kiếm</button>
-                <ul id="topMenu" className="nav pull-right">
-                  {/* <li className=""><a href="special_offer.html">Khuyến mại </a></li> */}
-                  {/* <li className=""><a href="normal.html">Tin tức</a></li> */}
-                  {/* <li className=""><a href="contact.html">Hỗ trợ</a></li> */}
                   {(!this.props.account.userName)? (
-                    <li className="">
-                    <a id="loginBtn" role="button" data-toggle="modal" style={{ paddingRight:0 }}
-                      onClick={() => this.setState({ openLogin: true })}
-                    >
-                      <span className="btn btn-large btn-success"> Đăng nhập </span>
-                    </a>
-                    {this.state.openLogin && <div id="login" className={"modal fade in"} tabIndex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-                      <div className="modal-header">
-                        <button type="button" className="close closeLogin" onClick={() => this.setState({ openLogin: false })} data-dismiss="modal" aria-hidden="true">×</button>
-                        <h3> Đăng nhập </h3>
-                      </div>
-                      <div className="modal-body">
-                        <strong><span> { this.props.errorLogin } </span></strong>
-                        <form className="form-horizontal loginFrm">
-                          <div className="control-group">
-                            <input type="text" id="inputUsername" name="username" onChange={this.change} placeholder="Tên đăng nhập" value={this.state.username} />
+                    <ul id="topMenu" className="nav pull-right">
+                      <li className="">
+                        <a id="loginBtn" role="button" data-toggle="modal" style={{ paddingRight:0 }}
+                          onClick={() => this.setState({ openLogin: true })}>
+                          <span className="btn btn-large btn-success"> Đăng nhập </span>
+                        </a>
+                        {this.state.openLogin && <div id="login" className={"modal fade in"} tabIndex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
+                          <div className="modal-header">
+                            <button type="button" className="close closeLogin" onClick={() => this.setState({ openLogin: false })} data-dismiss="modal" aria-hidden="true">×</button>
+                            <h3> Đăng nhập </h3>
                           </div>
-                          <div className="control-group">
-                            <input type="password" id="inputPassword" name="password" onChange={this.change} placeholder="Mật khẩu" value={this.state.password} />
+                          <div className="modal-body">
+                            <strong><span> { this.props.errorLogin } </span></strong>
+                            <form className="form-horizontal loginFrm">
+                              <div className="control-group">
+                                <input type="text" id="inputUsername" name="username" onChange={this.change} placeholder="Tên đăng nhập" value={this.state.username} />
+                              </div>
+                              <div className="control-group">
+                                <input type="password" id="inputPassword" name="password" onChange={this.change} placeholder="Mật khẩu" value={this.state.password} />
+                              </div>
+                              <div className="control-group">
+                                <label className="checkbox">
+                                  <input type="checkbox" /> <span>Ghi nhớ</span>
+                                </label>
+                              </div>
+                            </form>
+                            <div className="btn-group">
+                              <Link to="/signup" onClick={ () => {$("#login").fadeOut(0);} }>
+                              <button className="closeLogin btn input-group-btn" onClick={() => this.setState({ openLogin: false })} data-dismiss="modal">Đăng ký</button>
+                              </Link>
+                              <button onClick={this.signin} className="btn btn-success"> Đăng nhập </button>
+                              <button className="btn closeLogin" onClick={() => this.setState({ openLogin: false })} data-dismiss="modal" aria-hidden="true"> Đóng </button>
+                            </div>
                           </div>
-                          <div className="control-group">
-                            <label className="checkbox">
-                              <input type="checkbox" /> <span>Ghi nhớ</span>
-				                    </label>
-                          </div>
-                        </form>
-                        <div className="btn-group">
-                          <Link to="/signup" onClick={ () => {$("#login").fadeOut(0);} }>
-                          <button className="closeLogin btn input-group-btn" onClick={() => this.setState({ openLogin: false })} data-dismiss="modal">Đăng ký</button>
-                          </Link>
-                          <button onClick={this.signin} className="btn btn-success"> Đăng nhập </button>
-                          <button className="btn closeLogin" onClick={() => this.setState({ openLogin: false })} data-dismiss="modal" aria-hidden="true"> Đóng </button>
-                        </div>
-                      </div>
-                    </div>}
-                  </li>
-                  ) : null
-                  }
-                </ul>
+                        </div>}
+                      </li>
+                    </ul>
+                  ) : (
+                    <ul id="topMenu" className="nav pull-right">
+                      <li><Link to="/customer/orders">Danh sách đơn hàng</Link></li>
+                      <li><Link to="/customer/profile">Thông tin cá nhân</Link></li>
+                    </ul>
+                  )}
               </div>
             </div>
           </div>
