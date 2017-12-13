@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import DatePicker from 'react-datepicker';
 
 class Profile extends Component {
     constructor (props) {
@@ -23,7 +24,7 @@ class Profile extends Component {
             <form className="form-horizontal">
                 {
                 Object.keys(this.props.account).map((attr, index) => {
-                    if (attr == "accountId" || attr == "role"){
+                    if (["accountId", "role", "createdAt", "updatedAt"].indexOf(attr) != -1){
                         return;
                     }
                     if (attr == "password"){
