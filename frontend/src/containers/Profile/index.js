@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {updateInfo} from './actions';
+import { access } from 'fs';
 
 class Profile extends Component {
     constructor (props) {
@@ -16,18 +17,20 @@ class Profile extends Component {
         router: PropTypes.object
     }
     update() {
-        let newInfo = {...this.props.account};
-        let attrs = Object.keys(this.props.account);
-        attrs.forEach(attr => {
+        let newInfo = {};
+        this.state.attrs.forEach(attr => {
             this.state[attr]?newInfo[attr] = this.state[attr]:null ;
         });
         this.props.updateInfo(newInfo)
     }
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.account) {
-            this.setState({...this.state, ...nextProps.account});
+    
+    componentWillMount() {
+        let account = localStorage.getItem('account');
+        if (account) {
+            account = JSON.parse(account);      
+            this.setState({...this.state, ...account, attrs: Object.keys(account)});
         }
-        this.setState({...this.state, nextProps});
+        // this.setState({...this.state, nextProps});
     }
     reload() {
         window.location.reload();
@@ -38,8 +41,7 @@ class Profile extends Component {
     }
     render() {
         return ( 
-        this.props.account?
-        (<div className="span9">
+            <div className="span9">
             <ul className="breadcrumb">
                 <li><Link to="/home">Trang chủ</Link> <span className="divider">/</span></li>
                 <li className="active">Thông tin tài khoản</li>
@@ -47,8 +49,7 @@ class Profile extends Component {
             <h3>THÔNG TIN TÀI KHOẢN</h3>
             <form className="form-horizontal">
                 {
-                Object.keys(this.props.account).map((attr, index) => {
-                    console.log("attr: ", attr);
+                this.state.attrs.map((attr, index) => {
                     let attrs = "";
                     switch (attr) {
                         case "userName":
@@ -131,7 +132,6 @@ class Profile extends Component {
             </div>
             </div>}
         </div>
-        ):(<div>{this.context.router.history.push("/")}</div>)
     )}
 }
 

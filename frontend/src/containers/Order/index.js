@@ -33,8 +33,8 @@ class Order extends Component {
         this.setState({ cartTotal: cartTotal });
         this.setState({ cartQuantity: cartQuantity });
 
-        const accountString = getCookie('account');
-        if (accountString && accountString !== '') {
+        const accountString = localStorage.getItem('account');
+        if (accountString) {
             let account = JSON.parse(accountString);
             console.log("AAcount: ", account);
             // console.log('---Account parse = ---', account);

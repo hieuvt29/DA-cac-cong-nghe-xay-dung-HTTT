@@ -15,6 +15,7 @@ import Supplier from '../Supplier';
 import Order from '../Order';
 import CustomerOrder from '../CustomerOrder';
 import Profile from '../Profile';
+import PropTypes from 'prop-types';
 
 // import Demo from '../Demo';
 
@@ -23,14 +24,21 @@ import '../..//App.css';
 import { getCookie, setCookie } from '../../globalFunc';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+
+    }
+  }
   componentDidMount() {
-    if (getCookie('username') === '') setCookie('username', 'heo');
-    if (getCookie('age') === '') setCookie('age', '');
     if (getCookie('cart') === '') setCookie('cart', '');
     if (getCookie('cartQuantity') === '') setCookie('cartQuantity', '0');
     if (getCookie('cartTotal') === '') setCookie('cartTotal', '0.0');
   }
-
+  static contextTypes = {
+    router: PropTypes.object
+  }
   render() {
     return (
       <div className="App">
@@ -49,8 +57,20 @@ class App extends Component {
             <Route path="/product/:id" component={ProductDetail} />
             <Route path="/category/:id" component={Category} />
             <Route path="/supplier/:id" component={Supplier} />
-            <Route path="/customer/orders" component={CustomerOrder} />
-            <Route path="/customer/profile" component={Profile} />
+            <Route path="/customer/orders" component={() => {
+              if(localStorage.getItem('account')) {
+                return (<CustomerOrder/>)
+              } else {
+                return (<div>{this.context.router.history.push('/')}</div>)
+              }
+            }} />
+            <Route path="/customer/profile" component={() => {
+              if(localStorage.getItem('account')) {
+                return (<Profile/>)
+              } else {
+                return (<div>{this.context.router.history.push('/')}</div>)
+              }
+            }} />
 
             {/* <Route path="" component={NotFound} /> */}
             {/* <Redirect to="/" /> */}

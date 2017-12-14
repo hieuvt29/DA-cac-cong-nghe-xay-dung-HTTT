@@ -32,11 +32,11 @@ function appReducer(state = initialState, action) {
         return { ...state, count: state.count + 1 };
     }
     case 'SIGNOUT': {
-        setCookie('account', '');
+        localStorage.setItem('account', '');
         return { ...state, account: '' };
     }
     case 'INIT_ACCOUNT': {
-        let raw = (getCookie('account'));
+        let raw = localStorage.getItem('account');
         let account = (raw)? JSON.parse(raw) : '';
         return { ...state, account: account};
     }
@@ -61,7 +61,7 @@ function appReducer(state = initialState, action) {
     }
     case 'RES_SIGNUP': {
         console.log('---TuyenTN---', action.response);
-        setCookie('account', JSON.stringify(action.response.data.account));
+        localStorage.setItem('account', JSON.stringify(action.response.data.account));
         return { ...state, account: action.response.data.account, signup_failed: null};
     }
     case 'SIGNUP_FAILED': {
@@ -98,7 +98,7 @@ function appReducer(state = initialState, action) {
         if (action.response.data.errorCode === 1) {
             return { ...state, errorLogin: 'Sai tên đăng nhập hoặc mật khẩu'};
         } else {
-            setCookie('account', JSON.stringify(action.response.data.user));
+            localStorage.setItem('account', JSON.stringify(action.response.data.user));
             return { ...state, account: action.response.data.user};
         }
     }
@@ -184,7 +184,7 @@ function appReducer(state = initialState, action) {
     }
     case 'RES_UPDATE_INFO': {
         console.log('---RES_UPDATE_INFO---', action.response.data.account);
-        setCookie('account', JSON.stringify(action.response.data.account));
+        localStorage.setItem('account', JSON.stringify(action.response.data.account));
         return {...state, updatedAccount: action.response.data.account};
     }
     case 'UPDATE_INFO_FAILED': {
