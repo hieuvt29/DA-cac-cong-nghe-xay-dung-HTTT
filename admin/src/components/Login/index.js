@@ -72,9 +72,12 @@ class Login extends React.Component {
                 return response.json();
               }).then(function(data) {
                 console.log('RES login:', data);
-                // that.forceUpdate();
-                setCookie('account', JSON.stringify(data.user));
-                that.props.history.push('/');
+                if(data.errorCode){
+                    that.setState({ response: "Sai tên đăng nhập hoặc mật khẩu" });
+                } else {
+                    setCookie('account', JSON.stringify(data.user));
+                    that.props.history.push('/');
+                }
               });
         } catch (error) {
             console.log('---This is an error---', error);
@@ -85,6 +88,7 @@ class Login extends React.Component {
     render() {
         return (
             <div id="lgi" className="login-page">
+                <h2 style={{ textAlign: 'center'}}>Đăng nhập </h2>
                 {this.state.response ? (
                     <div>
                         <p>{this.state.response}</p>
