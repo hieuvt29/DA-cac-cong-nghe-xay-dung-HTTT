@@ -6,6 +6,7 @@ import { signin, initCart, initAccount, signout, search, reqCategories, reqSuppl
 import '../..//App.css';
 import $ from 'jquery';
 import { setCookie, getCookie } from '../../globalFunc';
+import { address } from '../../config.js';
 import PropTypes from "prop-types";
 
 class Header extends Component {
@@ -22,17 +23,8 @@ class Header extends Component {
   static contextTypes = {
     router: PropTypes.object
   }
-  componentWillReceiveProps(nextPorps){
-    
-  }
+
   componentDidMount() {
-    // $("#loginBtn").click(() => {
-    //   $("#login").toggle();
-    // });
-    // $(".closeLogin").click(() => {
-    //   $("#login").fadeOut(0);
-    // });
-    // console.log('---didmount Account---', this.props.account);
     this.props.initCart();
     this.props.initAccount();
     this.props.reqCategories();
@@ -41,11 +33,16 @@ class Header extends Component {
 
   signin = () => {
     this.props.signin(this.state.username, this.state.password);
+    setTimeout(()=> {
+      if (!this.props.errorLogin) {
+        this.setState({ openLogin: false });
+      }
+    }, 500);
   }
 
   search = () => {
     // this.props.search(this.state.searchKey);
-    this.context.router.history.push("/?searchKey=" + this.state.searchKey);
+    this.context.router.history.push('/?searchKey=' + this.state.searchKey);
   }
 
   change = (e) => {
@@ -59,7 +56,7 @@ class Header extends Component {
           <div className="container">
             <div id="welcomeLine" className="row">
               <div className="span6">Chào mừng <strong> {(this.props.account.userName)? (this.props.account.userName):  'Guest' } !</strong>
-                {(this.props.account.userName)? (<span><a style={{ cursor: 'pointer', marginLeft: '10px' }} onClick={ () => this.props.signout() }>  [Đăng xuất]</a></span>): ''}
+                {(this.props.account.userName)? (<span><a style={{ cursor: 'pointer', marginLeft: '10px' }} onClick={ () => {this.props.signout(); this.context.router.push('/');} }>  [Đăng xuất]</a></span>): ''}
               </div>
               <div className="span6">
                 <div className="pull-right">
@@ -84,8 +81,8 @@ class Header extends Component {
               </a>
               <div className="navbar-inner">
                 <Link className="brand" to="/"><img src={window.location.origin + "/themes/images/logo.png"} alt="Bootsshop" /></Link>
-                <form className="form-inline navbar-search" disabled="disabled" >
-                  <input className="srchTxt" type="text" name="searchKey" onChange={this.change} value={this.state.searchKey}  />
+                <form className="form-inline navbar-search" disabled="disabled" onSubmit={e => e.preventDefault()}>
+                  <input className="srchTxt" type="text" name="searchKey" onKeyPress={e => e.key == 'Enter'? this.search(): null} onChange={this.change} value={this.state.searchKey}  />
                 </form>
                 <button to="/" id="submitButton" className="btn btn-primary" onClick={ this.search }>Tìm kiếm</button>
                   {(!this.props.account.userName)? (
@@ -101,13 +98,13 @@ class Header extends Component {
                             <h3> Đăng nhập </h3>
                           </div>
                           <div className="modal-body">
-                            <strong><span> { this.props.errorLogin } </span></strong>
+                            <strong><span> { this.props.errorLogin} </span></strong>
                             <form className="form-horizontal loginFrm">
                               <div className="control-group">
                                 <input type="text" id="inputUsername" name="username" onChange={this.change} placeholder="Tên đăng nhập" value={this.state.username} />
                               </div>
                               <div className="control-group">
-                                <input type="password" id="inputPassword" name="password" onChange={this.change} placeholder="Mật khẩu" value={this.state.password} />
+                                <input type="password" id="inputPassword" name="password" onKeyPress={e => e.key == 'Enter'? this.signin(): null} onChange={this.change} placeholder="Mật khẩu" value={this.state.password} />
                               </div>
                               <div className="control-group">
                                 <label className="checkbox">

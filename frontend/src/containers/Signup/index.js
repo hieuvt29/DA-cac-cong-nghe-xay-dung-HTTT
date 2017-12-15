@@ -125,14 +125,14 @@ class Signup extends React.Component {
                             </div>
     
                             <div className="control-group">
-                                <label className="control-label" htmlFor="firstName">Họ <sup>*</sup></label>
+                                <label className="control-label" htmlFor="firstName">Tên<sup>*</sup></label>
                                 <div className="controls">
                                     <input type="text" id="firstName" name="firstName" onChange={this.change} value={this.state.firstName} placeholder="Ho" />
                                 </div>
                             </div>
     
                             <div className="control-group">
-                                <label className="control-label" htmlFor="lastName">Tên <sup>*</sup></label>
+                                <label className="control-label" htmlFor="lastName">Họ <sup>*</sup></label>
                                 <div className="controls">
                                     <input type="text" id="lastName" name="lastName" onChange={this.change} value={this.state.lastName} placeholder="Ten" />
                                 </div>

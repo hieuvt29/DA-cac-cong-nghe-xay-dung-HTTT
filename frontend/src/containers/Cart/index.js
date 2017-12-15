@@ -54,7 +54,7 @@ class Cart extends Component {
     let cartQuantity = this.state.cartQuantity + 1;
     this.setState({ cart: cartArr });
     this.setState({ cartTotal: cartTotal });
-    this.setState({ cartQuantity: cartQuantity });    
+    this.setState({ cartQuantity: cartQuantity });
     setCookie('cart', JSON.stringify(cartArr));
     setCookie('cartTotal', JSON.stringify(cartTotal));
     setCookie('cartQuantity', JSON.stringify(cartQuantity));

@@ -1,8 +1,7 @@
 
-export const getProBySupplier = (supplier_id) => {
-    // console.log('---TuyenTN---request action');
+export const updateInfo = (customer) => {
     return {
-        type: 'PRODUCTS_REQUEST_BY_SUPPLIER',
-        supplier_id,
+        type: 'UPDATE_INFO',
+        customer,
     };
 }

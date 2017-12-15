@@ -36,7 +36,7 @@ module.exports = function(sequelize, DataTypes) {
             allowNull: false
         },
         dob : {
-            type: DataTypes.DATE,
+            type: DataTypes.DATEONLY,
             allowNull: true
         },
         email : {

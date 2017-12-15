@@ -32,7 +32,7 @@ class CustomerOrder extends Component {
         this.setState({...this.props, nextProps});
     } 
     componentDidMount() {
-        let account = getCookie('account');
+        let account = localStorage.getItem('account');
         if (account != ''){
             account = JSON.parse(account);
             this.props.getCustomerOrders(account.accountId);
@@ -56,7 +56,7 @@ class CustomerOrder extends Component {
                     <li className="active">DANH SÁCH ĐƠN HÀNG</li>
                 </ul>
                 <h3>   DANH SÁCH ĐƠN HÀNG </h3>
-                {this.props.customerOrders?(
+                {(this.props.customerOrders && this.props.customerOrders.length>0)?(
                     <div>
                         <table className="table table-bordered">
                             <thead>
@@ -75,7 +75,7 @@ class CustomerOrder extends Component {
                                         <tr key={order.orderId}>
                                             <td>{index + 1}</td>
                                             <td>{order.orderId} </td>
-                                            <td>{order.Products.map((product, index) => (<Link ke={index} to={"/product/" + product.productId}><span key={index}><b>{(index + 1) + ". "}</b>{product.productName + " (" + product['Orders-Products'].orderQuantity + ((index + 1) === order.Products.length?" sản phẩm)":" sản phẩm)")}<br/></span></Link>))}</td>
+                                            <td>{order.Products.map((product, index) => (<Link key={index} to={"/product/" + product.productId}><span key={index}><b>{(index + 1) + ". "}</b>{product.productName + " (" + product['Orders-Products'].orderQuantity + ((index + 1) === order.Products.length?" sản phẩm)":" sản phẩm)")}<br/></span></Link>))}</td>
                                             <td>{Number((order.total).toFixed(2)).toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")}&#8363;</td>
                                             <td><span className={"alert " + (order.state == orderState.CANCELLED?"alert-danger":order.state==orderState.DELIVERED?"alert-success":"")}>{order.state}</span></td>
                                             <td>{new Date(order.createdAt).toLocaleString('vi')}</td>
