@@ -11,9 +11,10 @@ class Header extends React.Component {
   }
 
   componentDidMount() {
+    // setCookie('account', '');
     const acc = getCookie('account');
-    console.log('---ACC =---', JSON.parse(acc));
     if(acc) {
+      console.log('---ACC =---', JSON.parse(acc));
       this.setState({ account: JSON.parse(acc)});
     }
     console.log('---Header this state acc =  ', this.state.account);
@@ -21,7 +22,7 @@ class Header extends React.Component {
 
   signout = () => {
     setCookie('account', '');
-    this.props.history.push('/');
+    window.location.reload();
   }
   render() {
     return (
