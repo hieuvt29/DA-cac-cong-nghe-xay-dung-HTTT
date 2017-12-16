@@ -41,8 +41,10 @@ function appReducer(state = initialState, action) {
         return { ...state, account: account};
     }
     case 'INIT_CART': {
-        let cartTotal = parseFloat(localStorage.getItem('cartTotal'))?parseFloat(localStorage.getItem('cartTotal')):0;
-        let cartQuantity = parseInt(localStorage.getItem('cartQuantity'), 10)?parseInt(localStorage.getItem('cartQuantity'), 10):0;        
+        let cartTotal = localStorage.getItem('cartTotal');
+        cartTotal = (cartTotal || cartTotal == 'undefined')? 0: parseFloat(cartTotal);
+        let cartQuantity = localStorage.getItem('cartQuantity');
+        cartQuantity = (cartQuantity || cartQuantity == 'undefined')?0: parseInt(localStorage.getItem('cartQuantity'), 10);
         return { ...state, cartTotal: cartTotal, cartQuantity: cartQuantity};
     }
     case 'RES_PRODUCTS': {
@@ -150,7 +152,7 @@ function appReducer(state = initialState, action) {
     case 'ADDTOCART': {
         const cartString = localStorage.getItem('cart');
         let newCart = [];
-        if (cartString && cartString != "null") {
+        if (cartString && cartString != "null" && cartString != "undefined") {
             newCart = JSON.parse(cartString);
         }
         let i;

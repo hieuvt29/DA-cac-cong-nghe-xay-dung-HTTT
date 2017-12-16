@@ -34,7 +34,7 @@ class CustomerOrder extends Component {
     componentDidMount() {
         window.scrollTo(0, 0);
         let account = localStorage.getItem('account');
-        if (account != ''){
+        if (account && account != "undefined"){
             account = JSON.parse(account);
             this.props.getCustomerOrders(account.accountId);
         }

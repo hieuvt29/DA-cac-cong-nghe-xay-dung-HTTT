@@ -26,16 +26,18 @@ class Order extends Component {
         window.scrollTo(0, 0);
         let cartArr = [];
         const cartString = localStorage.getItem('cart');
-        cartArr = (cartString === '') ? [] : JSON.parse(cartString);
+        cartArr = (cartString === '' || cartString == "undefined") ? [] : JSON.parse(cartString);
         // console.log('CART Array =', cartArr);
-        let cartTotal = parseFloat(localStorage.getItem('cartTotal'));
-        let cartQuantity = parseInt(localStorage.getItem('cartQuantity'), 10);
+        let cartTotal = localStorage.getItem('cartTotal');
+        cartTotal = (cartTotal || cartTotal == 'undefined')? 0: parseFloat(cartTotal);
+        let cartQuantity = localStorage.getItem('cartQuantity');
+        cartQuantity = (cartQuantity || cartQuantity == 'undefined')?0: parseInt(localStorage.getItem('cartQuantity'), 10);
         this.setState({ cart: cartArr });
         this.setState({ cartTotal: cartTotal });
         this.setState({ cartQuantity: cartQuantity });
 
         const accountString = localStorage.getItem('account');
-        if (accountString) {
+        if (accountString && accountString != "undefined") {
             let account = JSON.parse(accountString);
             console.log("AAcount: ", account);
             // console.log('---Account parse = ---', account);

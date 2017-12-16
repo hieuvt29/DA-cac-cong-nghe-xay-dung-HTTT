@@ -25,19 +25,13 @@ class Cart extends Component {
     window.scrollTo(0, 0);
   }
   componentWillMount() {
-    // $("#loginBtn").click(() => {
-    //   $("#login").toggle();
-    // });
-    // $(".closeLogin").click(() => {
-    //   $("#login").fadeOut(0);
-    // });
-    // console.log('-Cart String-  =', getCookie('cart'));
     let cartArr = [];
     const cartString = localStorage.getItem('cart');
-    cartArr = (cartString === '') ? [] : JSON.parse(cartString);
-    // console.log('CART Array =', cartArr);
-    let cartTotal = parseFloat(localStorage.getItem('cartTotal'))?parseFloat(localStorage.getItem('cartTotal')):0;
-    let cartQuantity = parseInt(localStorage.getItem('cartQuantity'), 10)?parseInt(localStorage.getItem('cartQuantity'), 10):0;
+    cartArr = (cartString === '' || cartString == "undefined") ? [] : JSON.parse(cartString);
+    let cartTotal = localStorage.getItem('cartTotal');
+    cartTotal = (cartTotal || cartTotal == 'undefined')? 0: parseFloat(cartTotal);
+    let cartQuantity = localStorage.getItem('cartQuantity');
+    cartQuantity = (cartQuantity || cartQuantity == 'undefined')?0: parseInt(localStorage.getItem('cartQuantity'), 10);
     this.setState({ cart: cartArr });
     this.setState({ cartTotal: cartTotal });
     this.setState({ cartQuantity: cartQuantity });
