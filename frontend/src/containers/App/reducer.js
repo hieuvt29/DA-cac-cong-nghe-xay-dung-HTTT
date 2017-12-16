@@ -1,4 +1,4 @@
-import { getCookie, setCookie } from '../../globalFunc';
+// import { getCookie, setCookie } from '../../globalFunc';
 const initialState = {
     count: 88,
     cartAmount: 0,
@@ -37,12 +37,12 @@ function appReducer(state = initialState, action) {
     }
     case 'INIT_ACCOUNT': {
         let raw = localStorage.getItem('account');
-        let account = (raw)? JSON.parse(raw) : '';
+        let account = (raw && raw !== "undefined")? JSON.parse(raw) : '';
         return { ...state, account: account};
     }
     case 'INIT_CART': {
-        let cartTotal = parseFloat(getCookie('cartTotal'))?parseFloat(getCookie('cartTotal')):0;
-        let cartQuantity = parseInt(getCookie('cartQuantity'), 10)?parseInt(getCookie('cartQuantity'), 10):0;        
+        let cartTotal = parseFloat(localStorage.getItem('cartTotal'))?parseFloat(localStorage.getItem('cartTotal')):0;
+        let cartQuantity = parseInt(localStorage.getItem('cartQuantity'), 10)?parseInt(localStorage.getItem('cartQuantity'), 10):0;        
         return { ...state, cartTotal: cartTotal, cartQuantity: cartQuantity};
     }
     case 'RES_PRODUCTS': {
@@ -148,7 +148,7 @@ function appReducer(state = initialState, action) {
         return { ...state, cartTotal: action.cartTotal, cartQuantity: action.cartQuantity };
     }
     case 'ADDTOCART': {
-        const cartString = getCookie('cart');
+        const cartString = localStorage.getItem('cart');
         let newCart = [];
         if (cartString && cartString != "null") {
             newCart = JSON.parse(cartString);
@@ -167,19 +167,19 @@ function appReducer(state = initialState, action) {
         // let cartQuantity = parseInt(getCookie('cartQuantity'), 10) != NaN?parseInt(getCookie('cartQuantity'), 10)+1: 1;
         let cartTotal = 0;
         let cartQuantity = 0;
-        if (parseFloat(getCookie('cartTotal'))) {
-            cartTotal = parseFloat(getCookie('cartTotal')) + action.product.price;
+        if (parseFloat(localStorage.getItem('cartTotal'))) {
+            cartTotal = parseFloat(localStorage.getItem('cartTotal')) + action.product.price;
         } else {
             cartTotal = action.product.price;
         }
-        if (parseInt(getCookie('cartQuantity'), 10)) {
-            cartQuantity = parseInt(getCookie('cartQuantity'), 10) + 1;
+        if (parseInt(localStorage.getItem('cartQuantity'), 10)) {
+            cartQuantity = parseInt(localStorage.getItem('cartQuantity'), 10) + 1;
         } else {
             cartQuantity = 1;
         }
-        setCookie('cart', JSON.stringify(newCart));
-        setCookie('cartQuantity', JSON.stringify(cartQuantity));
-        setCookie('cartTotal', JSON.stringify(cartTotal));
+        localStorage.setItem('cart', JSON.stringify(newCart));
+        localStorage.setItem('cartQuantity', JSON.stringify(cartQuantity));
+        localStorage.setItem('cartTotal', JSON.stringify(cartTotal));
         return { ...state, cartTotal: cartTotal, cartQuantity: cartQuantity };
     }
     case 'RES_UPDATE_INFO': {

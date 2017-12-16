@@ -5,7 +5,7 @@ import { signin, initCart, initAccount, signout, search, reqCategories, reqSuppl
 // import logo from '../../logo.svg';
 import '../..//App.css';
 import $ from 'jquery';
-import { setCookie, getCookie } from '../../globalFunc';
+// import { setCookie, getCookie } from '../../globalFunc';
 import { address } from '../../config.js';
 import PropTypes from "prop-types";
 
@@ -36,6 +36,7 @@ class Header extends Component {
     setTimeout(()=> {
       if (!this.props.errorLogin) {
         this.setState({ openLogin: false });
+        window.location.reload();
       }
     }, 500);
   }
@@ -56,7 +57,7 @@ class Header extends Component {
           <div className="container">
             <div id="welcomeLine" className="row">
               <div className="span6">Chào mừng <strong> {(this.props.account.userName)? (this.props.account.userName):  'Guest' } !</strong>
-                {(this.props.account.userName)? (<span><a style={{ cursor: 'pointer', marginLeft: '10px' }} onClick={ () => {this.props.signout(); this.context.router.push('/');} }>  [Đăng xuất]</a></span>): ''}
+                {(this.props.account.userName)? (<span><a style={{ cursor: 'pointer', marginLeft: '10px' }} onClick={ () => {this.props.signout(); this.context.router.history.push('/');} }>  [Đăng xuất]</a></span>): ''}
               </div>
               <div className="span6">
                 <div className="pull-right">

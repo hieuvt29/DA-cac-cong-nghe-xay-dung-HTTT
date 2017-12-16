@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { createOrder, removeOrder } from './actions';
-import { getCookie, setCookie } from '../../globalFunc';
+// import { getCookie, setCookie } from '../../globalFunc';
 import {updateCart} from '../Cart/actions';
 import {getCustomerOrders, changeOrderState} from './actions';
 import orderState from '../common/order-states';
@@ -32,6 +32,7 @@ class CustomerOrder extends Component {
         this.setState({...this.props, nextProps});
     } 
     componentDidMount() {
+        window.scrollTo(0, 0);
         let account = localStorage.getItem('account');
         if (account != ''){
             account = JSON.parse(account);

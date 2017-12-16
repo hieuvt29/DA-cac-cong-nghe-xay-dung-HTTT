@@ -15,9 +15,7 @@ class Category extends Component {
             
         };
     }
-    componentDidMount () {
-        console.log("Component did mount");
-    }
+    
     componentWillMount() {
         console.log("component will mount");
         const category_id = this.props.match.params.id;

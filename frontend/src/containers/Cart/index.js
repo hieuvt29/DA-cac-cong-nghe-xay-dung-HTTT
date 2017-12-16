@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { updateCart } from './actions';
 import { signin } from '../Header/actions';
-import { getCookie, setCookie } from '../../globalFunc';
+// import { getCookie, setCookie } from '../../globalFunc';
 import defaultImage from '../../img/laptop-default.jpg'
 
 class Cart extends Component {
@@ -21,7 +21,9 @@ class Cart extends Component {
     this.props.signin(this.state.username, this.state.password);
 
   }
-  
+  componentDidMount() {
+    window.scrollTo(0, 0);
+  }
   componentWillMount() {
     // $("#loginBtn").click(() => {
     //   $("#login").toggle();
@@ -31,11 +33,11 @@ class Cart extends Component {
     // });
     // console.log('-Cart String-  =', getCookie('cart'));
     let cartArr = [];
-    const cartString = getCookie('cart');
+    const cartString = localStorage.getItem('cart');
     cartArr = (cartString === '') ? [] : JSON.parse(cartString);
     // console.log('CART Array =', cartArr);
-    let cartTotal = parseFloat(getCookie('cartTotal'))?parseFloat(getCookie('cartTotal')):0;
-    let cartQuantity = parseInt(getCookie('cartQuantity'), 10)?parseInt(getCookie('cartQuantity'), 10):0;
+    let cartTotal = parseFloat(localStorage.getItem('cartTotal'))?parseFloat(localStorage.getItem('cartTotal')):0;
+    let cartQuantity = parseInt(localStorage.getItem('cartQuantity'), 10)?parseInt(localStorage.getItem('cartQuantity'), 10):0;
     this.setState({ cart: cartArr });
     this.setState({ cartTotal: cartTotal });
     this.setState({ cartQuantity: cartQuantity });
@@ -55,9 +57,9 @@ class Cart extends Component {
     this.setState({ cart: cartArr });
     this.setState({ cartTotal: cartTotal });
     this.setState({ cartQuantity: cartQuantity });
-    setCookie('cart', JSON.stringify(cartArr));
-    setCookie('cartTotal', JSON.stringify(cartTotal));
-    setCookie('cartQuantity', JSON.stringify(cartQuantity));
+    localStorage.setItem('cart', JSON.stringify(cartArr));
+    localStorage.setItem('cartTotal', JSON.stringify(cartTotal));
+    localStorage.setItem('cartQuantity', JSON.stringify(cartQuantity));
     this.props.updateCart(cartTotal, cartQuantity);
   }
   decQuantity = (item) => {
@@ -70,9 +72,9 @@ class Cart extends Component {
     this.setState({ cart: cartArr });
     this.setState({ cartTotal: cartTotal });
     this.setState({ cartQuantity: cartQuantity });
-    setCookie('cart', JSON.stringify(cartArr));
-    setCookie('cartTotal', JSON.stringify(cartTotal));
-    setCookie('cartQuantity', JSON.stringify(cartQuantity));
+    localStorage.setItem('cart', JSON.stringify(cartArr));
+    localStorage.setItem('cartTotal', JSON.stringify(cartTotal));
+    localStorage.setItem('cartQuantity', JSON.stringify(cartQuantity));
     this.props.updateCart(cartTotal, cartQuantity);    
   }
   remove = (item) => {
@@ -84,9 +86,9 @@ class Cart extends Component {
     this.setState({ cart: cartArr });
     this.setState({ cartTotal: cartTotal });
     this.setState({ cartQuantity: cartQuantity });    
-    setCookie('cart', JSON.stringify(cartArr));
-    setCookie('cartTotal', JSON.stringify(cartTotal));
-    setCookie('cartQuantity', JSON.stringify(cartQuantity));
+    localStorage.setItem('cart', JSON.stringify(cartArr));
+    localStorage.setItem('cartTotal', JSON.stringify(cartTotal));
+    localStorage.setItem('cartQuantity', JSON.stringify(cartQuantity));
     this.props.updateCart(cartTotal, cartQuantity);    
   }
   lookCart = (item, cartArr) => {

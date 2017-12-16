@@ -21,7 +21,7 @@ import PropTypes from 'prop-types';
 
 import '../..//App.css';
 
-import { getCookie, setCookie } from '../../globalFunc';
+// import { getCookie, setCookie } from '../../globalFunc';
 
 class App extends Component {
   constructor(props) {
@@ -32,9 +32,9 @@ class App extends Component {
     }
   }
   componentDidMount() {
-    if (getCookie('cart') === '') setCookie('cart', '');
-    if (getCookie('cartQuantity') === '') setCookie('cartQuantity', '0');
-    if (getCookie('cartTotal') === '') setCookie('cartTotal', '0.0');
+    // if (getCookie('cart') === '') setCookie('cart', '');
+    // if (getCookie('cartQuantity') === '') setCookie('cartQuantity', '0');
+    // if (getCookie('cartTotal') === '') setCookie('cartTotal', '0.0');
   }
   static contextTypes = {
     router: PropTypes.object

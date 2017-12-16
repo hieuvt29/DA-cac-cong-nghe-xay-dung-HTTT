@@ -18,13 +18,7 @@ class HomePage extends Component {
         };
     }
     componentDidMount () {
-        // console.log('---TuyenTN---didmount');
-        
-        // this.setState({ separatedProduct: featuredProducts });
-        // this.setState((featuredProducts) => {
-        //     return {separatedProduct: featuredProducts}
-        // });
-        console.log('ALL ====== \n', this.props.history);
+        window.scrollTo(0, 0);
     }
     componentWillMount() {
              

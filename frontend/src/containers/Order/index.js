@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { createOrder, removeOrder } from './actions';
-import { getCookie, setCookie } from '../../globalFunc';
+// import { getCookie, setCookie } from '../../globalFunc';
 import {updateCart} from '../Cart/actions';
 import { access } from 'fs';
 
@@ -23,12 +23,13 @@ class Order extends Component {
     }
 
     componentDidMount() {
+        window.scrollTo(0, 0);
         let cartArr = [];
-        const cartString = getCookie('cart');
+        const cartString = localStorage.getItem('cart');
         cartArr = (cartString === '') ? [] : JSON.parse(cartString);
         // console.log('CART Array =', cartArr);
-        let cartTotal = parseFloat(getCookie('cartTotal'));
-        let cartQuantity = parseInt(getCookie('cartQuantity'), 10);
+        let cartTotal = parseFloat(localStorage.getItem('cartTotal'));
+        let cartQuantity = parseInt(localStorage.getItem('cartQuantity'), 10);
         this.setState({ cart: cartArr });
         this.setState({ cartTotal: cartTotal });
         this.setState({ cartQuantity: cartQuantity });
@@ -98,9 +99,9 @@ class Order extends Component {
         
     }
     remove = () => {
-        setCookie("cart", "");
-        setCookie("cartTotal", "");
-        setCookie("cartQuantity", "");
+        localStorage.setItem("cart", "");
+        localStorage.setItem("cartTotal", "");
+        localStorage.setItem("cartQuantity", "");
         this.props.removeOrder();
         this.props.updateCart(0, 0); 
     }
@@ -125,6 +126,7 @@ class Order extends Component {
                         <div className="alert alert-success">
                             <strong>Trạng thái:</strong> {this.props.resCreateOrder.data.order.state}
                         </div>
+                        {window.scrollTo(0, 0)}
                     </div>) :
                 (
                 <div>

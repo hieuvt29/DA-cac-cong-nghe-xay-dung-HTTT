@@ -27,6 +27,9 @@ class Signup extends React.Component {
         router: PropTypes.object
     }
 
+    componentDidMount() {
+        window.scrollTo(0, 0);
+    }
     closeError = () => {
         this.setState({ showError: 'hide' });
     }

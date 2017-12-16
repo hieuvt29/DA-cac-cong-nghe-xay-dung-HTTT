@@ -16,6 +16,9 @@ class Profile extends Component {
     static contextTypes = {
         router: PropTypes.object
     }
+    componentDidMount() {
+        window.scrollTo(0, 0);
+    }
     update() {
         let newInfo = {};
         this.state.attrs.forEach(attr => {
@@ -116,6 +119,12 @@ class Profile extends Component {
                 onClick={() =>{ this.update(); setTimeout(() => this.setState({ openAlert: true }), 500)}}>
                 <span className="btn btn-info">Cập nhật</span>
                 </div>
+                {this.state.openAlert && <div
+                    id="manhinhtoi"
+                    onClick={() => {
+                        this.setState({ openAlert: false });
+                    }}
+          className="modal-backdrop fade in"></div> }
             </form>
             {this.state.openAlert && <div id="login" className={"modal fade in"} tabIndex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
             <div className="modal-header">

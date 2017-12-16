@@ -13,7 +13,9 @@ class Result extends Component {
             attr: ""
         };
     }
-
+    componentDidMount() {
+        window.scrollTo(0, 0);
+    }
     componentWillReceiveProps(nextProps) {
         console.log("Result recieve props: ", nextProps);
         this.setState({...this.props, nextProps});

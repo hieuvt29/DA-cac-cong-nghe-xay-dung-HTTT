@@ -24,13 +24,7 @@ class ProductDetail extends Component {
       this.props.addToCart(lightProduct);
     }
     componentDidMount () {
-        // console.log('---TuyenTN---didmount');
-        // this.props.req_products();'
-        // const that = this;
-        // const url = `http://localhost:3001/products/${this.props.match.params.id}`;
-        // fetch(url).then(res => { return res.json();})
-        // .then(res_json => that.setState({ prodDetail: res_json }))
-        // .catch(error => console.log('---TuyenTN---', error));
+      window.scrollTo(0, 0);
     }
     componentWillMount() {
       const product_id = this.props.match.params.id;
