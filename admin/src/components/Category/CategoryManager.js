@@ -1,6 +1,8 @@
 import React from 'react';
 import DataTable from '../Table/index';
 import $ from 'jquery';
+import { address } from '../config';
+import { Link } from "react-router-dom";
 
 class CategoryManager extends React.Component {
     constructor(props){
@@ -22,9 +24,9 @@ class CategoryManager extends React.Component {
     }
 
     remove = (id) => {
-        let that = this;
+        // let that = this;
         try {
-            fetch('http://localhost:3001/categories/'+id, {
+            fetch(`${address}/categories/`+id, {
                 method: 'DELETE'
               }).then(function(response) {
                 return response.json();
@@ -41,7 +43,7 @@ class CategoryManager extends React.Component {
         console.log('---Ham cua thang bo: ---', data);
         let dataObject;
         let id = '';
-        let that = this;
+        // let that = this;
         data.forEach(item => {
             if (item.title === "categoryId") {
                 id = item.text;
@@ -50,7 +52,7 @@ class CategoryManager extends React.Component {
             }
         });
         try {
-            fetch('http://localhost:3001/categories/'+id, {
+            fetch(`${address}/categories/`+id, {
                 method: 'put',
                 body: JSON.stringify(dataObject)
               }).then(function(response) {
@@ -74,7 +76,7 @@ class CategoryManager extends React.Component {
                 Category Manager
                 </h1>
                 <ol className="breadcrumb">
-                    <li><a href="#"><i className="fa fa-dashboard"></i> Home</a></li>
+                    <li><Link to=''><i className="fa fa-dashboard"></i> Home</Link></li>
                     <li className="active">Category Manager</li>
                 </ol>
                 </section>

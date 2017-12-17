@@ -1,7 +1,27 @@
 import React from "react";
-import {BrowserRouter, Link} from "react-router-dom";
+import { Link } from "react-router-dom";
+import { getCookie } from '../globalFunc';
 
 class Sidebar extends React.Component {
+
+  constructor(props) {
+    super(props);
+    
+    this.state = {
+      account: {},
+    }
+  }
+
+  componentDidMount() {
+    // setCookie('account', '');
+    const acc = getCookie('account');
+    if(acc) {
+      // console.log('---ACC =---', JSON.parse(acc));
+      this.setState({ account: JSON.parse(acc)});
+    }
+    // console.log('---Header this state acc =  ', this.state.account);
+  }
+
   render() {
     return (
       <aside className="main-sidebar">
@@ -13,14 +33,14 @@ class Sidebar extends React.Component {
               <img
                 src="dist/img/user2-160x160.jpg"
                 className="img-circle"
-                alt="User Image"
+                alt="User"
               />
             </div>
             <div className="pull-left info">
-              <p>Alexander Pierce</p>
-              <a href="#">
+              <p>{this.state.account.firstName + " " + this.state.account.lastName}</p>
+              <Link to="#">
                 <i className="fa fa-circle text-success" /> Online
-              </a>
+              </Link>
             </div>
           </div>
           {}

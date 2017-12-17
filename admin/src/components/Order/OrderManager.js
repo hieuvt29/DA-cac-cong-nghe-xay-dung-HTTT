@@ -1,6 +1,8 @@
 import React from 'react';
 import DataTable from '../Table/index';
 import $ from 'jquery';
+import { address } from '../config';
+
 
 class OrderManager extends React.Component {
     constructor(props){
@@ -24,7 +26,7 @@ class OrderManager extends React.Component {
     remove = (id) => {
         let that = this;
         try {
-            fetch('http://localhost:3001/orders/'+id, {
+            fetch(`${address}/orders/`+id, {
                 method: 'DELETE'
               }).then(function(response) {
                 return response.json();
@@ -50,7 +52,7 @@ class OrderManager extends React.Component {
             }
         });
         try {
-            fetch('http://localhost:3001/orders/'+id, {
+            fetch(`${address}/orders/`+id, {
                 method: 'put',
                 body: JSON.stringify(dataObject)
               }).then(function(response) {

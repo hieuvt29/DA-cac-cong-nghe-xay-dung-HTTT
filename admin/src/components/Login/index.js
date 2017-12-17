@@ -1,8 +1,9 @@
 import React from 'react';
-import DataTable from '../Table/index';
-import $ from 'jquery';
+// import DataTable from '../Table/index';
+// import $ from 'jquery';
 import { Button } from 'react-bootstrap';
-import { getCookie, setCookie } from '../../globalFunc';
+import { setCookie } from '../../globalFunc';
+import { address } from '../config';
 
 class Login extends React.Component {
     constructor(props){
@@ -31,33 +32,8 @@ class Login extends React.Component {
 
     submit = () => {
         let that = this;
-        let dataObject = {
-            userName: "tuyentn",
-            password: "123abcxyz"
-        }
         try {
-            // $.ajax({
-            //     url: '/login',
-            //     method: 'POST',
-            //     data: dataObject,
-            //     body: dataObject
-            // }).then(rej => {
-            //     if (rej.errorCode) {
-            //         that.setState({ response: 'Sai mat khau hoac ten dang nhap' });
-            //     } else {
-            //         setCookie('account', "tuyen");
-            //     }
-            //     console.log('---TuyenTN---', rej);
-            // })
-            // $('http://localhost:3001/login', {
-            //     method: 'POST',
-            //     body: dataObject
-            //   }).then(function(response) {
-            //     return response.json();
-            //   }).then(function(rej) {
-
-            //   });
-            fetch("http://localhost:3001/login/", {
+            fetch(`${address}/login/`, {
                 method: "post",
                 headers: {
                     'Accept': 'application/json',
@@ -96,7 +72,7 @@ class Login extends React.Component {
                     </div>
                 ) : null}
                 <div className="form">
-                    <form class="login-form" onClick={() => this.setState({ response: '' })}>
+                    <form className="login-form" onClick={() => this.setState({ response: '' })}>
                         <input type="text" id="username" value={this.state.username} onChange={this.change} name="username" placeholder="username" />
                         <input type="password" id="password" value={this.state.password} onChange={this.change} name="password" placeholder="password" />
                         <Button onClick={this.submit}>login</Button>
