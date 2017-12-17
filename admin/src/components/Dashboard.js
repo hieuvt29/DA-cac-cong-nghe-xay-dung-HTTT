@@ -7,22 +7,52 @@ class Content extends React.Component {
     
     this.state = {
       bestSoldProducts: [],
+      activeCustomers: [],
+      numberProducts: 0,
+      numberAccounts: 0,
+      numberOrders: 0,
     }
   }
   componentWillMount () {
-    console.log('Dashboard MOUNT');
+    // console.log('Dashboard MOUNT');
     $.get('/best-seller-products', res => {
-      // console.log("best sold products: ", res);
-      this.setState({bestSoldProducts: res.products});
-      // console.log('---TuyenTN---', this.state.bestSoldProducts);
+      if(res.products){
+        this.setState({bestSoldProducts: res.products});
+      }
+    });
+    $.get('/active-customers', res => {
+      if(res.customers){
+        this.setState({activeCustomers: res.customers});
+      }
+    });
+    $.get('/customers', res => {
+      if (res.accounts) {
+        this.setState({ numberAccounts: res.accounts.length });
+      }
+    });
+    $.ajax({
+      url: '/orders',
+      method: 'GET'
+    }).then(res => {
+      if (res.orders) {
+        this.setState({ numberOrders: res.orders.length });
+      }
+      });
+    $.ajax({
+      url: '/products',
+      method: 'GET'
+    }).then(res => {
+      if (res.products) {
+        this.setState({ numberProducts: res.products.length });
+      }
     });
   }
 
   componentWillUnmount () {
-    console.log('Dashboard  UNMOUNT');
+    // console.log('Dashboard  UNMOUNT');
   }
   componentDidMount () {
-    console.log('Dashboard Did MOUNT');
+    // console.log('Dashboard Did MOUNT');
   }
 
   render() {
@@ -70,7 +100,7 @@ class Content extends React.Component {
                 </span>
                 <div className="info-box-content">
                   <span className="info-box-text">Sản phẩm</span>
-                  <span className="info-box-number"></span>
+                  <span className="info-box-number">{this.state.numberProducts}</span>
                 </div>
                 {}
               </div>
@@ -85,7 +115,7 @@ class Content extends React.Component {
                 </span>
                 <div className="info-box-content">
                   <span className="info-box-text">Đơn hàng</span>
-                  <span className="info-box-number"></span>
+                  <span className="info-box-number">{this.state.numberOrders}</span>
                 </div>
                 {}
               </div>
@@ -99,7 +129,7 @@ class Content extends React.Component {
                 </span>
                 <div className="info-box-content">
                   <span className="info-box-text"> Số thành viên</span>
-                  <span className="info-box-number">20,000</span>
+                  <span className="info-box-number">{this.state.numberAccounts}</span>
                 </div>
                 {}
               </div>
@@ -202,29 +232,26 @@ class Content extends React.Component {
                         <tr>
                           <th>STT</th>
                           <th>Tên khách hàng </th>
-                          <th>Giá</th>
-                          <th>Số lượng</th>
+                          <th>Số điện thoại </th>
+                          <th>Địa chỉ</th>
+                          <th>Số lượng Order</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {this.state.bestSoldProducts.map((product, index) => (
+                        {this.state.activeCustomers.map((customer, index) => (
                           <tr>
                             <td>
                               {index}
                             </td>
-                            <td>{product.productName}</td>
+                            <td>{(customer.Account)? customer.Account.firstName + customer.Account.lastName: 'khach '+index}</td>
                             <td>
-                              <span className="label label-success">{product.price}</span>
+                              <span>{(customer.Account)? customer.Account.telephone: ''}</span>
                             </td>
                             <td>
-                              <div
-                                className="sparkbar"
-                                data-color="#00a65a"
-                                data-height={20}
-                              >
-                                {product.numProducts}
-                            </div>
+                              <span>{(customer.Account)? customer.Account.address: ''}</span>
                             </td>
+                            <td><span className="label label-success">{(customer.Account)? customer.numOrders: ''}</span></td>
+        
                           </tr>
                         ))}
                       </tbody>

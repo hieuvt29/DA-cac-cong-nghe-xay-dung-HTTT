@@ -11,7 +11,7 @@ import CategoryManager from './Category/CategoryManager';
 import SupplierManager from './Supplier/SupplierManager';
 import OrderManager from './Order/OrderManager';
 import Login from './Login/index';
-import { getCookie, setCookie } from '../globalFunc';
+import { getCookie } from '../globalFunc';
 
 class Wrapper extends React.Component {
   

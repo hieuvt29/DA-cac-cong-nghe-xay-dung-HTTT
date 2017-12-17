@@ -78,7 +78,7 @@ class DataTable extends React.Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    console.log("Props recieved: ", nextProps.data);
+    // console.log("Props recieved: ", nextProps.data);
     let changed = this.state.data !== nextProps.data;
     changed ? this.renderTable(nextProps.data) : null;
   }
@@ -89,7 +89,7 @@ class DataTable extends React.Component {
   componentWillMount() {
   }
   renderTable(data) {
-    console.log("table rendered");
+    // console.log("table rendered");
     let tableTemplate = this.refs.dataTable;
     if (data && data.length === 0) {
       $(tableTemplate).DataTable({
@@ -102,7 +102,8 @@ class DataTable extends React.Component {
     } else {
       let dataRows = (!data) ? null : data.map(obj => {
         let keys = Object.keys(obj);
-        return keys.reduce((arr, attr) => arr.concat(obj[attr]), []);
+        // console.log('Keys = ', keys);
+        return keys.reduce((arr, attr) => arr.concat(JSON.stringify(obj[attr], null, 2).substr(0, 100).replace(/\"/g, "")), []);
       });
       let columns = Object.keys(data[0]).map(key => ({ title: key }));
 
@@ -275,7 +276,7 @@ class DataTable extends React.Component {
       rowInfo.push($(this).text());
     });
 
-    console.log("selected: ", rowInfo, columns);
+    // console.log("selected: ", rowInfo, columns);
     if (rowInfo.length !== 0) {
       let modalData = [];
       for (let i = 0; i < rowInfo.length; i++) {
@@ -286,13 +287,16 @@ class DataTable extends React.Component {
   }
   changeModalItemText = (e, index) => {
     const modalData = this.state.modalData.map((item, i) => {
-      if (i === index) return { ...item, text: e.target.value }
+      if (i === index) {
+        // console.log("Item in modalData: ", e.target);
+        return { ...item, text: e.target.value }
+      }
       return item;
     });
     this.setState({ modalData });
   }
   submit = () => {
-    console.log('---TuyenTN---datatatdtagda', this.state.modalData);
+    // console.log('---TuyenTN---datatatdtagda', this.state.modalData);
     this.props.submit(this.state.modalData);
   }
 
@@ -434,7 +438,7 @@ class DataTable extends React.Component {
                         <select value={this.state.categoryId} className="select_pro" name="categoryId" onChange={this.change}>
                             <option>Chọn một</option>
                           {this.props.categories.map((category, index) => (
-                            <option value={category.categoryId} selected={index === 1? "selected" : ''}>{category.categoryName}</option>
+                            <option value={category.categoryId} key={index} defaultChecked={index === 1? "selected" : ''}>{category.categoryName}</option>
                           ))}
                         </select>
                       </div>
@@ -446,7 +450,7 @@ class DataTable extends React.Component {
                         <select value={this.state.supplierId} className="select_pro" name="supplierId" onChange={this.change}>
                         <option>Chọn một</option>
                           {this.props.suppliers.map((supplier, index) => (
-                            <option value={supplier.supplierId} selected={index === 1? "selected" : ''}>{supplier.supplierName}</option>
+                            <option value={supplier.supplierId} key={index} defaultChecked={index === 1? "selected" : ''}>{supplier.supplierName}</option>
                           ))}
                         </select>
                       </div>
@@ -644,7 +648,7 @@ class LargeModal extends React.Component {
   };
 
   render() {
-    console.log("state: ", this.state);
+    // console.log("state: ", this.state);
     return (
       <Modal {...this.props} bsSize="large" aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
@@ -655,13 +659,14 @@ class LargeModal extends React.Component {
             <div className="box-body" ref={abc => { this.abc = abc; console.log('---TuyenTN---', abc); }}>
               {this.props.show ? this.props.modaldata.map((item, index) => {
                 let action = this.props.action;
-                let val = action === "edit" ? JSON.stringify(item.text) : "";
+                let val = action === "edit" ? (item.text) : "";
                 //console.log(val);
                 if (!item.title.includes('is')) {
                   return (
                     <div key={"index-" + item.title} className="form-group">
                       <label htmlFor={item.title}>{item.title}</label>
-                      <input type="text" className="form-control" onChange={e => this.props.change(e, index)} id={item.title} name={item.title} placeholder={"Enter " + item.title} value={val} />
+                      <input type="text" className="form-control" onChange={e => this.props.change(e, index)} 
+                      id={item.title} name={item.title} placeholder={"Enter " + item.title} value={val} />
                     </div>
                   )
                 } else {

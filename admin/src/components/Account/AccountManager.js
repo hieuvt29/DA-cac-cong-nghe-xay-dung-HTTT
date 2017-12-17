@@ -1,6 +1,8 @@
 import React from 'react';
 import DataTable from '../Table/index';
 import $ from 'jquery';
+import { address } from '../config';
+import { Link } from "react-router-dom";
 
 class AccountManager extends React.Component {
     constructor(props){
@@ -45,7 +47,7 @@ class AccountManager extends React.Component {
         console.log('---Ham cua thang bo: ---', data);
         let dataObject;
         let id = '';
-        let that = this;
+        // let that = this;
         data.forEach(item => {
             if (item.title === "accountId") {
                 id = item.text;
@@ -54,7 +56,7 @@ class AccountManager extends React.Component {
             }
         });
         try {
-            fetch('http://localhost:3001/customers/'+id, {
+            fetch(`${address}/customers/`+id, {
                 method: 'put',
                 body: JSON.stringify(dataObject)
               }).then(function(response) {
@@ -78,7 +80,7 @@ class AccountManager extends React.Component {
                     Account Manager
                 </h1>
                 <ol className="breadcrumb">
-                    <li><a href="#"><i className="fa fa-dashboard"></i> Home</a></li>
+                    <li><Link to=''><i className="fa fa-dashboard"></i> Home</Link></li>
                     <li className="active">Account Manager</li>
                 </ol>
                 </section>

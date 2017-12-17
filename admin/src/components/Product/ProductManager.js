@@ -1,6 +1,8 @@
 import React from 'react';
 import DataTable from '../Table/index';
 import $ from 'jquery';
+import { address } from '../config';
+
 
 class ProductManager extends React.Component {
     constructor(props){
@@ -14,7 +16,7 @@ class ProductManager extends React.Component {
         }
     }
     componentDidMount(){
-        console.info("ProductManager DidMount");
+        // console.info("ProductManager DidMount");
         $.ajax({
             url: '/products',
             method: 'GET'
@@ -38,9 +40,9 @@ class ProductManager extends React.Component {
     }
 
     remove = (id) => {
-        let that = this;
+        // let that = this;
         try {
-            fetch('http://localhost:3001/products/'+id, {
+            fetch(`${address}/products/`+id, {
                 method: 'DELETE'
               }).then(function(response) {
                 return response.json();
@@ -54,7 +56,7 @@ class ProductManager extends React.Component {
     }
 
     submit = (data) => {
-        let that = this;        
+        // let that = this;        
         console.log('---Ham cua thang bo: ---', data);
         let dataObject;
         let id = '';
@@ -66,7 +68,7 @@ class ProductManager extends React.Component {
             }
         });
         try {
-            fetch('http://localhost:3001/products/'+id, {
+            fetch(`${address}/products/`+id, {
                 method: 'put',
                 body: JSON.stringify(dataObject)
               }).then(function(response) {

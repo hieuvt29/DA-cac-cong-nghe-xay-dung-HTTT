@@ -14,10 +14,10 @@ class Header extends React.Component {
     // setCookie('account', '');
     const acc = getCookie('account');
     if(acc) {
-      console.log('---ACC =---', JSON.parse(acc));
+      // console.log('---ACC =---', JSON.parse(acc));
       this.setState({ account: JSON.parse(acc)});
     }
-    console.log('---Header this state acc =  ', this.state.account);
+    // console.log('---Header this state acc =  ', this.state.account);
   }
 
   signout = () => {
@@ -84,6 +84,12 @@ class Header extends React.Component {
                     </div>
                   </li>
                 </ul>
+              </li>
+              {}
+              <li className="">
+                <a href="#" className="" style={{ borderLeft: 'solid 1px' }} onClick={this.signout}>
+                  Sign out
+                      </a>
               </li>
             </ul>
           </div>

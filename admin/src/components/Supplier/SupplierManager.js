@@ -1,6 +1,7 @@
 import React from 'react';
 import DataTable from '../Table/index';
 import $ from 'jquery';
+import { address } from '../config';
 
 class SupplierManager extends React.Component {
     constructor(props){
@@ -22,9 +23,9 @@ class SupplierManager extends React.Component {
     }
 
     remove = (id) => {
-        let that = this;
+        // let that = this;
         try {
-            fetch('http://localhost:3001/suppliers/'+id, {
+            fetch(`${address}/suppliers/`+id, {
                 method: 'DELETE'
               }).then(function(response) {
                 return response.json();
@@ -38,7 +39,7 @@ class SupplierManager extends React.Component {
     }
 
     submit = (data) => {
-        let that = this;
+        // let that = this;
         console.log('---Ham cua thang bo: ---', data);
         let dataObject;
         let id = '';
@@ -50,7 +51,7 @@ class SupplierManager extends React.Component {
             }
         });
         try {
-            fetch('http://localhost:3001/suppliers/'+id, {
+            fetch(`${address}/suppliers/`+id, {
                 method: 'put',
                 body: JSON.stringify(dataObject)
               }).then(function(response) {
