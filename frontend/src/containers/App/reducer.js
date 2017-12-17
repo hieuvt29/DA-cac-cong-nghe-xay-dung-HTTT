@@ -42,9 +42,9 @@ function appReducer(state = initialState, action) {
     }
     case 'INIT_CART': {
         let cartTotal = localStorage.getItem('cartTotal');
-        cartTotal = (cartTotal || cartTotal == 'undefined')? 0: parseFloat(cartTotal);
+        cartTotal = (!cartTotal || cartTotal == 'undefined')? 0: parseFloat(cartTotal);
         let cartQuantity = localStorage.getItem('cartQuantity');
-        cartQuantity = (cartQuantity || cartQuantity == 'undefined')?0: parseInt(localStorage.getItem('cartQuantity'), 10);
+        cartQuantity = (!cartQuantity || cartQuantity == 'undefined')?0: parseInt(localStorage.getItem('cartQuantity'), 10);
         return { ...state, cartTotal: cartTotal, cartQuantity: cartQuantity};
     }
     case 'RES_PRODUCTS': {

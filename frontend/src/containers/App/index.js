@@ -32,9 +32,9 @@ class App extends Component {
     }
   }
   componentDidMount() {
-    // if (getCookie('cart') === '') setCookie('cart', '');
-    // if (getCookie('cartQuantity') === '') setCookie('cartQuantity', '0');
-    // if (getCookie('cartTotal') === '') setCookie('cartTotal', '0.0');
+    if (localStorage.getItem('cart') === '' || localStorage.getItem('cart') === 'undefined') localStorage.setItem('cart', '');
+    if (localStorage.getItem('cartQuantity') === '' || localStorage.getItem('cartQuantity') === 'undefined') localStorage.setItem('cartQuantity', '0');
+    if (localStorage.getItem('cartTotal') === '' || localStorage.getItem('cartTotal') === 'undefined') localStorage.setItem('cartTotal', '0.0');
   }
   static contextTypes = {
     router: PropTypes.object

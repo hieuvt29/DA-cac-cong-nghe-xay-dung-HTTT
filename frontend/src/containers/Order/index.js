@@ -29,9 +29,9 @@ class Order extends Component {
         cartArr = (cartString === '' || cartString == "undefined") ? [] : JSON.parse(cartString);
         // console.log('CART Array =', cartArr);
         let cartTotal = localStorage.getItem('cartTotal');
-        cartTotal = (cartTotal || cartTotal == 'undefined')? 0: parseFloat(cartTotal);
+        cartTotal = (!cartTotal || cartTotal == 'undefined')? 0: parseFloat(cartTotal);
         let cartQuantity = localStorage.getItem('cartQuantity');
-        cartQuantity = (cartQuantity || cartQuantity == 'undefined')?0: parseInt(localStorage.getItem('cartQuantity'), 10);
+        cartQuantity = (!cartQuantity || cartQuantity == 'undefined')?0: parseInt(localStorage.getItem('cartQuantity'), 10);
         this.setState({ cart: cartArr });
         this.setState({ cartTotal: cartTotal });
         this.setState({ cartQuantity: cartQuantity });
