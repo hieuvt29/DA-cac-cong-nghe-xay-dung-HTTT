@@ -52,7 +52,7 @@ class Login extends React.Component {
                     that.setState({ response: "Sai tên đăng nhập hoặc mật khẩu" });
                 } else {
                     setCookie('account', JSON.stringify(data.user));
-                    that.props.history.push('/');
+                    that.props.history.push('/admin');
                 }
               });
         } catch (error) {

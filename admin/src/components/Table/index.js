@@ -11,7 +11,9 @@ import { NotificationContainer, NotificationManager } from 'react-notifications'
 // import 'datatables.altEditor.free/js/altEditor/dataTables.altEditor.free.js';
 // import {LargeModal} from './Modal';
 import { Modal, Button, ButtonToolbar, Form, FormGroup, Col, ControlLabel } from 'react-bootstrap';
+import { address } from '../config';
 import 'react-notifications/lib/notifications.css';
+import stateOfOrder from '../common/order-states';
 
 class DataTable extends React.Component {
   constructor(props) {
@@ -103,7 +105,26 @@ class DataTable extends React.Component {
       let dataRows = (!data) ? null : data.map(obj => {
         let keys = Object.keys(obj);
         // console.log('Keys = ', keys);
-        return keys.reduce((arr, attr) => arr.concat(JSON.stringify(obj[attr], null, 2).substr(0, 100).replace(/\"/g, "")), []);
+        // return keys.reduce((arr, attr) => arr.concat(obj[attr]),[]);
+        return keys.reduce((arr, attr) => {
+          if (this.state.tableName === "Orders" && attr === "Products") {
+            const stringPros = obj[attr].map(product => product.productName + ' ( ' + product['Orders-Products'].orderQuantity + ' sản phẩm )');
+            console.log('---Stringprop---', stringPros);
+            return arr.concat(stringPros);
+          } else if (this.state.tableName === "Products" && attr === "description") {
+            const stringPros = Object.keys(obj[attr]).join(', ') + '...';
+            return arr.concat(stringPros);
+          } else if (this.state.tableName === "Products" && attr === "Categories") {
+            const stringPros = obj[attr].reduce((str, cate) => str+cate.categoryName+ ', ', '');
+            return arr.concat(stringPros);
+          } else if (this.state.tableName === "Products" && attr === "Supplier") {
+            const stringPros = obj[attr].supplierName;
+            return arr.concat(stringPros);
+          } else {  
+            return arr.concat(obj[attr]);
+          }
+        }, []);
+        
       });
       let columns = Object.keys(data[0]).map(key => ({ title: key }));
 
@@ -130,7 +151,7 @@ class DataTable extends React.Component {
 
   submitCat = () => {
     this.setState({ createPageShow: 'none' });
-    fetch("http://localhost:3001/categories/", {
+    fetch(address+"/categories/", {
       method: "post",
       headers: {
         'Accept': 'application/json',
@@ -150,7 +171,7 @@ class DataTable extends React.Component {
   }
   submitSup = () => {
     this.setState({ createPageShow: 'none' });
-    fetch("http://localhost:3001/suppliers/", {
+    fetch(address+"/suppliers/", {
       method: "post",
       headers: {
         'Accept': 'application/json',
@@ -187,7 +208,7 @@ class DataTable extends React.Component {
       description: { description: this.state.description },
     };
     console.log('---BODY POST---', bodyObject);
-    fetch("http://localhost:3001/products/", {
+    fetch(address+"/products/", {
       method: "post",
       headers: {
         'Accept': 'application/json',
@@ -202,68 +223,7 @@ class DataTable extends React.Component {
       });
   }
 
-  submitAcc = () => {
-    this.setState({ showError: '' });
-    let re = /^\w+$/;
-    if (this.state.username === '') {
-      this.setState({ error: 'Username cannot blank', password: '' });
-    }
-    else if (!re.test(this.state.username)) {
-      this.setState({ error: 'Username must contain only letters, numbers and underscores!' });
-    }
-    else if (this.state.email === '') {
-      this.setState({ error: 'Vui lòng nhập email!' });
-    }
-    else if (this.state.firstName === '' || this.state.lastName === '') {
-      this.setState({ error: 'Vui lòng nhập đầy đủ họ và tên' });
-    }
-    else if (this.state.password === '') {
-      this.setState({ error: 'Password cannot blank' });
-    }
-    else if (this.state.password !== this.state.repassword) {
-      this.setState({ error: 'Please check that you\'ve entered and confirmed your password!' });
-    }
-    else if (this.state.password === this.state.repassword) {
-      if (this.state.password.length < 4) {
-        this.setState({ error: 'Password must contain at least six characters!', password: '' });
-      }
-      if (this.state.password === this.state.username) {
-        this.setState({ error: 'Password must be different from Username!' });
-      }
-      re = /[0-9]/;
-      if (!re.test(this.state.password)) {
-        this.setState({ error: 'password must contain at least one number (0-9)!' });
-      }
-      re = /[a-z]/;
-      if (!re.test(this.state.password)) {
-        this.setState({ error: 'password must contain at least one lowercase letter (a-z)!' });
-      } else {
-        this.setState({ createPageShow: 'none' });
-        fetch("http://localhost:3001/register/", {
-          method: "post",
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-
-          //make sure to serialize your JSON body
-          body: JSON.stringify({
-            userName: this.state.username,
-            password: this.state.password,
-            firstName: this.state.firstName,
-            lastName: this.state.lastName,
-            email: this.state.email,
-            gender: this.state.gender,
-            address: this.state.address,
-            telephone: this.state.telephone,
-          })
-        })
-          .then((response) => {
-            this.setState({ response: response });
-          });
-      }
-    }
-  };
+  submitAcc = () => {}
   edit(e) {
     e.preventDefault();
     let table = this.refs.dataTable;
@@ -330,6 +290,7 @@ class DataTable extends React.Component {
                     show={this.state.modalShow}
                     change={this.changeModalItemText}
                     modaldata={this.state.modalData}
+                    tableName={this.state.tableName}
                     onHide={() => this.setState({ modalShow: false })}
                   />
                 </ButtonToolbar>
@@ -338,89 +299,7 @@ class DataTable extends React.Component {
 
                 </table>
               </div>
-              {this.state.tableName === "Customers" ? (
-                <div className="create_form" style={{ display: this.state.createPageShow }}>
-                  <Form horizontal>
-                    <h3> Thông tin tài khoản </h3>
-                    <hr className="soft"/>
-                    <FormGroup controlId="formHorizontalEmail">
-                      <Col componentClass={ControlLabel} sm={2}>Tên đăng nhập <sup>*</sup></Col>
-                      <Col sm={10}>
-                        <input type="text" id="input_username" autoComplete="false" name="username" onChange={this.change} value={this.state.username} placeholder="Username" />
-                      </Col>
-                    </FormGroup>
-
-                    <FormGroup controlId="formHorizontalEmail">
-                      <Col componentClass={ControlLabel} sm={2}>Mật khẩu <sup>*</sup></Col>
-                      <Col sm={10}>
-                        <input type="password" id="inputPassword1" name="password" onChange={this.change} value={this.state.password} placeholder="Password" />
-                      </Col>
-                    </FormGroup>
-
-                    <FormGroup controlId="formHorizontalEmail">
-                      <Col componentClass={ControlLabel} sm={2}>Nhập lại mật khẩu <sup>*</sup></Col>
-                      <Col sm={10}>
-                        <input type="password" id="inputPassword2" name="repassword" onChange={this.change} value={this.state.repassword} placeholder="Retype Password" />
-                      </Col>
-                    </FormGroup>
-
-                    <FormGroup controlId="formHorizontalEmail">
-                      <Col componentClass={ControlLabel} sm={2}>Email <sup>*</sup></Col>
-                      <Col sm={10}>
-                        <input type="text" id="email" autoComplete="false" name="email" onChange={this.change} value={this.state.email} placeholder="Email" />
-                      </Col>
-                    </FormGroup>
-
-                    <FormGroup controlId="formHorizontalEmail">
-                      <Col componentClass={ControlLabel} sm={2}>Họ <sup>*</sup></Col>
-                      <Col sm={10}>
-                        <input type="text" id="firstName" name="firstName" onChange={this.change} value={this.state.firstName} placeholder="Ho" />
-                      </Col>
-                    </FormGroup>
-
-                    <FormGroup controlId="formHorizontalEmail">
-                      <Col componentClass={ControlLabel} sm={2}>Tên <sup>*</sup></Col>
-                      <Col sm={10}>
-                        <input type="text" id="lastName" name="lastName" onChange={this.change} value={this.state.lastName} placeholder="Ten" />
-                      </Col>
-                    </FormGroup>
-
-                    <FormGroup>
-                    <Col componentClass={ControlLabel} sm={2}>Giới tính</Col>
-                      <div className="controls">
-                        <input type="radio" id="nam" name="gender" checked={this.state.gender === "nam"} onChange={this.change} value="nam" /><label htmlFor="nam" style={{ display: 'inline' }}>Nam</label>
-                        <input type="radio" id="nu" name="gender" checked={this.state.gender === "nu"} onChange={this.change} value="nu" /><label htmlFor="nu" style={{ display: 'inline' }}>Nữ</label>
-                        <input type="radio" id="khac" name="gender" checked={this.state.gender === "khac"} onChange={this.change} value="khac" /><label htmlFor="khac" style={{ display: 'inline' }}>Khác</label>
-                      </div>
-                      </FormGroup>
-
-                    <FormGroup controlId="formHorizontalEmail">
-                      <Col componentClass={ControlLabel} sm={2}>Số điện thoại <sup>*</sup></Col>
-                      <Col sm={10}>
-                        <input type="text" id="telephone" name="telephone" onChange={this.change} value={this.state.telephone} placeholder="+84" />
-                      </Col>
-                    </FormGroup>
-
-                    <FormGroup controlId="formHorizontalEmail">
-                      <Col componentClass={ControlLabel} sm={2}>Địa chỉ</Col>
-                      <Col sm={10}>
-                        <input type="text" id="address" name="address" onChange={this.change} value={this.state.address} placeholder="Dia chi" />
-                      </Col>
-                    </FormGroup>
-
-                    <div style={{ width: '83.33333333%' }} className={"form-group alert alert-block alert-error fade in" + this.state.showError}>
-                      <button type="button" className="close" onClick={this.closeError} data-dismiss="alert">×</button>
-                      <strong>{this.state.error}</strong>
-                    </div>
-
-                    <p><sup>*</sup>Bắt buộc </p>
-                      <Button bsStyle="primary" onClick={this.submitAcc}>Đăng kí</Button>
-                    <span className="controls" style={{marginLeft: '30px'}}>
-                      <Button onClick={() => { this.setState({ createPageShow: 'none' }) }}>Đóng</Button>
-                    </span>
-                  </Form>
-                </div>
-              ) : (this.state.tableName === "Products") ? (
+              {(this.state.tableName === "Products") ? (
                 <div className="create_form" style={{ display: this.state.createPageShow }}>
                 <Form horizontal>
                     <h4> Thông tin sản phẩm </h4>
@@ -660,23 +539,64 @@ class LargeModal extends React.Component {
               {this.props.show ? this.props.modaldata.map((item, index) => {
                 let action = this.props.action;
                 let val = action === "edit" ? (item.text) : "";
-                //console.log(val);
-                if (!item.title.includes('is')) {
-                  return (
-                    <div key={"index-" + item.title} className="form-group">
-                      <label htmlFor={item.title}>{item.title}</label>
-                      <input type="text" className="form-control" onChange={e => this.props.change(e, index)} 
-                      id={item.title} name={item.title} placeholder={"Enter " + item.title} value={val} />
-                    </div>
-                  )
-                } else {
-                  return (
-                    <div className="checkbox" key={"index-" + item.title}>
-                      <label>
-                        <input type="checkbox" id={item.title} name={item.title} defaultChecked={val} />{item.title}
-                      </label>
-                    </div>
-                  )
+
+                if (this.props.tableName === "Orders") {
+                  if (item.title === 'state') {
+                    return (
+                      <div key={"index-" + item.title} className="form-group">
+                        {console.log('---TuyenTN--- Thiss is state')}
+                        <label htmlFor={item.title}>{item.title}</label>
+                        <div className="controls">
+                          <select value={val} className="" id={item.title} name={item.title} onChange={e => this.props.change(e, index)}>
+                            {Object.keys(stateOfOrder).map((state, index) => (
+                              <option value={state} key={index}>{state}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    )
+                  } else if (item.title === 'deliveryDate') {
+                    return (
+                      <div key={"index-" + item.title} className="form-group">
+                        <label htmlFor={item.title}>{item.title}</label>
+                        <div className="controls">
+                        <input type="text" className="form-control" onChange={e => this.props.change(e, index)}
+                          id={item.title} name={item.title} placeholder={"Enter " + item.title} value={val} />
+                        </div>
+                      </div>
+                    )
+                  }
+                  
+                }
+                 else {
+                  //console.log(val);
+                  if (item.title.includes('is')) {
+                    return (
+                      <div className="checkbox" key={"index-" + item.title}>
+                        <label>
+                          <input type="checkbox" id={item.title} name={item.title} defaultChecked={val} />{item.title}
+                        </label>
+                      </div>
+                    )
+                  } else if (item.title === 'Products') {
+                    return (
+                      <div key={"index-" + item.title} className="form-group">
+                        {/* {val.map((product, index) => (
+                        <p>
+                          {product.productName + ' : ' + product['Orders-Products'].orderQuantity} 
+                        </p>
+                      ))} */}
+                      </div>
+                    )
+                  } else {
+                    return (
+                      <div key={"index-" + item.title} className="form-group">
+                        <label htmlFor={item.title}>{item.title}</label>
+                        <input type="text" className="form-control" onChange={e => this.props.change(e, index)}
+                          id={item.title} name={item.title} placeholder={"Enter " + item.title} value={val} />
+                      </div>
+                    )
+                  }
                 }
               }) : null}
             </div>

@@ -22,6 +22,7 @@ class ProductManager extends React.Component {
             method: 'GET'
         }).then(res => {
             this.setState({data: res.products});
+            console.log('---Res product---', this.state.data);
         });
         $.ajax({
             url: '/categories',
@@ -35,6 +36,8 @@ class ProductManager extends React.Component {
             method: 'GET'
         }).then(res => {
             this.setState({suppliers: res.suppliers});
+            console.log('---Res supp---', this.state.suppliers);
+            
         });
 
     }

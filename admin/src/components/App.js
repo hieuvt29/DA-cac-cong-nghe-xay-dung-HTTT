@@ -25,12 +25,12 @@ class Wrapper extends React.Component {
           {}
 
           <Switch>
-            <Route path='/account-manager' component={AccountManager} />
-            <Route path='/product-manager' component={ProductManager} />
-            <Route path='/category-manager' component={CategoryManager} />
-            <Route path='/supplier-manager' component={SupplierManager} />
-            <Route path='/order-manager' component={OrderManager} />
-            <Route path='' component={Dashboard} />
+            <Route path='/admin/account-manager' component={AccountManager} />
+            <Route path='/admin/product-manager' component={ProductManager} />
+            <Route path='/admin/category-manager' component={CategoryManager} />
+            <Route path='/admin/supplier-manager' component={SupplierManager} />
+            <Route path='/admin/order-manager' component={OrderManager} />
+            <Route path='/admin' component={Dashboard} />
           </Switch>
           {}
           <Footer />

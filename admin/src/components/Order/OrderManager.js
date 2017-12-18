@@ -20,6 +20,7 @@ class OrderManager extends React.Component {
             method: 'GET'
         }).then(res => {
             this.setState({data: res.orders});
+            console.log('---Res orders---', this.state.data);
         })
     }
 

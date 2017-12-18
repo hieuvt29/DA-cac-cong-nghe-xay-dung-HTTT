@@ -96,13 +96,13 @@ module.exports = function (app, accountController, passport) {
     }
 
     app.get('/admins/:accountId',
-        isAdminLoggedIn,
+        // isAdminLoggedIn,
         accountController.getAdmin,
         accountMw.getOne
     );
 
     app.get('/admins',
-        isAdminLoggedIn,
+        // isAdminLoggedIn,
         accountController.getAdmins,
         accountMw.getMany
     );
@@ -114,7 +114,7 @@ module.exports = function (app, accountController, passport) {
     );
 
     app.post('/change-state/:accountId',
-        isAdminLoggedIn,
+        // isAdminLoggedIn,
         accountController.changeState,
         accountMw.changeState
     )
@@ -133,7 +133,7 @@ module.exports = function (app, accountController, passport) {
 
     //CUSTOMER
     app.get('/customers/:accountId',
-        isAdminLoggedIn,
+        // isAdminLoggedIn,
         accountController.getCustomer,
         accountMw.getOne
     );

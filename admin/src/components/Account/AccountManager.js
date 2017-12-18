@@ -22,6 +22,7 @@ class AccountManager extends React.Component {
             address: '',
             error: '',
             showError: '',
+            dataAdmins: '',
         }
     }
     shouldComponentUpdate(nextState) {
@@ -32,6 +33,11 @@ class AccountManager extends React.Component {
         $.get('/customers', res => {
             console.log("get customers: ", res);
             this.setState({data: res.accounts});
+        });
+        $.get('/admins', res => {
+            console.log("get customers: ", res);
+            this.setState({dataAdmins: res.accounts});
+            console.log('---Admins---', this.dataAdmins);
         });
     }
 
@@ -80,7 +86,7 @@ class AccountManager extends React.Component {
                     Account Manager
                 </h1>
                 <ol className="breadcrumb">
-                    <li><Link to=''><i className="fa fa-dashboard"></i> Home</Link></li>
+                    <li><Link to='/admin'><i className="fa fa-dashboard"></i> Home</Link></li>
                     <li className="active">Account Manager</li>
                 </ol>
                 </section>

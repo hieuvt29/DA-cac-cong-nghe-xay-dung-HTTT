@@ -19,6 +19,7 @@ class SupplierManager extends React.Component {
             method: 'GET'
         }).then(res => {
             this.setState({data: res.suppliers});
+            console.log('---Res supp---', this.data);
         })
     }
 

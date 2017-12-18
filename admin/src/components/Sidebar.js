@@ -38,7 +38,7 @@ class Sidebar extends React.Component {
             </div>
             <div className="pull-left info">
               <p>{this.state.account.firstName + " " + this.state.account.lastName}</p>
-              <Link to="#">
+              <Link to="/admin">
                 <i className="fa fa-circle text-success" /> Online
               </Link>
             </div>
@@ -69,14 +69,14 @@ class Sidebar extends React.Component {
           <ul className="sidebar-menu" data-widget="tree">
             <li className="header">MAIN NAVIGATION</li>
             <li >
-              <Link to="/dashboard">
+              <Link to="/admin/dashboard">
                 <i className="fa fa-dashboard" /> <span>Dashboard</span>
                 <span className="pull-right-container">
                 </span>
               </Link>
             </li>
             <li>
-                <Link to="/account-manager">
+                <Link to="/admin/account-manager">
                   <i className="fa fa-th" /> <span>Account Manager</span>
                   <span className="pull-right-container">
                     <small className="label pull-right bg-green">new</small>
@@ -84,7 +84,7 @@ class Sidebar extends React.Component {
                 </Link>
             </li>
             <li>
-                <Link to="/product-manager">
+                <Link to="/admin/product-manager">
                   <i className="fa fa-th" /> <span>Product Manager</span>
                   <span className="pull-right-container">
                     <small className="label pull-right bg-green">new</small>
@@ -92,7 +92,7 @@ class Sidebar extends React.Component {
                 </Link>
             </li>
             <li>
-                <Link to="/category-manager">
+                <Link to="/admin/category-manager">
                   <i className="fa fa-th" /> <span>Category Manager</span>
                   <span className="pull-right-container">
                     <small className="label pull-right bg-green">new</small>
@@ -100,7 +100,7 @@ class Sidebar extends React.Component {
                 </Link>
             </li>
             <li>
-                <Link to="/supplier-manager">
+                <Link to="/admin/supplier-manager">
                   <i className="fa fa-th" /> <span>Supplier Manager</span>
                   <span className="pull-right-container">
                     <small className="label pull-right bg-green">new</small>
@@ -108,7 +108,7 @@ class Sidebar extends React.Component {
                 </Link>
             </li>
             <li>
-                <Link to="/order-manager">
+                <Link to="/admin/order-manager">
                   <i className="fa fa-th" /> <span>Order Manager</span>
                   <span className="pull-right-container">
                     <small className="label pull-right bg-green">new</small>
