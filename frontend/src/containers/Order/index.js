@@ -68,6 +68,17 @@ class Order extends Component {
         }
     }
     componentWillReceiveProps(nextProps) {
+        console.log("props: ", nextProps);
+        if (nextProps.account) {
+            const fullName = nextProps.account.firstName + ' ' +nextProps.account.lastName;
+            let nextState = {
+                fullName: fullName?fullName:this.state.fullName,
+                telephone: nextProps.account.telephone?nextProps.account.telephone: this.state.telephone,
+                address: nextProps.account.address?nextProps.account.address: this.state.address,
+                accountId: nextProps.account.accountId
+            }
+            this.setState(...this.state, nextState);
+        }
         if (nextProps.order_failed) {
             this.setState({error: "Không thể khởi tạo đơn hàng, kiểm tra lại thông tin!"});
         }
@@ -141,9 +152,9 @@ class Order extends Component {
                             <td>
                                 <form className="form-horizontal">
                                     <div className="control-group">
-                                        <label className="control-label" htmlFor="inputUsername">Khách hàng:</label>
+                                        <label className="control-label" htmlFor="cusotmer">Khách hàng:</label>
                                         <div className="controls">
-                                            <input type="text" id="inputUsername" value={this.state.fullName} name="fullName" onChange={this.change} placeholder="Tên người nhận" />
+                                            <input type="text" id="cusotmer" value={this.state.fullName} name="fullName" onChange={this.change} placeholder="Tên người nhận" />
                                         </div>
                                     </div>
                                     <div className="control-group">

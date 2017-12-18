@@ -31,13 +31,22 @@ class Header extends Component {
     this.props.reqSuppliers();
   }
 
+  componentWillReceiveProps(nextProps) {
+    // setTimeout(()=> {
+    //   if (!nextProps.errorLogin) {
+    //     this.setState({ openLogin: false });
+    //     console.log("history: ", nextProps.history);
+    //     // window.location.reload();
+    //   }
+    // }, 500);
+    console.log("NEXT: ", );
+    if (!nextProps.errorLogin && nextProps.account) {
+      this.setState({ openLogin: false });
+    }
+  }
   signin = () => {
+    console.log("LOGIN");
     this.props.signin(this.state.username, this.state.password);
-    setTimeout(()=> {
-      if (!this.props.errorLogin) {
-        this.setState({ openLogin: false });
-      }
-    }, 500);
   }
 
   search = () => {
@@ -101,7 +110,7 @@ class Header extends Component {
                             <strong><span> { this.props.errorLogin} </span></strong>
                             <form className="form-horizontal loginFrm">
                               <div className="control-group">
-                                <input type="text" id="inputUsername" name="username" onChange={this.change} placeholder="Tên đăng nhập" value={this.state.username} />
+                                <input type="text" id="inputUsername" name="username" onChange={this.change} placeholder="Tên đăng nhập" value={this.state.username} ref={(input) => { this.nameInput = input; }}/>
                               </div>
                               <div className="control-group">
                                 <input type="password" id="inputPassword" name="password" onKeyPress={e => e.key == 'Enter'? this.signin(): null} onChange={this.change} placeholder="Mật khẩu" value={this.state.password} />

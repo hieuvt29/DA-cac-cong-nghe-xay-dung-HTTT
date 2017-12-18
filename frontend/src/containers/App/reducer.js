@@ -101,7 +101,7 @@ function appReducer(state = initialState, action) {
             return { ...state, errorLogin: 'Sai tên đăng nhập hoặc mật khẩu'};
         } else {
             localStorage.setItem('account', JSON.stringify(action.response.data.user));
-            return { ...state, account: action.response.data.user};
+            return { ...state, account: action.response.data.user, errorLogin: ''};
         }
     }
     

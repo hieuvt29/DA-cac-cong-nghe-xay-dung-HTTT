@@ -22,7 +22,7 @@ class Profile extends Component {
     update() {
         let newInfo = {};
         this.state.attrs.forEach(attr => {
-            this.state[attr]?newInfo[attr] = this.state[attr]:null ;
+            newInfo[attr] = this.state[attr];
         });
         this.props.updateInfo(newInfo)
     }
@@ -39,7 +39,7 @@ class Profile extends Component {
         window.location.reload();
     }
     change = (e) => {
-        let newState = {...this.state, [e.target.name]: e.target.value };
+        let newState = {...this.state, [e.target.name]: e.target.value};
         this.setState(newState);
     }
     render() {
