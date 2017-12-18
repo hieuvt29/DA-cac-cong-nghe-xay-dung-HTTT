@@ -36,7 +36,6 @@ class Header extends Component {
     setTimeout(()=> {
       if (!this.props.errorLogin) {
         this.setState({ openLogin: false });
-        window.location.reload();
       }
     }, 500);
   }
