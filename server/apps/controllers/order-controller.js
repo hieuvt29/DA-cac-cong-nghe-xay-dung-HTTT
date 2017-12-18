@@ -91,17 +91,22 @@ OrderController.prototype.create = async function (req, res, next) {
     })
 }
 
-OrderController.prototype.updateState = async function (req, res, next) {
+OrderController.prototype.update = async function (req, res, next) {
     var orderId = req.params.orderId;
-    var newState = req.body.newState;
-
+    var orderProps = req.body;
+    //validate props
+    var val = await validate(rule, orderProps);
+    if (val.numErr > 0) {
+        return next({
+            type: "Bad Request",
+            error: val.error
+        });
+    }
     var condition = {
         orderId: orderId
     }
-    var association = [{
-        model: dependencies.orderRepository.dbContext.Product
-    }];
-    dependencies.orderRepository.findOneBy(condition, association, [], function (err, orderObj) {
+
+    dependencies.orderRepository.findOneBy(condition, [], [], function (err, orderObj) {
         if (err) {
             next(err);
         } else if (orderObj) {
@@ -111,13 +116,13 @@ OrderController.prototype.updateState = async function (req, res, next) {
             if (orderObj.state == orderState.DELIVERED) {
                 return next({message: "Cannot change state of delivered order"});
             }
-            orderObj.state = newState;
-
-            dependencies.orderRepository.update(orderObj.dataValues, [], function (err, result) {
+            orderObj = Object.assign({}, orderObj.dataValues, orderProps);
+           
+            dependencies.orderRepository.update(orderObj, [], function (err, result) {
                 if (err) {
                     return next(err);
                 } else {
-                    res.order = orderObj.dataValues;
+                    res.order = orderObj;
                     return next();
                 }
             })

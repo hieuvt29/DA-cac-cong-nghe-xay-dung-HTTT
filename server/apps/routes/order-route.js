@@ -17,10 +17,9 @@ module.exports = function(app, orderController){
     );
     
     app.put('/orders/:orderId',
-        orderController.updateState, 
+        orderController.update, 
         orderMw.update
     );
-
 /*     app.delete('/orders/:orderId',
         orderController.delete,
         orderMw.delete
