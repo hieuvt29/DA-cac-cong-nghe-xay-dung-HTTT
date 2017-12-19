@@ -52,7 +52,7 @@ class CategoryManager extends React.Component {
             }
         });
         if (dataObject.parentId === "") {
-            delete dataObject.parentId;
+            dataObject.parentId = null;
         }
         
         console.log('---SUBMIT UPDATE---', dataObject.categoryName);
