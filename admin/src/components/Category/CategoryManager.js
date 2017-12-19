@@ -51,6 +51,9 @@ class CategoryManager extends React.Component {
                 dataObject = { ...dataObject, [item.title]: item.text }
             }
         });
+        if (dataObject.parentId === "") {
+            delete dataObject.parentId;
+        }
         
         console.log('---SUBMIT UPDATE---', dataObject.categoryName);
         const url = `${address}/categories/`+id;
