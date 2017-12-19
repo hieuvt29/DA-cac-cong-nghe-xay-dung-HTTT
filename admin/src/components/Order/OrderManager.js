@@ -59,7 +59,15 @@ class OrderManager extends React.Component {
             } else {
                 dataObject = { ...dataObject, [item.title]: item.text }
             }
+            
         });
+        if (dataObject.accountId === "") {
+            delete dataObject.accountId;
+        }
+        if (dataObject.deliveryDate === "") {
+            delete dataObject.deliveryDate;
+        }
+
         try {
             fetch(`${address}/orders/`+id, {
                 method: 'PUT',
