@@ -23,22 +23,23 @@ class ProductManager extends React.Component {
         }).then(res => {
             this.setState({data: res.products});
             console.log('---Res product---', this.state.data);
+            $.ajax({
+                url: '/categories',
+                method: 'GET'
+            }).then(res => {
+                this.setState({categories: res.categories});
+                // console.log('---DAD categories---', this.state.categories);
+                $.ajax({
+                    url: '/suppliers',
+                    method: 'GET'
+                }).then(res => {
+                    this.setState({suppliers: res.suppliers});
+                    console.log('---Res supp---', this.state.suppliers);
+                });
+            });
         });
-        $.ajax({
-            url: '/categories',
-            method: 'GET'
-        }).then(res => {
-            this.setState({categories: res.categories});
-            // console.log('---DAD categories---', this.state.categories);
-        });
-        $.ajax({
-            url: '/suppliers',
-            method: 'GET'
-        }).then(res => {
-            this.setState({suppliers: res.suppliers});
-            console.log('---Res supp---', this.state.suppliers);
-            
-        });
+        
+        
 
     }
 
@@ -72,13 +73,21 @@ class ProductManager extends React.Component {
         });
         try {
             fetch(`${address}/products/`+id, {
-                method: 'put',
+                method: 'PUT',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                  },
+                credentials: 'same-origin',
                 body: JSON.stringify(dataObject)
               }).then(function(response) {
                 return response.json();
               }).then(function(data) {
                 console.log('Created Gist:', data);
-                // that.forceUpdate();
+                alert(data.message);
+                if(data.message === "updated"){
+                    window.location.reload();
+                }
               });
             console.log('---Data Object---', dataObject);
         } catch (error) {

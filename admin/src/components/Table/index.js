@@ -80,9 +80,13 @@ class DataTable extends React.Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    // console.log("Props recieved: ", nextProps.data);
-    let changed = this.state.data !== nextProps.data;
-    changed ? this.renderTable(nextProps.data) : null;
+    console.log("Props recieved: ", nextProps.data);
+    let changed = (this.state.data !== nextProps.data);
+    if (changed) {
+      this.renderTable(nextProps.data);
+      this.setState({ modalShow: false });
+    }
+    console.log('---Changed---', changed);
   }
 
   componentWillUnMount() {
@@ -91,7 +95,7 @@ class DataTable extends React.Component {
   componentWillMount() {
   }
   renderTable(data) {
-    // console.log("table rendered");
+    console.log("table rendered");
     let tableTemplate = this.refs.dataTable;
     if (data && data.length === 0) {
       $(tableTemplate).DataTable({
@@ -164,10 +168,12 @@ class DataTable extends React.Component {
         description: this.state.description,
         parentId: this.state.parentId,
       })
-    })
-      .then((response) => {
-        this.setState({ response: response });
-      });
+    }).then(function (response) {
+      return response.json();
+    }).then(function (data) {
+      alert(data.message);
+      window.location.reload();
+    });
   }
   submitSup = () => {
     this.setState({ createPageShow: 'none' });
@@ -185,16 +191,12 @@ class DataTable extends React.Component {
         type: this.state.type,
         contact: this.state.contact,
       })
-    })
-      .then((response) => {
-        console.log('---RESPONSE---', (response));
-        if (response.error) {
-          this.createNotification('error', response.error);
-        } else {
-          this.createNotification('success', response.message);
-          this.setState({ response: response });
-        }
-      });
+    }).then(function (response) {
+      return response.json();
+    }).then(function (data) {
+      alert(data.message);
+      window.location.reload();
+    });
   }
   submitPro = () => {
     this.setState({ createPageShow: 'none' });
@@ -217,10 +219,12 @@ class DataTable extends React.Component {
 
       //make sure to serialize your JSON body
       body: JSON.stringify(bodyObject)
-    })
-      .then((response) => {
-        this.setState({ response: response });
-      });
+    }).then(function (response) {
+      return response.json();
+    }).then(function (data) {
+      alert(data.message);
+      window.location.reload();
+    });
   }
 
   submitAcc = () => {}
@@ -264,9 +268,13 @@ class DataTable extends React.Component {
     e.preventDefault();
     let table = this.refs.dataTable;
     let id = $(table).find('.selected').find('td:first-child').text();
-    console.log('The id of selected row in remove function', id);
-    this.props.remove(id);
-    $(table).find('.selected').hide();
+    let the_name = $(table).find('.selected').find('td:nth-child(2)').text();
+    let cf = window.confirm("Chắc chắn xóa "+ the_name + "?");
+    if (cf) {
+      console.log('The id of selected row in remove function', id);
+      this.props.remove(id);
+      $(table).find('.selected').hide();
+    }
   }
   render() {
     return (
@@ -292,6 +300,7 @@ class DataTable extends React.Component {
                     modaldata={this.state.modalData}
                     tableName={this.state.tableName}
                     onHide={() => this.setState({ modalShow: false })}
+                    categories={this.props.categories? this.props.categories: null}
                   />
                 </ButtonToolbar>
                 <hr />
@@ -391,16 +400,20 @@ class DataTable extends React.Component {
                         <input type="text" id="description" name="description" onChange={this.change} value={this.state.description} placeholder="" />
                       </div>
                     </div>
-                    <div>Nếu là loại sub-category:</div>
                     <div className="control-group">
-                      <label className="control-label" htmlFor="parentId">Mã parent category <sup>*</sup></label>
+                      <label className="control-label" htmlFor="parentId">Nếu là sub-category, chọn Loại sản phẩm cha:</label>
                       <div className="controls">
-                        <input type="text" id="parentId" name="parentId" onChange={this.change} value={this.state.parentId} placeholder="" />
+                        <select value={this.state.parentId} className="" name="parentId" onChange={this.change}>
+                          <option value="">Không</option>
+                          {this.props.categories.map((category, index) => (
+                            <option value={category.categoryId} key={index} defaultChecked={index === 1 ? "selected" : ''}>{category.categoryName}</option>
+                          ))}
+                        </select>
                       </div>
                     </div>
 
-                  <div className="control-group">
-                    <div className="controls">
+                    <div className="control-group">
+                      <div className="controls">
                     <Button bsStyle="primary" onClick={this.submitCat}>Thêm loại sản phẩm</Button>
                     </div>
                     <span className="controls">
@@ -535,7 +548,7 @@ class LargeModal extends React.Component {
         </Modal.Header>
         <Modal.Body>
           <form role="form">
-            <div className="box-body" ref={abc => { this.abc = abc; console.log('---TuyenTN---', abc); }}>
+            <div className="box-body" ref={abc => { this.abc = abc; }}>
               {this.props.show ? this.props.modaldata.map((item, index) => {
                 let action = this.props.action;
                 let val = action === "edit" ? (item.text) : "";
@@ -544,7 +557,7 @@ class LargeModal extends React.Component {
                   if (item.title === 'state') {
                     return (
                       <div key={"index-" + item.title} className="form-group">
-                        {console.log('---TuyenTN--- Thiss is state')}
+                        {/* {console.log('---TuyenTN--- Thiss is state')} */}
                         <label htmlFor={item.title}>{item.title}</label>
                         <div className="controls">
                           <select value={val} className="" id={item.title} name={item.title} onChange={e => this.props.change(e, index)}>
@@ -555,7 +568,7 @@ class LargeModal extends React.Component {
                         </div>
                       </div>
                     )
-                  } else if (item.title === 'deliveryDate') {
+                  } else if (item.title === 'deliveryDate' || item.title === 'address' || item.title === 'telephone') {
                     return (
                       <div key={"index-" + item.title} className="form-group">
                         <label htmlFor={item.title}>{item.title}</label>
@@ -567,8 +580,25 @@ class LargeModal extends React.Component {
                     )
                   }
                   
+                } else if (this.props.tableName === "Categories" && item.title === 'parentId') {
+                  return (
+                    <div key={"index-" + item.title} className="form-group">
+                      {/* {console.log('---TuyenTN--- Thiss is state', this.props.categories)} */}
+                      <label htmlFor={item.title}>{item.title}</label>
+                      <div className="controls">
+                        <select value={val} className="" id={item.title} name={item.title} onChange={e => this.props.change(e, index)}>
+                          <option value="">Không</option>
+                          {/* {console.log('---item.value---', this.props.modaldata[1].text)} */}
+                          {this.props.categories.filter(category => category.categoryId !== this.props.modaldata[0].text).map((category, idx) => (
+                              <option value={category.categoryId} key={idx} defaultChecked={index === 1 ? "selected" : ''}>{category.categoryName}</option>
+                          )
+                          )}
+                        </select>
+                      </div>
+                    </div>
+                  )
                 }
-                 else {
+                else {
                   //console.log(val);
                   if (item.title.includes('is')) {
                     return (

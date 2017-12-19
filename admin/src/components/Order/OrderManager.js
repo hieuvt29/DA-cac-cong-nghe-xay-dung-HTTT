@@ -10,18 +10,24 @@ class OrderManager extends React.Component {
 
         this.state = {
             data: [],
-            loading: true
+            loading: true,
+            showModal: false,
+            updateNumber: 0,
         }
     }
     componentDidMount(){
         console.info("OrderManager DidMount");
+        this.callData();
+    }
+
+    callData = () => {
         $.ajax({
             url: '/orders',
             method: 'GET'
         }).then(res => {
-            this.setState({data: res.orders});
+            this.setState({data: res.orders, updateNumber: (this.setState.updateNumber+1)});
             console.log('---Res orders---', this.state.data);
-        })
+        });
     }
 
     remove = (id) => {
@@ -42,25 +48,35 @@ class OrderManager extends React.Component {
 
     submit = (data) => {
         console.log('---Ham cua thang bo: ---', data);
-        let dataObject;
+        let dataObject = [];
         let id = '';
-        let that = this;        
+        let that = this;     
         data.forEach(item => {
             if (item.title === "orderId") {
                 id = item.text;
+            } else if (item.title === "Products" || item.title === "total") {
+
             } else {
                 dataObject = { ...dataObject, [item.title]: item.text }
             }
         });
         try {
             fetch(`${address}/orders/`+id, {
-                method: 'put',
-                body: JSON.stringify(dataObject)
+                method: 'PUT',
+                headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json',
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify(dataObject),
               }).then(function(response) {
                 return response.json();
               }).then(function(data) {
                 console.log('Update order:', data);
-                // that.forceUpdate();
+                alert(data.message);
+                if(data.message === "updated"){
+                    window.location.reload();
+                }
               });
             console.log('---Data Object---', dataObject);
         } catch (error) {
@@ -81,7 +97,7 @@ class OrderManager extends React.Component {
                     <li className="active">Order Manager</li>
                 </ol>
                 </section>
-                <DataTable remove={this.remove} submit={this.submit} data={this.state.data} tableName="Orders"/>
+                <DataTable remove={this.remove} resMessage={this.state.resMessage} updateNumber={this.state.updateNumber} submit={this.submit} data={this.state.data} tableName="Orders"/>
             </div>
         );
     }

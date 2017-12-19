@@ -12,7 +12,9 @@
 .create_form form label, .create_form form h4 {
 	color: #000000;
 }
-
+.create_form form .btn{
+  margin-top: 30px;
+}
 form.form-horizontal{
   width: 80%;
   padding-left: 20%;
@@ -125,4 +127,7 @@ body {
 
 .select_pro:focus option:first-of-type {
   display: none;
+}
+.create_form button {
+  margin-top: 20px;
 }

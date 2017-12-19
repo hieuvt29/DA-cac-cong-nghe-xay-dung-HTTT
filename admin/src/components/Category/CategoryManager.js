@@ -10,7 +10,7 @@ class CategoryManager extends React.Component {
 
         this.state = {
             data: [],
-            loading: true
+            loading: true,
         }
     }
     componentDidMount(){
@@ -51,15 +51,27 @@ class CategoryManager extends React.Component {
                 dataObject = { ...dataObject, [item.title]: item.text }
             }
         });
+        
+        console.log('---SUBMIT UPDATE---', dataObject.categoryName);
+        const url = `${address}/categories/`+id;
+        console.log('URL =', url);
         try {
-            fetch(`${address}/categories/`+id, {
-                method: 'put',
+            fetch(url, {
+                method: 'PUT',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                  },
+                credentials: 'same-origin',
                 body: JSON.stringify(dataObject)
               }).then(function(response) {
                 return response.json();
               }).then(function(data) {
                 console.log('Created Gist:', data);
-                // that.forceUpdate();
+                alert(data.message);
+                if(data.message === "updated"){
+                    window.location.reload();
+                }
               });
             console.log('---Data Object---', dataObject);
         } catch (error) {
@@ -80,7 +92,7 @@ class CategoryManager extends React.Component {
                     <li className="active">Category Manager</li>
                 </ol>
                 </section>
-                <DataTable remove={this.remove} submit={this.submit} data={this.state.data} tableName="Categories"/>
+                <DataTable remove={this.remove} categories={this.state.data} submit={this.submit} data={this.state.data} tableName="Categories"/>
             </div>
         );
     }

@@ -53,13 +53,21 @@ class SupplierManager extends React.Component {
         });
         try {
             fetch(`${address}/suppliers/`+id, {
-                method: 'put',
+                method: 'PUT',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                  },
+                credentials: 'same-origin',
                 body: JSON.stringify(dataObject)
               }).then(function(response) {
                 return response.json();
               }).then(function(data) {
                 console.log('Created Gist:', data);
-                // that.forceUpdate();
+                alert(data.message);
+                if(data.message === "updated"){
+                    window.location.reload();
+                }
               });
             console.log('---Data Object---', dataObject);
         } catch (error) {
