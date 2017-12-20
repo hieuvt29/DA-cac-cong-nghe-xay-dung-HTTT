@@ -34,16 +34,7 @@ class Supplier extends Component {
     updateProps = () => {
         this.props.dispath()
     }
-    addCart = (product) => {
-        const lightProduct = {
-            productId: product.productId,
-            productName: product.productName,
-            image: product.image,
-            price: product.price,
-            quantity: 1,
-        }
-        this.props.addToCart(lightProduct);
-    } 
+
     render() {
         //Ket qua search
         console.log("SUPPLIER RENDERED");

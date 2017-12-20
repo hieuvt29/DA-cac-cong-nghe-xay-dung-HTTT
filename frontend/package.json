@@ -6,6 +6,7 @@
     "axios": "^0.16.2",
     "jquery": "^3.2.1",
     "react": "^16.2.0",
+    "react-alert": "^2.4.0",
     "react-dom": "^16.2.0",
     "react-image-lightbox": "^4.3.0",
     "react-redux": "^5.0.6",

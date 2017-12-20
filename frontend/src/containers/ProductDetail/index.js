@@ -4,6 +4,7 @@ import { get_product } from './actions';
 import NotFound from '../NotFound/index';
 import { addToCart } from './../Cart/actions';
 import Lightbox from 'react-image-lightbox';
+import AlertContainer from 'react-alert'
 
 class ProductDetail extends Component {
     constructor (props) {
@@ -13,16 +14,31 @@ class ProductDetail extends Component {
         isOpen: false
       };
     }
+
     addCart = (product) => {
-      const lightProduct = {
-          productId: product.productId,
-          productName: product.productName,
-          image: product.image,
-          price: product.price,
-          quantity: 1,
+      let quantity = product.quantity;
+      if (quantity == 0) {
+          this.msg.show("Đã hết hàng, vui lòng chọn mặt hàng khác!", {
+              time: 1000,
+              type: 'info'
+          });
+      } else {
+          const lightProduct = {
+              productId: product.productId,
+              productName: product.productName,
+              image: product.image,
+              price: product.price,
+              quantity: 1,
+          }
+          product.quantity -= 1;
+          this.props.addToCart(lightProduct);
+          this.msg.show("Đã thêm sản phẩm vào giỏ hàng!", {
+              time: 1000,
+              type: 'success'
+          });
       }
-      this.props.addToCart(lightProduct);
-    }
+  }
+  
     componentDidMount () {
       window.scrollTo(0, 0);
     }
@@ -61,6 +77,7 @@ class ProductDetail extends Component {
           <li><a href="index.html">Home</a> <span className="divider">/</span></li>
           <li><a href="products.html">Products</a> <span className="divider">/</span></li>
           <li className="active">product Details</li>
+          <AlertContainer ref={a => this.msg = a} {...{offset: 14, position: 'bottom left', theme: 'dark', time: 5000, transition: 'scale'}} />
           </ul>	
           <div className="row">
           {isOpen &&

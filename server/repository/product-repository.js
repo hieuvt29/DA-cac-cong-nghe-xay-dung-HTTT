@@ -51,6 +51,14 @@ ProductRepository.prototype.fulltextSearch = function (keywords, select, page, l
     });
     var includeNames = ["Supplier", "Categories"];
 
+    keywords = keywords.trim();
+    var keywords = keywords.split(" ").reduce(function(str, kw) {
+        if (kw[0] != '-') {
+            return str + " *" + kw + "*";
+        } else {
+            return str + " " + kw.slice(0, 1) + "*" + kw.slice(1) + "*";
+        }
+    },"");
     var query = "SELECT " + productFields + "," + supplierFields + "," + categoryFields + "," + " MATCH (Products.productName, Products.description) AGAINST (:keywords IN BOOLEAN MODE) AS score FROM  Products LEFT JOIN ( `Categories-Products` JOIN Categories ON Categories.categoryId = `Categories-Products`.categoryId) ON Products.productId = `Categories-Products`.productId LEFT JOIN Suppliers ON Products.supplierId = Suppliers.supplierId WHERE MATCH (Products.productName, Products.description) AGAINST (:keywords IN BOOLEAN MODE) AND Products.isActive = 1 AND Products.isDelete = 0 LIMIT :limit OFFSET :page";
     var options = {
         replacements: {

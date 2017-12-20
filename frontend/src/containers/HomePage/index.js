@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import defaultImage from '../../img/laptop-default.jpg';
 import Result from '../Result/index';
 import {search} from '../Header/actions';
+import AlertContainer from 'react-alert'
 
 class HomePage extends Component {
     constructor (props) {
@@ -40,16 +41,31 @@ class HomePage extends Component {
     updateProps = () => {
         this.props.dispath()
     }
+
     addCart = (product) => {
-        const lightProduct = {
-            productId: product.productId,
-            productName: product.productName,
-            image: product.image,
-            price: product.price,
-            quantity: 1,
+        let quantity = product.quantity;
+        if (quantity == 0) {
+            this.msg.show("Đã hết hàng, vui lòng chọn mặt hàng khác!", {
+                time: 1000,
+                type: 'info'
+            });
+        } else {
+            const lightProduct = {
+                productId: product.productId,
+                productName: product.productName,
+                image: product.image,
+                price: product.price,
+                quantity: 1,
+            }
+            product.quantity -= 1;
+            this.props.addToCart(lightProduct);
+            this.msg.show("Đã thêm sản phẩm vào giỏ hàng!", {
+                time: 1000,
+                type: 'success'
+            });
         }
-        this.props.addToCart(lightProduct);
-    } 
+    }
+    
     render() {
         // let featuredProducts = [];
         // let temp = [];
@@ -65,6 +81,7 @@ class HomePage extends Component {
         if (!this.state.isSearching) {
         return (
             <div className="span9">
+            <AlertContainer ref={a => this.msg = a} {...{offset: 14, position: 'bottom left', theme: 'dark', time: 5000, transition: 'scale'}} />
                 <div className="well well-small">
                     <h4>Sản phẩm nổi bật <small className="pull-right">200+ featured products</small></h4>
                     <div className="row-fluid">
