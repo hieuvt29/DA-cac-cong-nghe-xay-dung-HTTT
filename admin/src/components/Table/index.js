@@ -269,7 +269,10 @@ class DataTable extends React.Component {
     let table = this.refs.dataTable;
     let id = $(table).find('.selected').find('td:first-child').text();
     let the_name = $(table).find('.selected').find('td:nth-child(2)').text();
-    let cf = window.confirm("Chắc chắn xóa "+ the_name + "?");
+    let cf = false;
+    if (id) {
+      cf = window.confirm("Chắc chắn xóa "+ the_name + "?");
+    }
     if (cf) {
       console.log('The id of selected row in remove function', id);
       this.props.remove(id);

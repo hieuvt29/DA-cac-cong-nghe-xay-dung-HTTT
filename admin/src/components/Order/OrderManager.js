@@ -35,11 +35,6 @@ class OrderManager extends React.Component {
         try {
             fetch(`${address}/orders/`+id, {
                 method: 'DELETE'
-              }).then(function(response) {
-                return response.json();
-              }).then(function(data) {
-                console.log('DELETE supplier:', data);
-                // that.forceUpdate();
               });
         } catch (error) {
             console.log('REMOVE supplier error', error);
