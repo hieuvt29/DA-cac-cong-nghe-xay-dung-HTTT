@@ -10,9 +10,9 @@ var checkAccount = nv.isAnyObject()
     .withOptional('accountId', nv.isString({regex: /^[a-zA-Z0-9_-]{36}$/}))
     .withOptional('role', nv.isInteger())
     .withOptional('telephone', nv.isString({regex: /^[0-9]{10,20}$/}))
-    // .withOptional('dob', nv.isDate())
+    .withOptional('dob', nv.isDate())
     .withOptional('address', nv.isString({ regex: /^.+$/ }))
-    // .withOptional('createdAt', nv.isDate())
+    .withOptional('createdAt', nv.isDate())
     .withOptional('isActive', nv.isBoolean())
     .withOptional('isDelete', nv.isBoolean());
 

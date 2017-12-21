@@ -154,7 +154,7 @@ AccountController.prototype.changePassword = async function (req, res, next) {
 
     var val = await validate(rule, userProps);
     if (val.numErr > 0) {
-        return callback({
+        return next({
             type: "Bad Request",
             error: val.error
         });
@@ -162,13 +162,13 @@ AccountController.prototype.changePassword = async function (req, res, next) {
 
     dependencies.accountRepository.update(userProps, null, function (err, result) {
         if (err) {
-            callback(err);
+            next(err);
         } else if (result) {
             res.account = userProps;
             req.user.password = userProps.password;
             next();
         } else {
-            callback({
+            next({
                 type: 'Bad Request'
             });
         }
@@ -185,7 +185,7 @@ AccountController.prototype.changeUserName = async function (req, res, next) {
     // validate accountProps 
     var val = await validate(rule, accountProps);
     if (val.numErr > 0) {
-        return callback({
+        return next({
             type: "Bad Request",
             error: val.error
         });
@@ -195,15 +195,15 @@ AccountController.prototype.changeUserName = async function (req, res, next) {
         userName: accountProps.userName
     }, [], null, function (err, dup) {
         if (err) {
-            callback(err);
+            next(err);
         } else if (dup) {
-            callback({
+            next({
                 type: 'Duplicated'
             });
         } else {
             dependencies.accountRepository.update(accountProps, null, function (err, result) {
                 if (err) {
-                    callback(err);
+                    next(err);
                 } else if (result) {
                     res.account = accountProps;
                     req.user = accountProps;
@@ -233,7 +233,7 @@ AccountController.prototype.updateInfo = async function (req, res, next) {
 
     dependencies.accountRepository.update(accountProps, null, function (err, result) {
         if (err) {
-            callback(err);
+            next(err);
         } else if (result) {
             res.account = accountProps;
             req.user = accountProps;
