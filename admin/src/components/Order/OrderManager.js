@@ -2,6 +2,7 @@ import React from 'react';
 import DataTable from '../Table/index';
 import $ from 'jquery';
 import { address } from '../config';
+import AlertContainer from 'react-alert';
 
 
 class OrderManager extends React.Component {
@@ -76,7 +77,10 @@ class OrderManager extends React.Component {
                 return response.json();
               }).then(function(data) {
                 console.log('Update order:', data);
-                alert(data.message);
+                that.msg.show("Cập nhật thành công!", {
+                    time: 2000,
+                    type: 'info'
+                });
                 if(data.message === "updated"){
                     window.location.reload();
                 }
@@ -95,6 +99,7 @@ class OrderManager extends React.Component {
                 <h1>
                     Order Manager
                 </h1>
+                <AlertContainer ref={a => this.msg = a} {...{offset: 14, position: 'top right', theme: 'dark', time: 5000, transition: 'scale'}} />
                 <ol className="breadcrumb">
                     <li><a href="#"><i className="fa fa-dashboard"></i> Home</a></li>
                     <li className="active">Order Manager</li>
