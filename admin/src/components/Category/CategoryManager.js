@@ -3,6 +3,8 @@ import DataTable from '../Table/index';
 import $ from 'jquery';
 import { address } from '../config';
 import { Link } from "react-router-dom";
+import AlertContainer from 'react-alert';
+
 
 class CategoryManager extends React.Component {
     constructor(props){
@@ -43,7 +45,7 @@ class CategoryManager extends React.Component {
         console.log('---Ham cua thang bo: ---', data);
         let dataObject;
         let id = '';
-        // let that = this;
+        let that = this;
         data.forEach(item => {
             if (item.title === "categoryId") {
                 id = item.text;
@@ -71,7 +73,11 @@ class CategoryManager extends React.Component {
                 return response.json();
               }).then(function(data) {
                 console.log('Created Gist:', data);
-                alert(data.message);
+                
+                that.msg.show("Cập nhật thành công!", {
+                    time: 1000,
+                    type: 'info'
+                });
                 if(data.message === "updated"){
                     window.location.reload();
                 }
@@ -86,6 +92,7 @@ class CategoryManager extends React.Component {
     render () {
         return (
             <div className="content-wrapper">
+                <AlertContainer ref={a => this.msg = a} {...{offset: 14, position: 'top right', theme: 'dark', time: 5000, transition: 'scale'}} />
                 <section className="content-header">
                 <h1>
                 Category Manager
@@ -95,6 +102,7 @@ class CategoryManager extends React.Component {
                     <li className="active">Category Manager</li>
                 </ol>
                 </section>
+                
                 <DataTable remove={this.remove} categories={this.state.data} submit={this.submit} data={this.state.data} tableName="Categories"/>
             </div>
         );

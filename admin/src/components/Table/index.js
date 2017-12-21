@@ -14,6 +14,7 @@ import { Modal, Button, ButtonToolbar, Form, FormGroup, Col, ControlLabel } from
 import { address } from '../config';
 import 'react-notifications/lib/notifications.css';
 import stateOfOrder from '../common/order-states';
+import AlertContainer from 'react-alert';
 
 class DataTable extends React.Component {
   constructor(props) {
@@ -154,6 +155,7 @@ class DataTable extends React.Component {
   };
 
   submitCat = () => {
+    let that = this;
     this.setState({ createPageShow: 'none' });
     fetch(address+"/categories/", {
       method: "post",
@@ -171,11 +173,15 @@ class DataTable extends React.Component {
     }).then(function (response) {
       return response.json();
     }).then(function (data) {
-      alert(data.message);
+      that.msg.show("Tạo mới loại sản phẩm thành công!", {
+        time: 1000,
+        type: 'success'
+    });
       window.location.reload();
     });
   }
   submitSup = () => {
+    let that = this;    
     this.setState({ createPageShow: 'none' });
     fetch(address+"/suppliers/", {
       method: "post",
@@ -194,11 +200,15 @@ class DataTable extends React.Component {
     }).then(function (response) {
       return response.json();
     }).then(function (data) {
-      alert(data.message);
+      HTMLHeadElement.msg.show("Tạo mới nhà cung cấp thành công!", {
+        time: 1000,
+        type: 'success'
+    });
       window.location.reload();
     });
   }
   submitPro = () => {
+    let that = this;        
     this.setState({ createPageShow: 'none' });
     const bodyObject = {
       productName: this.state.productName,
@@ -222,7 +232,10 @@ class DataTable extends React.Component {
     }).then(function (response) {
       return response.json();
     }).then(function (data) {
-      alert(data.message);
+      that.msg.show("Tạo mới sản phẩm thành công!", {
+        time: 1000,
+        type: 'success'
+    });
       window.location.reload();
     });
   }
@@ -275,7 +288,10 @@ class DataTable extends React.Component {
         cf = window.confirm("Chắc chắn xóa " + the_name + "?");
       }
       if (cf) {
-        console.log('The id of selected row in remove function', id);
+        this.msg.show("Đã xóa!", {
+          time: 1000,
+          type: 'success'
+      });
         this.props.remove(id);
         $(table).find('.selected').hide();
       }
@@ -290,6 +306,7 @@ class DataTable extends React.Component {
               <div className="box-header">
                 <h3 className="box-title">{this.state.tableName}</h3>
               </div>
+              <AlertContainer ref={a => this.msg = a} {...{offset: 14, position: 'top right', theme: 'dark', time: 5000, transition: 'scale'}} />
               <div className="box-body">
                 <ButtonToolbar>
                   <Button className="create_btn" onClick={this.showCreate}>New</Button>

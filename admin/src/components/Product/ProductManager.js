@@ -2,6 +2,7 @@ import React from 'react';
 import DataTable from '../Table/index';
 import $ from 'jquery';
 import { address } from '../config';
+import AlertContainer from 'react-alert';
 
 
 class ProductManager extends React.Component {
@@ -60,7 +61,7 @@ class ProductManager extends React.Component {
     }
 
     submit = (data) => {
-        // let that = this;        
+        let that = this;        
         console.log('---Ham cua thang bo: ---', data);
         let dataObject;
         let id = '';
@@ -84,7 +85,10 @@ class ProductManager extends React.Component {
                 return response.json();
               }).then(function(data) {
                 console.log('Created Gist:', data);
-                alert(data.message);
+                that.msg.show("Cập nhật thành công!", {
+                    time: 2000,
+                    type: 'info'
+                });
                 if(data.message === "updated"){
                     window.location.reload();
                 }
@@ -103,6 +107,7 @@ class ProductManager extends React.Component {
                 <h1>
                     Product Manager
                 </h1>
+                <AlertContainer ref={a => this.msg = a} {...{offset: 14, position: 'top right', theme: 'dark', time: 5000, transition: 'scale'}} />
                 <ol className="breadcrumb">
                     <li><a href="#"><i className="fa fa-dashboard"></i> Home</a></li>
                     <li className="active">Product Manager</li>
