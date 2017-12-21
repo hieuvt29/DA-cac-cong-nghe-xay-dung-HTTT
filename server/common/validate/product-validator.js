@@ -10,7 +10,7 @@ var checkProduct = nv.isAnyObject()
     .withOptional('views', nv.isInteger())
     .withOptional('image', nv.isString({regex: /.{5,255}/}))
     .withOptional('description', nv.isAnyObject())
-    .withOptional('createdAt', nv.isDate())
+    // .withOptional('createdAt', nv.isDate())
     .withOptional('isActive', nv.isBoolean())
     .withOptional('isDelete', nv.isBoolean())
     

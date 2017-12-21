@@ -7,8 +7,8 @@ var checkOrder = nv.isAnyObject()
     .withOptional('state', nv.isString({regex: /(^PENDING$)|(^DELIVERED$)|(^CANCELLED$)/}))
     .withOptional('orderId', nv.isString({regex: /^[a-zA-Z0-9_-]{36}$/}))
     .withOptional('accountId', nv.isString({regex: /^[a-zA-Z0-9_-]{36}$/}))
-    .withOptional('createdAt', nv.isDate())
-    .withOptional('deliveryDate', nv.isDate())
+    // .withOptional('createdAt', nv.isDate())
+    // .withOptional('deliveryDate', nv.isDate())
     .withOptional('total', nv.isNumber())
     
 module.exports = checkOrder;
